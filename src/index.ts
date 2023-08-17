@@ -70,6 +70,7 @@ class GitHubAction implements Reporter {
         const content: string[] = [];
 
         content.push(`\n`);
+        content.push(`\n`);
         content.push(`<table role="table">`);
         content.push(`<thead>`);
         content.push(`<tr>`);
@@ -139,7 +140,15 @@ class GitHubAction implements Reporter {
 
         // summary.addTable(tableRows);
 
-        summary.addDetails(fileName, content.join("\n"));
+        // Check if there are any failed tests
+        const failedTests = Object.values(
+          this.testDetails.tests[fileName]
+        ).filter((test) => test.status !== "passed");
+
+        summary.addDetails(
+          `## ${failedTests.length === 0 ? "✅" : "❌"} ${fileName}`,
+          content.join("\n")
+        );
       }
 
       await summary.write();
