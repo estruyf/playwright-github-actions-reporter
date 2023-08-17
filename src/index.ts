@@ -67,45 +67,58 @@ class GitHubAction implements Reporter {
       summary.addRaw(`Total tests: ${this.testDetails.total}`);
 
       for (const fileName of Object.keys(this.testDetails.tests)) {
-        summary.addHeading(fileName, 2);
+        const content: string[] = [];
 
-        const tableRows = [
-          [
-            {
-              data: "Test",
-              header: true,
-            },
-            {
-              data: "Status",
-              header: true,
-            },
-            {
-              data: "Duration",
-              header: true,
-            },
-          ],
-        ];
+        content.push(`| Test | Status | Duration |`);
+        content.push(`| ---- | ------ | -------- |`);
+
+        // summary.addHeading(fileName, 2);
+
+        // const tableRows = [
+        //   [
+        //     {
+        //       data: "Test",
+        //       header: true,
+        //     },
+        //     {
+        //       data: "Status",
+        //       header: true,
+        //     },
+        //     {
+        //       data: "Duration",
+        //       header: true,
+        //     },
+        //   ],
+        // ];
 
         for (const testName of Object.keys(this.testDetails.tests[fileName])) {
           const test = this.testDetails.tests[fileName][testName];
 
-          tableRows.push([
-            {
-              data: testName,
-              header: false,
-            },
-            {
-              data: test.status === "passed" ? "✅ Pass" : "❌ Fail",
-              header: false,
-            },
-            {
-              data: `${test.duration / 1000}s`,
-              header: false,
-            },
-          ]);
+          content.push(
+            `| ${testName} | ${
+              test.status === "passed" ? "✅ Pass" : "❌ Fail"
+            } | ${test.duration / 1000}s |`
+          );
+
+          // tableRows.push([
+          //   {
+          //     data: testName,
+          //     header: false,
+          //   },
+          //   {
+          //     data: test.status === "passed" ? "✅ Pass" : "❌ Fail",
+          //     header: false,
+          //   },
+          //   {
+          //     data: `${test.duration / 1000}s`,
+          //     header: false,
+          //   },
+          // ]);
         }
 
-        summary.addTable(tableRows);
+        // summary.addTable(tableRows);
+
+        summary.addDetails(fileName, content.join("\n"));
       }
 
       await summary.write();
