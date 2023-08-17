@@ -64,13 +64,13 @@ class GitHubAction implements Reporter {
       const summary = core.summary;
       summary.addHeading(this.options.title || `Test results`, 1);
 
-      summary.addRaw(`Total tests: ${this.testDetails.total}\n`);
+      summary.addRaw(`Total tests: ${this.testDetails.total}<br>`);
 
       for (const fileName of Object.keys(this.testDetails.tests)) {
         const content: string[] = [];
 
         content.push(``);
-        content.push(`<div></div>`);
+        content.push(`<br>`);
         content.push(`<table role="table">`);
         content.push(`<thead>`);
         content.push(`<tr>`);
