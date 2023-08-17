@@ -9,25 +9,36 @@ import type {
 } from "@playwright/test/reporter";
 import * as core from "@actions/core";
 import { basename } from "path";
+import { getHtmlTable } from "./utils/getHtmlTable";
+import { getTableRows } from "./utils/getTableRows";
+
+interface GitHubActionOptions {
+  title?: string;
+  useDetails?: boolean;
+}
+
+interface TestDetails {
+  total: number | undefined;
+
+  tests: {
+    [fileName: string]: TestResults;
+  };
+}
+
+export interface TestResults {
+  [testTitle: string]: {
+    status: TestStatus | "pending";
+    duration: number;
+  };
+}
 
 class GitHubAction implements Reporter {
-  private testDetails: {
-    total: number | undefined;
-
-    tests: {
-      [fileName: string]: {
-        [testTitle: string]: {
-          status: TestStatus | "pending";
-          duration: number;
-        };
-      };
-    };
-  } = {
+  private testDetails: TestDetails = {
     total: undefined,
     tests: {},
   };
 
-  constructor(private options: { title?: string } = {}) {
+  constructor(private options: GitHubActionOptions = {}) {
     console.log(`Using GitHub Actions reporter`);
   }
 
@@ -60,95 +71,38 @@ class GitHubAction implements Reporter {
   }
 
   async onEnd(result: FullResult) {
-    if (process.env.NODE_ENV !== "development") {
+    if (process.env.GITHUB_ACTIONS) {
       const summary = core.summary;
       summary.addHeading(this.options.title || `Test results`, 1);
 
-      summary.addRaw(`Total tests: ${this.testDetails.total}<br>`);
+      summary.addRaw(`Total tests: ${this.testDetails.total}`);
+
+      if (this.options.useDetails) {
+        summary.addSeparator();
+      }
 
       for (const fileName of Object.keys(this.testDetails.tests)) {
-        const content: string[] = [];
-
-        content.push(``);
-        content.push(`<br>`);
-        content.push(`<table role="table">`);
-        content.push(`<thead>`);
-        content.push(`<tr>`);
-        content.push(`<th>Test</th>`);
-        content.push(`<th>Status</th>`);
-        content.push(`<th>Duration</th>`);
-        content.push(`</tr>`);
-        content.push(`</thead>`);
-
-        content.push(`<tbody>`);
-
-        // summary.addHeading(fileName, 2);
-
-        // const tableRows = [
-        //   [
-        //     {
-        //       data: "Test",
-        //       header: true,
-        //     },
-        //     {
-        //       data: "Status",
-        //       header: true,
-        //     },
-        //     {
-        //       data: "Duration",
-        //       header: true,
-        //     },
-        //   ],
-        // ];
-
-        for (const testName of Object.keys(this.testDetails.tests[fileName])) {
-          const test = this.testDetails.tests[fileName][testName];
-
-          content.push(`<tr>`);
-          content.push(`<td>${testName}</td>`);
-          content.push(
-            `<td>${test.status === "passed" ? "✅ Pass" : "❌ Fail"}</td>`
-          );
-          content.push(`<td>${test.duration / 1000}s</td>`);
-          content.push(`</tr>`);
-
-          // content.push(
-          //   `| ${testName} | ${
-          //     test.status === "passed" ? "✅ Pass" : "❌ Fail"
-          //   } | ${test.duration / 1000}s |`
-          // );
-
-          // tableRows.push([
-          //   {
-          //     data: testName,
-          //     header: false,
-          //   },
-          //   {
-          //     data: test.status === "passed" ? "✅ Pass" : "❌ Fail",
-          //     header: false,
-          //   },
-          //   {
-          //     data: `${test.duration / 1000}s`,
-          //     header: false,
-          //   },
-          // ]);
-        }
-
-        content.push(`</tbody>`);
-        content.push(`</table>`);
-        content.push(`\n`);
-
-        // summary.addTable(tableRows);
-
         // Check if there are any failed tests
         const failedTests = Object.values(
           this.testDetails.tests[fileName]
         ).filter((test) => test.status !== "passed");
 
-        summary.addDetails(
-          `${failedTests.length === 0 ? "✅" : "❌"} ${fileName}`,
-          content.join("\n")
-        );
+        if (this.options.useDetails) {
+          const content = getHtmlTable(this.testDetails.tests[fileName]);
+
+          summary.addDetails(
+            `${failedTests.length === 0 ? "✅" : "❌"} ${fileName}`,
+            content
+          );
+        } else {
+          summary.addHeading(
+            `${failedTests.length === 0 ? "✅" : "❌"} ${fileName}`,
+            2
+          );
+
+          const tableRows = getTableRows(this.testDetails.tests[fileName]);
+          summary.addTable(tableRows);
+        }
       }
 
       await summary.write();

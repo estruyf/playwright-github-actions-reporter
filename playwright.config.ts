@@ -10,7 +10,13 @@ const config: PlaywrightTestConfig<{}, {}> = {
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 2 : 1,
   workers: process.env.CI ? 1 : undefined,
-  reporter: [["./src/index.ts", { title: "Reporter testing" }]],
+  reporter: [
+    ["./src/index.ts", { title: "Reporter testing" }],
+    [
+      "./src/index.ts",
+      { title: "Reporter testing with details", useDetails: true },
+    ],
+  ],
   use: {
     actionTimeout: 0,
     trace: "on-first-retry",
