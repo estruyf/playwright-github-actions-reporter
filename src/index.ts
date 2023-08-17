@@ -64,13 +64,13 @@ class GitHubAction implements Reporter {
       const summary = core.summary;
       summary.addHeading(this.options.title || `Test results`, 1);
 
-      summary.addRaw(`Total tests: ${this.testDetails.total}`);
+      summary.addRaw(`Total tests: ${this.testDetails.total}\n`);
 
       for (const fileName of Object.keys(this.testDetails.tests)) {
         const content: string[] = [];
 
-        content.push(`\n`);
-        content.push(`\n`);
+        content.push(``);
+        content.push(`<div></div>`);
         content.push(`<table role="table">`);
         content.push(`<thead>`);
         content.push(`<tr>`);
@@ -146,7 +146,7 @@ class GitHubAction implements Reporter {
         ).filter((test) => test.status !== "passed");
 
         summary.addDetails(
-          `## ${failedTests.length === 0 ? "✅" : "❌"} ${fileName}`,
+          `${failedTests.length === 0 ? "✅" : "❌"} ${fileName}`,
           content.join("\n")
         );
       }
