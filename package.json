@@ -10,6 +10,18 @@
   },
   "author": "Elio Struyf <elio@struyfconsulting.be>",
   "license": "MIT",
+  "homepage": "https://github.com/estruyf/playwright-github-actions-reporter",
+  "bugs": {
+    "url": "https://github.com/estruyf/playwright-github-actions-reporter/issues"
+  },
+  "funding": {
+    "type": "individual",
+    "url": "https://github.com/sponsors/estruyf"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/estruyf/playwright-github-actions-reporter.git"
+  },
   "devDependencies": {
     "@playwright/test": "^1.37.0",
     "@tsconfig/recommended": "^1.0.2",

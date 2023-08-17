@@ -1,6 +1,7 @@
 .github
 assets
 node_modules
+scripts
 src
 test-results
 tests

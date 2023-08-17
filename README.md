@@ -34,6 +34,21 @@ The reporter supports the following configuration options:
 | title | Title of the report | `Test results` |
 | useDetails | Use details in summary which creates expandable content | `false` |
 
+To use these option, you can update the reporter configuration:
+
+```ts
+import { defineConfig } from '@playwright/test';
+
+export default defineConfig({
+  reporter: [
+    ['@estruyf/github-actions-reporter', {
+      title: 'My custom title',
+      useDetails: true
+    }]
+  ],
+});
+```
+
 ### Example without details
 
 ![Example without details](./assets/example-without-details.png)
