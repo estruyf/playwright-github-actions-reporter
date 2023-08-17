@@ -69,8 +69,17 @@ class GitHubAction implements Reporter {
       for (const fileName of Object.keys(this.testDetails.tests)) {
         const content: string[] = [];
 
-        content.push(`| Test | Status | Duration |`);
-        content.push(`| ---- | ------ | -------- |`);
+        content.push(`\n`);
+        content.push(`<table role="table">`);
+        content.push(`<thead>`);
+        content.push(`<tr>`);
+        content.push(`<th>Test</th>`);
+        content.push(`<th>Status</th>`);
+        content.push(`<th>Duration</th>`);
+        content.push(`</tr>`);
+        content.push(`</thead>`);
+
+        content.push(`<tbody>`);
 
         // summary.addHeading(fileName, 2);
 
@@ -94,11 +103,19 @@ class GitHubAction implements Reporter {
         for (const testName of Object.keys(this.testDetails.tests[fileName])) {
           const test = this.testDetails.tests[fileName][testName];
 
+          content.push(`<tr>`);
+          content.push(`<td>${testName}</td>`);
           content.push(
-            `| ${testName} | ${
-              test.status === "passed" ? "✅ Pass" : "❌ Fail"
-            } | ${test.duration / 1000}s |`
+            `<td>${test.status === "passed" ? "✅ Pass" : "❌ Fail"}</td>`
           );
+          content.push(`<td>${test.duration / 1000}s</td>`);
+          content.push(`</tr>`);
+
+          // content.push(
+          //   `| ${testName} | ${
+          //     test.status === "passed" ? "✅ Pass" : "❌ Fail"
+          //   } | ${test.duration / 1000}s |`
+          // );
 
           // tableRows.push([
           //   {
@@ -115,6 +132,10 @@ class GitHubAction implements Reporter {
           //   },
           // ]);
         }
+
+        content.push(`</tbody>`);
+        content.push(`</table>`);
+        content.push(`\n`);
 
         // summary.addTable(tableRows);
 
