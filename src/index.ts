@@ -82,23 +82,20 @@ class GitHubAction implements Reporter {
       }
 
       for (const fileName of Object.keys(this.testDetails.tests)) {
-        // Check if there are any failed tests
-        const failedTests = Object.values(
-          this.testDetails.tests[fileName]
-        ).filter((test) => test.status !== "passed");
-
         if (this.options.useDetails) {
           const content = getHtmlTable(this.testDetails.tests[fileName]);
+
+          // Check if there are any failed tests
+          const failedTests = Object.values(
+            this.testDetails.tests[fileName]
+          ).filter((test) => test.status !== "passed");
 
           summary.addDetails(
             `${failedTests.length === 0 ? "✅" : "❌"} ${fileName}`,
             content
           );
         } else {
-          summary.addHeading(
-            `${failedTests.length === 0 ? "✅" : "❌"} ${fileName}`,
-            2
-          );
+          summary.addHeading(fileName, 2);
 
           const tableRows = getTableRows(this.testDetails.tests[fileName]);
           summary.addTable(tableRows);

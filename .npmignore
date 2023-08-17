@@ -1,4 +1,5 @@
 .github
+assets
 node_modules
 src
 test-results
