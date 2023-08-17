@@ -25,6 +25,8 @@ export default defineConfig({
 });
 ```
 
+> More information on how to use reporters can be found in the [Playwright documentation](https://playwright.dev/docs/test-reporters).
+
 ## Configuration
 
 The reporter supports the following configuration options:
