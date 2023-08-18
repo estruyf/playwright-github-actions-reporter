@@ -1,7 +1,7 @@
 import { SummaryTableRow } from "@actions/core/lib/summary";
-import { TestResults } from "..";
+import { TestCase } from "@playwright/test/reporter";
 
-export const getTableRows = (tests: TestResults): SummaryTableRow[] => {
+export const getTableRows = (tests: TestCase[]): SummaryTableRow[] => {
   const tableRows = [
     [
       {
@@ -16,23 +16,32 @@ export const getTableRows = (tests: TestResults): SummaryTableRow[] => {
         data: "Duration",
         header: true,
       },
+      {
+        data: "Retries",
+        header: true,
+      },
     ],
   ];
 
-  for (const testName of Object.keys(tests)) {
-    const test = tests[testName];
+  for (const test of tests) {
+    // Get the last result
+    const result = test.results[test.results.length - 1];
 
     tableRows.push([
       {
-        data: testName,
+        data: test.title,
         header: false,
       },
       {
-        data: test.status === "passed" ? "✅ Pass" : "❌ Fail",
+        data: result.status === "passed" ? "✅ Pass" : "❌ Fail",
         header: false,
       },
       {
-        data: `${test.duration / 1000}s`,
+        data: `${result.duration / 1000}s`,
+        header: false,
+      },
+      {
+        data: `${result.retry}`,
         header: false,
       },
     ]);
