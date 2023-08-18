@@ -25,6 +25,10 @@ class GitHubAction implements Reporter {
     console.log(`Using GitHub Actions reporter`);
   }
 
+  onBegin(_: FullConfig, suite: Suite) {
+    this.suite = suite;
+  }
+
   async onEnd(result: FullResult) {
     if (process.env.GITHUB_ACTIONS && this.suite) {
       const os = process.platform;
