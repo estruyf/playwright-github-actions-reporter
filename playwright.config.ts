@@ -11,7 +11,7 @@ const config: PlaywrightTestConfig<{}, {}> = {
   retries: process.env.CI ? 2 : 1,
   workers: process.env.CI ? 1 : undefined,
   reporter: [
-    ["./src/index.ts", { title: "Reporter testing" }],
+    ["./src/index.ts", { title: "Reporter testing", showError: true }],
     [
       "./src/index.ts",
       { title: "Reporter testing with details", useDetails: true },

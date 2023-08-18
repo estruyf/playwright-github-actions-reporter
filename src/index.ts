@@ -3,102 +3,100 @@ import type {
   FullConfig,
   Suite,
   TestCase,
-  TestResult,
   FullResult,
-  TestStatus,
 } from "@playwright/test/reporter";
 import * as core from "@actions/core";
 import { basename } from "path";
 import { getHtmlTable } from "./utils/getHtmlTable";
 import { getTableRows } from "./utils/getTableRows";
+import { checkForFailedTests } from "./utils/checkForFailedTests";
+import Convert from "ansi-to-html";
 
 interface GitHubActionOptions {
   title?: string;
   useDetails?: boolean;
-}
-
-interface TestDetails {
-  total: number | undefined;
-
-  tests: {
-    [fileName: string]: TestResults;
-  };
-}
-
-export interface TestResults {
-  [testTitle: string]: {
-    status: TestStatus | "pending";
-    duration: number;
-  };
+  showError?: boolean;
 }
 
 class GitHubAction implements Reporter {
-  private testDetails: TestDetails = {
-    total: undefined,
-    tests: {},
-  };
+  private suite: Suite | undefined;
 
   constructor(private options: GitHubActionOptions = {}) {
     console.log(`Using GitHub Actions reporter`);
   }
 
-  onBegin(config: FullConfig, suite: Suite) {
-    this.testDetails.total = suite.allTests().length;
-  }
-
-  onTestBegin(test: TestCase, result: TestResult) {
-    const fileName = basename(test.location.file);
-
-    if (!this.testDetails.tests[fileName]) {
-      this.testDetails.tests[fileName] = {};
-    }
-
-    if (!this.testDetails.tests[fileName][test.title]) {
-      this.testDetails.tests[fileName][test.title] = {
-        status: "pending",
-        duration: 0,
-      };
-    }
-  }
-
-  onTestEnd(test: TestCase, result: TestResult) {
-    const fileName = basename(test.location.file);
-
-    this.testDetails.tests[fileName][test.title] = {
-      status: result.status,
-      duration: result.duration,
-    };
+  onBegin(_: FullConfig, suite: Suite) {
+    this.suite = suite;
   }
 
   async onEnd(result: FullResult) {
-    if (process.env.GITHUB_ACTIONS) {
+    if (process.env.GITHUB_ACTIONS && this.suite) {
+      const os = process.platform;
       const summary = core.summary;
       summary.addHeading(this.options.title || `Test results`, 1);
 
-      summary.addRaw(`Total tests: ${this.testDetails.total}`);
+      summary.addRaw(`Total tests: ${this.suite.allTests().length}`);
 
       if (this.options.useDetails) {
         summary.addSeparator();
       }
 
-      for (const fileName of Object.keys(this.testDetails.tests)) {
-        if (this.options.useDetails) {
-          const content = getHtmlTable(this.testDetails.tests[fileName]);
+      for (const suite of this.suite?.suites) {
+        const project = suite.project();
 
-          // Check if there are any failed tests
-          const failedTests = Object.values(
-            this.testDetails.tests[fileName]
-          ).filter((test) => test.status !== "passed");
+        // Get all the test files
+        const files = suite
+          .allTests()
+          .map((test) => test.location.file)
+          .reduce((acc, curr) => {
+            if (!acc.includes(curr)) {
+              acc.push(curr);
+            }
 
-          summary.addDetails(
-            `${failedTests.length === 0 ? "✅" : "❌"} ${fileName}`,
-            content
-          );
-        } else {
-          summary.addHeading(fileName, 2);
+            return acc;
+          }, [] as string[]);
 
-          const tableRows = getTableRows(this.testDetails.tests[fileName]);
-          summary.addTable(tableRows);
+        // Get all the tests per file
+        const tests = files.reduce((acc, curr) => {
+          acc[curr] = suite.allTests().filter((test) => {
+            return test.location.file === curr;
+          });
+
+          return acc;
+        }, {} as { [fileName: string]: TestCase[] });
+
+        for (const filePath of Object.keys(tests)) {
+          const fileName = basename(filePath);
+
+          if (this.options.useDetails) {
+            const content = getHtmlTable(
+              tests[filePath],
+              !!this.options.showError
+            );
+
+            // Check if there are any failed tests
+            const hasFailedTests = checkForFailedTests(tests[filePath]);
+
+            summary.addDetails(
+              `${hasFailedTests ? "❌" : "✅"} ${fileName} (${os}${
+                project!.name ? ` / ${project!.name}` : ""
+              })`,
+              content
+            );
+          } else {
+            summary.addHeading(
+              `${fileName} (${os}${
+                project!.name ? ` / ${project!.name}` : ""
+              })`,
+              2
+            );
+
+            const tableRows = getTableRows(
+              tests[filePath],
+              !!this.options.showError
+            );
+            summary.addTable(tableRows);
+          }
         }
       }
 

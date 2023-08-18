@@ -35,6 +35,7 @@ The reporter supports the following configuration options:
 | --- | --- | --- |
 | title | Title of the report | `Test results` |
 | useDetails | Use details in summary which creates expandable content | `false` |
+| showError | Show error message in summary | `false` |
 
 To use these option, you can update the reporter configuration:
 
@@ -45,7 +46,8 @@ export default defineConfig({
   reporter: [
     ['@estruyf/github-actions-reporter', {
       title: 'My custom title',
-      useDetails: true
+      useDetails: true,
+      showError: true
     }]
   ],
 });

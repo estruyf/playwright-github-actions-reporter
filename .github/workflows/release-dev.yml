@@ -4,9 +4,16 @@ on:
     branches:
       - dev
 
+# Cancel the previous runs (if any are still waiting)
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: true
+
 jobs:
   build:
     runs-on: ubuntu-latest
+    environment:
+      name: npm
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-node@v3
