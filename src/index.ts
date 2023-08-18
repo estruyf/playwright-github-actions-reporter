@@ -82,7 +82,7 @@ class GitHubAction implements Reporter {
             );
           } else {
             summary.addHeading(
-              `${fileName} (${os}/${
+              `${fileName} (${os}${
                 project!.name ? ` / ${project!.name}` : ""
               })`,
               2

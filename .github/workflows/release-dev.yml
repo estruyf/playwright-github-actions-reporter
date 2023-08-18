@@ -4,6 +4,11 @@ on:
     branches:
       - dev
 
+# Cancel the previous runs (if any are still waiting)
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: true
+
 jobs:
   build:
     runs-on: ubuntu-latest
