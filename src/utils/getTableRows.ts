@@ -1,7 +1,10 @@
 import { SummaryTableRow } from "@actions/core/lib/summary";
 import { TestCase } from "@playwright/test/reporter";
+import Convert from "ansi-to-html";
 
 export const getTableRows = (tests: TestCase[]): SummaryTableRow[] => {
+  const convert = new Convert();
+
   const tableRows = [
     [
       {
@@ -18,6 +21,10 @@ export const getTableRows = (tests: TestCase[]): SummaryTableRow[] => {
       },
       {
         data: "Retries",
+        header: true,
+      },
+      {
+        data: "Error",
         header: true,
       },
     ],
@@ -42,6 +49,13 @@ export const getTableRows = (tests: TestCase[]): SummaryTableRow[] => {
       },
       {
         data: `${result.retry}`,
+        header: false,
+      },
+      {
+        data:
+          result.error && result.error.message
+            ? convert.toHtml(result.error.message!)
+            : "",
         header: false,
       },
     ]);

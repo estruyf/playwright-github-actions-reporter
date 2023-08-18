@@ -3,15 +3,14 @@ import type {
   FullConfig,
   Suite,
   TestCase,
-  TestResult,
   FullResult,
-  TestStatus,
 } from "@playwright/test/reporter";
 import * as core from "@actions/core";
 import { basename } from "path";
 import { getHtmlTable } from "./utils/getHtmlTable";
 import { getTableRows } from "./utils/getTableRows";
 import { checkForFailedTests } from "./utils/checkForFailedTests";
+import Convert from "ansi-to-html";
 
 interface GitHubActionOptions {
   title?: string;
