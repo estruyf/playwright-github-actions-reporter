@@ -76,12 +76,17 @@ class GitHubAction implements Reporter {
 
             summary.addDetails(
               `${hasFailedTests ? "❌" : "✅"} ${fileName} (${os}${
-                project!.name ? `/${project!.name}` : ""
+                project!.name ? ` / ${project!.name}` : ""
               })`,
               content
             );
           } else {
-            summary.addHeading(`${fileName} (${os}/${project})`, 2);
+            summary.addHeading(
+              `${fileName} (${os}/${
+                project!.name ? ` / ${project!.name}` : ""
+              })`,
+              2
+            );
 
             const tableRows = getTableRows(tests[filePath]);
             summary.addTable(tableRows);
