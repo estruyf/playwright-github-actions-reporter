@@ -8,6 +8,7 @@ All notable changes to this project will be documented in this file.
 - Added OS name
 - Added browser/project name
 - Added retries count
+- Added `showError` option
 
 ## [1.0.0]
 

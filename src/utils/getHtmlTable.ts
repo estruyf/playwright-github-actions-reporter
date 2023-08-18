@@ -1,7 +1,7 @@
 import { TestCase } from "@playwright/test/reporter";
 import Convert from "ansi-to-html";
 
-export const getHtmlTable = (tests: TestCase[]): string => {
+export const getHtmlTable = (tests: TestCase[], showError: boolean): string => {
   const convert = new Convert();
 
   const content: string[] = [];
@@ -14,7 +14,9 @@ export const getHtmlTable = (tests: TestCase[]): string => {
   content.push(`<th>Status</th>`);
   content.push(`<th>Duration</th>`);
   content.push(`<th>Retries</th>`);
-  content.push(`<th>Error</th>`);
+  if (showError) {
+    content.push(`<th>Error</th>`);
+  }
   content.push(`</tr>`);
   content.push(`</thead>`);
   content.push(`<tbody>`);
@@ -30,13 +32,15 @@ export const getHtmlTable = (tests: TestCase[]): string => {
     );
     content.push(`<td>${result.duration / 1000}s</td>`);
     content.push(`<td>${result.retry}</td>`);
-    content.push(
-      `<td>${
-        result.error && result.error.message
-          ? convert.toHtml(result.error.message!)
-          : ""
-      }</td>`
-    );
+    if (showError) {
+      content.push(
+        `<td>${
+          result.error && result.error.message
+            ? convert.toHtml(result.error.message!)
+            : ""
+        }</td>`
+      );
+    }
     content.push(`</tr>`);
   }
 

@@ -15,6 +15,7 @@ import Convert from "ansi-to-html";
 interface GitHubActionOptions {
   title?: string;
   useDetails?: boolean;
+  showError?: boolean;
 }
 
 class GitHubAction implements Reporter {
@@ -68,7 +69,10 @@ class GitHubAction implements Reporter {
           const fileName = basename(filePath);
 
           if (this.options.useDetails) {
-            const content = getHtmlTable(tests[filePath]);
+            const content = getHtmlTable(
+              tests[filePath],
+              !!this.options.showError
+            );
 
             // Check if there are any failed tests
             const hasFailedTests = checkForFailedTests(tests[filePath]);
@@ -87,7 +91,10 @@ class GitHubAction implements Reporter {
               2
             );
 
-            const tableRows = getTableRows(tests[filePath]);
+            const tableRows = getTableRows(
+              tests[filePath],
+              !!this.options.showError
+            );
             summary.addTable(tableRows);
           }
         }
