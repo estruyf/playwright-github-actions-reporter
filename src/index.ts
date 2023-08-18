@@ -75,7 +75,9 @@ class GitHubAction implements Reporter {
             const hasFailedTests = checkForFailedTests(tests[filePath]);
 
             summary.addDetails(
-              `${hasFailedTests ? "❌" : "✅"} ${fileName} (${os}/${project})`,
+              `${hasFailedTests ? "❌" : "✅"} ${fileName} (${os}${
+                project!.name ? `/${project!.name}` : ""
+              })`,
               content
             );
           } else {

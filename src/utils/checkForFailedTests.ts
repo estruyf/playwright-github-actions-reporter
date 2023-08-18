@@ -5,5 +5,5 @@ export const checkForFailedTests = (tests: TestCase[]) => {
     return test.results[test.results.length - 1].status !== "passed";
   });
 
-  return failedTests.length === 0;
+  return failedTests.length > 0;
 };
