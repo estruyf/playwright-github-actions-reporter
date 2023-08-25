@@ -4,6 +4,7 @@ import type {
   Suite,
   TestCase,
   FullResult,
+  TestResult,
 } from "@playwright/test/reporter";
 import * as core from "@actions/core";
 import { basename } from "path";
@@ -27,6 +28,14 @@ class GitHubAction implements Reporter {
 
   onBegin(_: FullConfig, suite: Suite) {
     this.suite = suite;
+  }
+
+  onStdOut(
+    chunk: string | Buffer,
+    test: void | TestCase,
+    result: void | TestResult
+  ): void {
+    console.log(chunk.toString());
   }
 
   async onEnd(result: FullResult) {
