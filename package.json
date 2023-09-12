@@ -6,7 +6,7 @@
   "scripts": {
     "build": "tsc",
     "watch": "tsc -w",
-    "test": "npx playwright test"
+    "test": "NODE_ENV=development npx playwright test"
   },
   "author": "Elio Struyf <elio@struyfconsulting.be>",
   "license": "MIT",

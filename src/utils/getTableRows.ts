@@ -1,6 +1,7 @@
 import { SummaryTableRow } from "@actions/core/lib/summary";
 import { TestCase } from "@playwright/test/reporter";
 import Convert from "ansi-to-html";
+import { getTestStatus } from "./getTestStatus";
 
 export const getTableRows = (
   tests: TestCase[],
@@ -46,7 +47,7 @@ export const getTableRows = (
         header: false,
       },
       {
-        data: result.status === "passed" ? "✅ Pass" : "❌ Fail",
+        data: getTestStatus(result),
         header: false,
       },
       {

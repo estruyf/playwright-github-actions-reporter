@@ -1,5 +1,6 @@
 import { TestCase } from "@playwright/test/reporter";
 import Convert from "ansi-to-html";
+import { getTestStatus } from "./getTestStatus";
 
 export const getHtmlTable = (tests: TestCase[], showError: boolean): string => {
   const convert = new Convert();
@@ -27,9 +28,7 @@ export const getHtmlTable = (tests: TestCase[], showError: boolean): string => {
 
     content.push(`<tr>`);
     content.push(`<td>${test.title}</td>`);
-    content.push(
-      `<td>${result.status === "passed" ? "✅ Pass" : "❌ Fail"}</td>`
-    );
+    content.push(`<td>${getTestStatus(result)}</td>`);
     content.push(`<td>${result.duration / 1000}s</td>`);
     content.push(`<td>${result.retry}</td>`);
     if (showError) {

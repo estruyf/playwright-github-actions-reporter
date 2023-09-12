@@ -1,12 +1,12 @@
 import { test, expect, Page } from "@playwright/test";
 
-test.describe("Failing test", () => {
+test.describe("Test retry", () => {
   let page: Page;
 
   test.beforeAll(async ({ browser }) => {
     page = await browser.newPage();
 
-    await page.goto("https://www.eliostruyf.com/stickers/", {
+    await page.goto("https://www.eliostruyf.com", {
       waitUntil: "domcontentloaded",
     });
   });
@@ -16,10 +16,18 @@ test.describe("Failing test", () => {
     await browser.close();
   });
 
-  test("Test should be skipped", async ({}, testInfo) => {
+  test("First test should fail, next should work", async ({}, testInfo) => {
     if (testInfo.retry === 0) {
       expect(true).toBeFalsy();
     }
+    expect(true).toBeTruthy();
+  });
+
+  test("Skip the test", async () => {
+    test.skip();
+  });
+
+  test("Should work fine", async () => {
     expect(true).toBeTruthy();
   });
 });
