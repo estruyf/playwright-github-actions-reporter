@@ -10,8 +10,10 @@ import * as core from "@actions/core";
 import { basename } from "path";
 import { getHtmlTable } from "./utils/getHtmlTable";
 import { getTableRows } from "./utils/getTableRows";
-import { checkForFailedTests } from "./utils/checkForFailedTests";
-import Convert from "ansi-to-html";
+import { getTestStatusIcon } from "./utils/getTestStatusIcon";
+import { SUMMARY_ENV_VAR } from "@actions/core/lib/summary";
+import { join } from "path";
+import { existsSync, unlinkSync, writeFileSync } from "fs";
 
 interface GitHubActionOptions {
   title?: string;
@@ -39,6 +41,16 @@ class GitHubAction implements Reporter {
   }
 
   async onEnd(result: FullResult) {
+    if (process.env.NODE_ENV === "development") {
+      const summaryFile = join(__dirname, "../summary.html");
+      if (existsSync(summaryFile)) {
+        unlinkSync(summaryFile);
+      }
+      writeFileSync(summaryFile, "", "utf-8");
+      process.env[SUMMARY_ENV_VAR] = summaryFile;
+      process.env.GITHUB_ACTIONS = "true";
+    }
+
     if (process.env.GITHUB_ACTIONS && this.suite) {
       const os = process.platform;
       const summary = core.summary;
@@ -84,10 +96,10 @@ class GitHubAction implements Reporter {
             );
 
             // Check if there are any failed tests
-            const hasFailedTests = checkForFailedTests(tests[filePath]);
+            const testStatusIcon = getTestStatusIcon(tests[filePath]);
 
             summary.addDetails(
-              `${hasFailedTests ? "❌" : "✅"} ${fileName} (${os}${
+              `${testStatusIcon} ${fileName} (${os}${
                 project!.name ? ` / ${project!.name}` : ""
               })`,
               content
