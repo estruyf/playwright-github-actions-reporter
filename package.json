@@ -6,7 +6,8 @@
   "scripts": {
     "build": "tsc",
     "watch": "tsc -w",
-    "test": "NODE_ENV=development npx playwright test"
+    "test": "NODE_ENV=development npx playwright test",
+    "test:local": "act -j testing -P ubuntu-latest=catthehacker/ubuntu:act-latest --container-architecture linux/amd64 --env GITHUB_STEP_SUMMARY='/dev/stdout'"
   },
   "author": "Elio Struyf <elio@struyfconsulting.be>",
   "license": "MIT",

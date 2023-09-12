@@ -24,7 +24,7 @@ test.describe("Test retry", () => {
   });
 
   test("Skip the test", async () => {
-    test.skip();
+    test.skip(true, "Don't need to test this.");
   });
 
   test("Should work fine", async () => {
