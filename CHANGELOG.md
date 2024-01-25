@@ -2,6 +2,11 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.3.0]
+
+- Added warning test icon
+- Added `skipped` status
+
 ## [1.2.0]
 
 - Show console logging
