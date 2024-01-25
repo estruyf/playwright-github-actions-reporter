@@ -16,7 +16,7 @@
     "url": "https://github.com/estruyf/playwright-github-actions-reporter/issues"
   },
   "funding": {
-    "type": "individual",
+    "type": "github",
     "url": "https://github.com/sponsors/estruyf"
   },
   "repository": {
