@@ -14,6 +14,7 @@ import { getTestStatusIcon } from "./utils/getTestStatusIcon";
 import { SUMMARY_ENV_VAR } from "@actions/core/lib/summary";
 import { join } from "path";
 import { existsSync, unlinkSync, writeFileSync } from "fs";
+import { getTotalStatus } from "./utils/getTotalStatus";
 
 interface GitHubActionOptions {
   title?: string;
@@ -56,7 +57,23 @@ class GitHubAction implements Reporter {
       const summary = core.summary;
       summary.addHeading(this.options.title || `Test results`, 1);
 
-      summary.addRaw(`Total tests: ${this.suite.allTests().length}`);
+      const totalStatus = getTotalStatus(this.suite?.suites);
+
+      const headerText = [`Total tests: ${this.suite.allTests().length}`];
+
+      if (totalStatus.passed > 0) {
+        headerText.push(`Passed: ${totalStatus.passed}`);
+      }
+
+      if (totalStatus.failed > 0) {
+        headerText.push(`Failed: ${totalStatus.failed}`);
+      }
+
+      if (totalStatus.skipped > 0) {
+        headerText.push(`Skipped: ${totalStatus.skipped}`);
+      }
+
+      summary.addRaw(headerText.join(` - `));
 
       if (this.options.useDetails) {
         summary.addSeparator();
