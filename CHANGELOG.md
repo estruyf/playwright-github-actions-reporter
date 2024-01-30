@@ -2,6 +2,10 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.4.0]
+
+- Add total passed, failed, and skipped to the summary
+
 ## [1.3.0]
 
 - Added warning test icon
