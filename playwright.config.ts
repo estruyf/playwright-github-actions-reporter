@@ -23,7 +23,12 @@ const config: PlaywrightTestConfig<{}, {}> = {
   },
   projects: [
     {
+      name: "setup",
+      testMatch: "setup.spec.ts",
+    },
+    {
       name: "chromium",
+      dependencies: ["setup"],
       use: {
         ...devices["Desktop Chrome"],
         viewport: { width: 1920, height: 1080 },
