@@ -1,4 +1,5 @@
 import { Suite } from "@playwright/test/reporter";
+import { getTestOutcome } from "./getTestOutcome";
 
 export const getTotalStatus = (
   suites: Suite[]
@@ -6,17 +7,19 @@ export const getTotalStatus = (
   passed: number;
   failed: number;
   skipped: number;
+  timedOut: number;
 } => {
   let total = {
     passed: 0,
     failed: 0,
     skipped: 0,
+    timedOut: 0,
   };
 
   for (const suite of suites) {
     const testOutcome = suite.allTests().map((test) => {
       const lastResult = test.results[test.results.length - 1];
-      return lastResult.status;
+      return getTestOutcome(test, lastResult);
     });
 
     for (const outcome of testOutcome) {
@@ -26,6 +29,8 @@ export const getTotalStatus = (
         total.failed++;
       } else if (outcome === "skipped") {
         total.skipped++;
+      } else if (outcome === "timedOut") {
+        total.timedOut++;
       }
     }
   }

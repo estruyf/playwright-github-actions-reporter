@@ -30,8 +30,9 @@
     "reporter"
   ],
   "devDependencies": {
-    "@playwright/test": "^1.37.0",
+    "@playwright/test": "^1.41.2",
     "@tsconfig/recommended": "^1.0.2",
+    "@types/node": "^18.19.17",
     "typescript": "^5.1.6"
   },
   "dependencies": {
@@ -39,6 +40,6 @@
     "ansi-to-html": "^0.7.2"
   },
   "peerDependencies": {
-    "@playwright/test": "^1.37.0"
+    "@playwright/test": "^1.41.2"
   }
 }
