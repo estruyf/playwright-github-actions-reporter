@@ -47,15 +47,15 @@ export const getTableRows = (
         header: false,
       },
       {
-        data: getTestStatus(result),
+        data: getTestStatus(test, result),
         header: false,
       },
       {
-        data: `${result.duration / 1000}s`,
+        data: result?.duration ? `${result.duration / 1000}s` : "",
         header: false,
       },
       {
-        data: `${result.retry}`,
+        data: `${result?.retry || ""}`,
         header: false,
       },
     ];
@@ -63,7 +63,7 @@ export const getTableRows = (
     if (showError) {
       tableRow.push({
         data:
-          result.error && result.error.message
+          result?.error && result.error?.message
             ? convert.toHtml(result.error.message!)
             : "",
         header: false,
