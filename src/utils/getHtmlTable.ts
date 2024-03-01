@@ -38,7 +38,7 @@ export const getHtmlTable = (tests: TestCase[], showError: boolean): string => {
         `<td>${
           result?.error && result.error?.message
             ? convert.toHtml(result.error.message!)
-            : "",
+            : ""
         }</td>`
       );
     }
