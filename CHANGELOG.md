@@ -2,6 +2,10 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.5.0]
+
+- [#6](https://github.com/estruyf/playwright-github-actions-reporter/issues/6): Included logic to retrieve status from the test case when no results are available
+
 ## [1.4.0]
 
 - Add total passed, failed, and skipped to the summary

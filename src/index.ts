@@ -7,12 +7,11 @@ import type {
   TestResult,
 } from "@playwright/test/reporter";
 import * as core from "@actions/core";
-import { basename } from "path";
+import { basename, join } from "path";
 import { getHtmlTable } from "./utils/getHtmlTable";
 import { getTableRows } from "./utils/getTableRows";
 import { getTestStatusIcon } from "./utils/getTestStatusIcon";
 import { SUMMARY_ENV_VAR } from "@actions/core/lib/summary";
-import { join } from "path";
 import { existsSync, unlinkSync, writeFileSync } from "fs";
 import { getTotalStatus } from "./utils/getTotalStatus";
 
@@ -71,6 +70,10 @@ class GitHubAction implements Reporter {
 
       if (totalStatus.skipped > 0) {
         headerText.push(`Skipped: ${totalStatus.skipped}`);
+      }
+
+      if (totalStatus.timedOut > 0) {
+        headerText.push(`Timed Out: ${totalStatus.timedOut}`);
       }
 
       summary.addRaw(headerText.join(` - `));

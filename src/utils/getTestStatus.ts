@@ -1,13 +1,16 @@
-import { TestResult } from "@playwright/test/reporter";
+import { TestCase, TestResult } from "@playwright/test/reporter";
+import { getTestOutcome } from "./getTestOutcome";
 
-export const getTestStatus = (result: TestResult) => {
+export const getTestStatus = (test: TestCase, result: TestResult) => {
   let value = "";
 
-  if (result.status === "passed" && result.retry > 0) {
+  let status = getTestOutcome(test, result);
+
+  if (status === "passed" && result.retry > 0) {
     value = `⚠️ Pass`;
-  } else if (result.status === "passed") {
+  } else if (status === "passed") {
     value = "✅ Pass";
-  } else if (result.status === "skipped") {
+  } else if (status === "skipped") {
     value = `⚠️ Skipped`;
   } else {
     value = "❌ Fail";
