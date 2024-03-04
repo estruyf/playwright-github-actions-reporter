@@ -1,9 +1,14 @@
 import { TestCase } from "@playwright/test/reporter";
+import { getTestOutcome } from "./getTestOutcome";
 
 export const getTestStatusIcon = (tests: TestCase[]) => {
+  if (!tests || tests.length === 0) {
+    return "❌";
+  }
+
   const testOutcomes = tests.map((test) => {
     const lastResult = test.results[test.results.length - 1];
-    return lastResult.status;
+    return getTestOutcome(test, lastResult);
   });
 
   if (

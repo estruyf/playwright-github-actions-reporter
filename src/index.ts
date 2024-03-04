@@ -144,7 +144,7 @@ class GitHubAction implements Reporter {
       await summary.write();
     }
 
-    if (result.status !== "passed") {
+    if (result?.status !== "passed") {
       core.setFailed("Tests failed");
     }
   }
