@@ -29,12 +29,14 @@ export const getHtmlTable = (tests: TestCase[], showError: boolean): string => {
     content.push(`<tr>`);
     content.push(`<td>${test.title}</td>`);
     content.push(`<td>${getTestStatus(test, result)}</td>`);
-    content.push(`<td>${result.duration / 1000}s</td>`);
-    content.push(`<td>${result.retry}</td>`);
+    content.push(
+      `<td>${result?.duration ? `${result.duration / 1000}s` : ""}</td>`
+    );
+    content.push(`<td>${result?.retry || ""}</td>`);
     if (showError) {
       content.push(
         `<td>${
-          result.error && result.error.message
+          result?.error && result.error?.message
             ? convert.toHtml(result.error.message!)
             : ""
         }</td>`
