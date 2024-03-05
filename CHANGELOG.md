@@ -4,7 +4,7 @@ All notable changes to this project will be documented in this file.
 
 ## [1.5.1]
 
-- [#8](https://github.com/estruyf/playwright-github-actions-reporter/issues/8): Fix for missing duration property
+- [#8](https://github.com/estruyf/playwright-github-actions-reporter/issues/8): Fix for missing duration and status property
 
 ## [1.5.0]
 
