@@ -1,6 +1,9 @@
 import { TestCase } from "@playwright/test/reporter";
 
-export const getTestAnnotations = (test: TestCase): string => {
+export const getTestAnnotations = (
+  test: TestCase,
+  isHtml: boolean = false
+): string => {
   if (!test || !test.annotations) {
     return "";
   }
@@ -10,5 +13,5 @@ export const getTestAnnotations = (test: TestCase): string => {
     list.push(`${annotation.type}: ${annotation.description}`);
   }
 
-  return list.join("\n");
+  return list.join(isHtml ? "<br>" : "\n");
 };

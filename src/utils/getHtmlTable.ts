@@ -46,7 +46,7 @@ export const getHtmlTable = (
         colLength++;
       }
 
-      const annotations = getTestAnnotations(test);
+      const annotations = getTestAnnotations(test, true);
       if (annotations) {
         content.push(`<tr>`);
         content.push(`<td colspan="${colLength}">${annotations}</td>`);
