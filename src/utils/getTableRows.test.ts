@@ -150,7 +150,10 @@ describe("getTableRows", () => {
             error: null,
           },
         ],
-        annotations: [{ type: "info", description: "Annotation 1" }],
+        annotations: [
+          { type: "info", description: "Annotation 1" },
+          { type: "info", description: "Annotation 2" },
+        ],
       },
       {
         title: "Test 2",
@@ -164,7 +167,7 @@ describe("getTableRows", () => {
             },
           },
         ],
-        annotations: [{ type: "doc", description: "Annotation 2" }],
+        annotations: [{ type: "doc", description: "Annotation 3" }],
       },
     ];
 
@@ -172,14 +175,20 @@ describe("getTableRows", () => {
 
     const expected = [
       tableHeaders,
-      [{ data: "- **info**: Annotation 1", header: false, colspan: "4" }],
+      [
+        {
+          data: "\n- **info**: Annotation 1\n- **info**: Annotation 2",
+          header: false,
+          colspan: "4",
+        },
+      ],
       [
         { data: "Test 1", header: false },
         { data: "✅ Pass", header: false },
         { data: "1s", header: false },
         { data: "", header: false },
       ],
-      [{ data: "- **doc**: Annotation 2", header: false, colspan: "4" }],
+      [{ data: "\n**doc**: Annotation 3", header: false, colspan: "4" }],
       [
         { data: "Test 2", header: false },
         { data: "❌ Fail", header: false },
@@ -230,7 +239,7 @@ describe("getTableRows", () => {
 
     const expected = [
       clonedTableHeaders,
-      [{ data: "- **info**: Annotation 1", header: false, colspan: "6" }],
+      [{ data: "\n**info**: Annotation 1", header: false, colspan: "6" }],
       [
         { data: "Test 1", header: false },
         { data: "✅ Pass", header: false },

@@ -16,8 +16,16 @@ describe("getTestAnnotations", () => {
     };
     const result = getTestAnnotations(test);
     expect(result).toBe(
-      "- **bug**: This is a bug\n- **feature**: This is a feature"
+      "\n- **bug**: This is a bug\n- **feature**: This is a feature"
     );
+  });
+
+  it("should return single line annotations when there is only one annotation", () => {
+    const test: any = {
+      annotations: [{ type: "bug", description: "This is a bug" }],
+    };
+    const result = getTestAnnotations(test);
+    expect(result).toBe("\n**bug**: This is a bug");
   });
 
   it("should return the HTML formatted annotations when isHtml is set to true", () => {
