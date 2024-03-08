@@ -4,6 +4,7 @@ import { getTestStatus } from "./getTestStatus";
 import { getTestTitle } from "./getTestTitle";
 import { getTestTags } from "./getTestTags";
 import { getTestAnnotations } from "./getTestAnnotations";
+import { getTestDuration } from "./getTestDuration";
 
 export const getHtmlTable = (
   tests: TestCase[],
@@ -57,9 +58,7 @@ export const getHtmlTable = (
     content.push(`<tr>`);
     content.push(`<td>${getTestTitle(test)}</td>`);
     content.push(`<td>${getTestStatus(test, result)}</td>`);
-    content.push(
-      `<td>${result?.duration ? `${result.duration / 1000}s` : ""}</td>`
-    );
+    content.push(`<td>${getTestDuration(result)}</td>`);
     content.push(`<td>${result?.retry || ""}</td>`);
 
     if (showTags) {

@@ -5,6 +5,7 @@ import { getTestStatus } from "./getTestStatus";
 import { getTestTitle } from "./getTestTitle";
 import { getTestTags } from "./getTestTags";
 import { getTestAnnotations } from "./getTestAnnotations";
+import { getTestDuration } from "./getTestDuration";
 
 export const getTableRows = (
   tests: TestCase[],
@@ -86,14 +87,14 @@ export const getTableRows = (
         header: false,
       },
       {
-        data: result?.duration ? `${result.duration / 1000}s` : "",
+        data: getTestDuration(result),
         header: false,
       },
       {
         data: `${result?.retry || ""}`,
         header: false,
       },
-    ];
+    ] as SummaryTableRow;
 
     if (showTags) {
       tableRow.push({

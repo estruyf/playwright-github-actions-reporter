@@ -16,7 +16,7 @@ describe("getTestAnnotations", () => {
     };
     const result = getTestAnnotations(test);
     expect(result).toBe(
-      "**bug**: This is a bug\n**feature**: This is a feature"
+      "- **bug**: This is a bug\n- **feature**: This is a feature"
     );
   });
 
