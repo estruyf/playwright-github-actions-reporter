@@ -33,7 +33,7 @@ The reporter supports the following configuration options:
 
 | Option | Description | Default |
 | --- | --- | --- |
-| title | Title of the report | `Test results` |
+| title | Title of the report. Use an empty string (`""`) to remove the heading.  | `Test results` |
 | useDetails | Use details in summary which creates expandable content | `false` |
 | showAnnotations | Show annotations from tests | `true` |
 | showTags | Show tags from tests | `true` |

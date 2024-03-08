@@ -55,8 +55,8 @@ class GitHubAction implements Reporter {
 
   onStdOut(
     chunk: string | Buffer,
-    test: void | TestCase,
-    result: void | TestResult
+    _: void | TestCase,
+    __: void | TestResult
   ): void {
     console.log(chunk.toString());
   }
@@ -75,7 +75,14 @@ class GitHubAction implements Reporter {
     if (process.env.GITHUB_ACTIONS && this.suite) {
       const os = process.platform;
       const summary = core.summary;
-      summary.addHeading(this.options.title || `Test results`, 1);
+
+      const summaryTitle =
+        typeof this.options.title === "undefined"
+          ? "Test results"
+          : this.options.title;
+      if (summaryTitle) {
+        summary.addHeading(summaryTitle, 1);
+      }
 
       const totalStatus = getTotalStatus(this.suite?.suites);
 
