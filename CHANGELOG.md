@@ -2,6 +2,10 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.6.0]
+
+- [#10](https://github.com/estruyf/playwright-github-actions-reporter/issues/10): Added support for test annotations, tags, and describe titles per test
+
 ## [1.5.1]
 
 - [#8](https://github.com/estruyf/playwright-github-actions-reporter/issues/8): Fix for missing duration property
