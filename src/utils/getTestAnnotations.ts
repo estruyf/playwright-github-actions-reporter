@@ -12,7 +12,7 @@ export const getTestAnnotations = (
   for (const annotation of test.annotations) {
     const type = isHtml
       ? `<strong>${annotation.type}</strong>`
-      : annotation.type;
+      : `<b>${annotation.type}</b>`;
     list.push(`${type}: ${annotation.description}`);
   }
 
