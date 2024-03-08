@@ -8,7 +8,7 @@
     "watch": "tsc -w",
     "test": "NODE_ENV=development npx playwright test",
     "test:local": "act -j testing -P ubuntu-latest=catthehacker/ubuntu:act-latest --container-architecture linux/amd64 --env GITHUB_STEP_SUMMARY='/dev/stdout'",
-    "test:jest": "jest"
+    "test:jest": "jest --coverage --coverageDirectory=../coverage"
   },
   "author": "Elio Struyf <elio@struyfconsulting.be>",
   "license": "MIT",
@@ -31,7 +31,7 @@
     "reporter"
   ],
   "devDependencies": {
-    "@playwright/test": "^1.41.2",
+    "@playwright/test": "^1.42.1",
     "@tsconfig/recommended": "^1.0.2",
     "@types/jest": "^29.5.12",
     "@types/node": "^18.19.17",
@@ -44,6 +44,6 @@
     "ansi-to-html": "^0.7.2"
   },
   "peerDependencies": {
-    "@playwright/test": "^1.41.2"
+    "@playwright/test": "^1.42.1"
   }
 }

@@ -32,6 +32,9 @@ describe("getTableRows", () => {
             error: null,
           },
         ],
+        parent: {
+          title: "Parent Title",
+        },
       },
       {
         title: "Test 2",
@@ -45,17 +48,18 @@ describe("getTableRows", () => {
             },
           },
         ],
+        parent: null,
       },
     ];
 
-    const result = getTableRows(tests, true);
+    const result = getTableRows(tests, false, false, true);
     const clonedTableHeaders = Object.assign([], tableHeaders);
     clonedTableHeaders.push({ data: "Error", header: true });
 
     const expected = [
       clonedTableHeaders,
       [
-        { data: "Test 1", header: false },
+        { data: "Parent Title > Test 1", header: false },
         { data: "✅ Pass", header: false },
         { data: "1s", header: false },
         { data: "", header: false },
@@ -101,7 +105,7 @@ describe("getTableRows", () => {
       },
     ];
 
-    const result = getTableRows(tests, false);
+    const result = getTableRows(tests, false, false, false);
 
     expect(result).toEqual([
       tableHeaders,
@@ -121,16 +125,130 @@ describe("getTableRows", () => {
   });
 
   it("should return an empty array if tests is empty (without error header)", () => {
-    const result = getTableRows([], false);
+    const result = getTableRows([], false, false, false);
 
     expect(result).toEqual([tableHeaders]);
   });
 
   it("should return an empty array if tests is empty (including error header)", () => {
-    const result = getTableRows([], true);
+    const result = getTableRows([], false, false, true);
     const clonedTableHeaders = Object.assign([], tableHeaders);
     clonedTableHeaders.push({ data: "Error", header: true });
 
     expect(result).toEqual([clonedTableHeaders]);
+  });
+
+  it("should return the table rows with annotations", () => {
+    const tests: any = [
+      {
+        title: "Test 1",
+        results: [
+          {
+            status: "passed",
+            duration: 1000,
+            retry: 0,
+            error: null,
+          },
+        ],
+        annotations: [{ type: "info", description: "Annotation 1" }],
+      },
+      {
+        title: "Test 2",
+        results: [
+          {
+            status: "failed",
+            duration: 2000,
+            retry: 1,
+            error: {
+              message: "Test failed",
+            },
+          },
+        ],
+        annotations: [{ type: "doc", description: "Annotation 2" }],
+      },
+    ];
+
+    const result = getTableRows(tests, true, false, false);
+
+    const expected = [
+      tableHeaders,
+      [{ data: "info: Annotation 1", header: false, colspan: "4" }],
+      [
+        { data: "Test 1", header: false },
+        { data: "✅ Pass", header: false },
+        { data: "1s", header: false },
+        { data: "", header: false },
+      ],
+      [{ data: "doc: Annotation 2", header: false, colspan: "4" }],
+      [
+        { data: "Test 2", header: false },
+        { data: "❌ Fail", header: false },
+        { data: "2s", header: false },
+        { data: "1", header: false },
+      ],
+    ];
+
+    expect(result).toEqual(expected);
+  });
+
+  it("should return the table rows with annotations and tags", () => {
+    const tests: any = [
+      {
+        title: "Test 1",
+        results: [
+          {
+            status: "passed",
+            duration: 1000,
+            retry: 0,
+            error: null,
+          },
+        ],
+        tags: ["@tag1", "@tag2"],
+        annotations: [{ type: "info", description: "Annotation 1" }],
+      },
+      {
+        title: "Test 2",
+        results: [
+          {
+            status: "failed",
+            duration: 2000,
+            retry: 1,
+            error: {
+              message: "Test failed",
+            },
+          },
+        ],
+        tags: ["@tag1"],
+      },
+    ];
+
+    const result = getTableRows(tests, true, true, true);
+
+    const clonedTableHeaders = Object.assign([], tableHeaders);
+    clonedTableHeaders.push({ data: "Tags", header: true });
+    clonedTableHeaders.push({ data: "Error", header: true });
+
+    const expected = [
+      clonedTableHeaders,
+      [{ data: "info: Annotation 1", header: false, colspan: "6" }],
+      [
+        { data: "Test 1", header: false },
+        { data: "✅ Pass", header: false },
+        { data: "1s", header: false },
+        { data: "", header: false },
+        { data: "tag1, tag2", header: false },
+        { data: "", header: false },
+      ],
+      [
+        { data: "Test 2", header: false },
+        { data: "❌ Fail", header: false },
+        { data: "2s", header: false },
+        { data: "1", header: false },
+        { data: "tag1", header: false },
+        { data: "Test failed", header: false },
+      ],
+    ];
+
+    expect(result).toEqual(expected);
   });
 });

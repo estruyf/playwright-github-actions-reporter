@@ -35,6 +35,8 @@ The reporter supports the following configuration options:
 | --- | --- | --- |
 | title | Title of the report | `Test results` |
 | useDetails | Use details in summary which creates expandable content | `false` |
+| showAnnotations | Show annotations from tests | `true` |
+| showTags | Show tags from tests | `true` |
 | showError | Show error message in summary | `false` |
 
 To use these option, you can update the reporter configuration:

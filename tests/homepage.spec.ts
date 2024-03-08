@@ -16,17 +16,33 @@ test.describe("Homepage", () => {
     await browser.close();
   });
 
-  test("Check logo", async () => {
-    const logo = page.locator(`#logo`);
-    await logo.waitFor();
+  test(
+    "Check logo",
+    {
+      tag: "@website",
+    },
+    async () => {
+      const logo = page.locator(`#logo`);
+      await logo.waitFor();
 
-    expect((await logo.allInnerTexts()).join()).toBe("ELIOSTRUYF");
-  });
+      expect((await logo.allInnerTexts()).join()).toBe("ELIOSTRUYF");
+    }
+  );
 
-  test("Check navigation", async () => {
-    const nav = page.locator(`.navigation nav`);
-    await nav.waitFor();
+  test(
+    "Check navigation",
+    {
+      tag: ["@website", "@navigation"],
+      annotation: {
+        type: "docs",
+        description: "This test validates the navigation",
+      },
+    },
+    async () => {
+      const nav = page.locator(`.navigation nav`);
+      await nav.waitFor();
 
-    await expect(page.locator(".navigation nav a")).toHaveCount(5);
-  });
+      await expect(page.locator(".navigation nav a")).toHaveCount(5);
+    }
+  );
 });

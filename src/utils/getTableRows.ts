@@ -2,9 +2,14 @@ import { SummaryTableRow } from "@actions/core/lib/summary";
 import { TestCase } from "@playwright/test/reporter";
 import Convert from "ansi-to-html";
 import { getTestStatus } from "./getTestStatus";
+import { getTestTitle } from "./getTestTitle";
+import { getTestTags } from "./getTestTags";
+import { getTestAnnotations } from "./getTestAnnotations";
 
 export const getTableRows = (
   tests: TestCase[],
+  showAnnotations: boolean,
+  showTags: boolean,
   showError: boolean
 ): SummaryTableRow[] => {
   const convert = new Convert();
@@ -28,6 +33,13 @@ export const getTableRows = (
     },
   ];
 
+  if (showTags) {
+    tableHeaders.push({
+      data: "Tags",
+      header: true,
+    });
+  }
+
   if (showError) {
     tableHeaders.push({
       data: "Error",
@@ -35,15 +47,36 @@ export const getTableRows = (
     });
   }
 
-  const tableRows = [tableHeaders];
+  const tableRows: SummaryTableRow[] = [tableHeaders];
 
   for (const test of tests) {
     // Get the last result
     const result = test.results[test.results.length - 1];
 
+    if (showAnnotations && test.annotations) {
+      let colLength = 4;
+      if (showTags) {
+        colLength++;
+      }
+      if (showError) {
+        colLength++;
+      }
+
+      const annotations = getTestAnnotations(test);
+      if (annotations) {
+        tableRows.push([
+          {
+            data: annotations,
+            header: false,
+            colspan: `${colLength}`,
+          },
+        ]);
+      }
+    }
+
     const tableRow = [
       {
-        data: test.title,
+        data: getTestTitle(test),
         header: false,
       },
       {
@@ -60,12 +93,17 @@ export const getTableRows = (
       },
     ];
 
-    if (showError) {
+    if (showTags) {
       tableRow.push({
-        data:
-          result?.error && result.error?.message
-            ? convert.toHtml(result.error.message!)
-            : "",
+        data: getTestTags(test),
+        header: false,
+      });
+    }
+
+    if (showError) {
+      const error = result?.error?.message || "";
+      tableRow.push({
+        data: convert.toHtml(error),
         header: false,
       });
     }
