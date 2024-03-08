@@ -1,6 +1,19 @@
 import { getTestOutcome } from "./getTestOutcome";
 
 describe("getTestOutcome", () => {
+  it("should return the status if it exists", () => {
+    const test: any = {
+      outcome: () => "expected",
+    };
+    const result: any = {
+      status: "passed",
+    };
+
+    const outcome = getTestOutcome(test, result);
+
+    expect(outcome).toBe("passed");
+  });
+
   it("should return the result status if it exists", () => {
     const test: any = {
       outcome: () => "expected",

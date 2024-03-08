@@ -18,14 +18,35 @@ import { getTotalStatus } from "./utils/getTotalStatus";
 interface GitHubActionOptions {
   title?: string;
   useDetails?: boolean;
+  showAnnotations: boolean;
+  showTags: boolean;
   showError?: boolean;
 }
 
 class GitHubAction implements Reporter {
   private suite: Suite | undefined;
 
-  constructor(private options: GitHubActionOptions = {}) {
+  constructor(
+    private options: GitHubActionOptions = {
+      showAnnotations: true,
+      showTags: true,
+    }
+  ) {
     console.log(`Using GitHub Actions reporter`);
+
+    // Set default options
+    if (typeof options.showAnnotations === "undefined") {
+      this.options.showAnnotations = true;
+    }
+
+    if (typeof options.showTags === "undefined") {
+      this.options.showTags = true;
+    }
+
+    if (process.env.NODE_ENV === "development") {
+      console.log(`Using development mode`);
+      console.log(`Options: ${JSON.stringify(this.options, null, 2)}`);
+    }
   }
 
   onBegin(_: FullConfig, suite: Suite) {
@@ -112,6 +133,8 @@ class GitHubAction implements Reporter {
           if (this.options.useDetails) {
             const content = getHtmlTable(
               tests[filePath],
+              this.options.showAnnotations,
+              this.options.showTags,
               !!this.options.showError
             );
 
@@ -134,6 +157,8 @@ class GitHubAction implements Reporter {
 
             const tableRows = getTableRows(
               tests[filePath],
+              this.options.showAnnotations,
+              this.options.showTags,
               !!this.options.showError
             );
             summary.addTable(tableRows);

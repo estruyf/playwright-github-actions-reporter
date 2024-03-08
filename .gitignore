@@ -4,3 +4,4 @@ node_modules
 test-results
 summary.html
 playwright-report
+coverage
