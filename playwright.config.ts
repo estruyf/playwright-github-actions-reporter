@@ -20,7 +20,7 @@ const config: PlaywrightTestConfig<{}, {}> = {
         showError: true,
       },
     ],
-    ["./src/index.ts", { title: "", useDetails: true }],
+    ["./src/index.ts", { useDetails: true }],
   ],
   use: {
     actionTimeout: 0,
