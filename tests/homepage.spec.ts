@@ -20,6 +20,10 @@ test.describe("Homepage", () => {
     "Check logo",
     {
       tag: "@website",
+      annotation: {
+        type: "info",
+        description: "A test to check the logo.",
+      },
     },
     async () => {
       const logo = page.locator(`#logo`);

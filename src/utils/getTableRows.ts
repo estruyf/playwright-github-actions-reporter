@@ -62,6 +62,8 @@ export const getTableRows = (
         colLength++;
       }
 
+      console.log("test.annotations", test.annotations);
+
       const annotations = getTestAnnotations(test);
       if (annotations) {
         tableRows.push([

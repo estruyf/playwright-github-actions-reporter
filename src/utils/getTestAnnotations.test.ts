@@ -1,0 +1,43 @@
+import { getTestAnnotations } from "./getTestAnnotations";
+
+describe("getTestAnnotations", () => {
+  it("should return an empty string if test or test.annotations is falsy", () => {
+    const test: any = null;
+    const result = getTestAnnotations(test);
+    expect(result).toBe("");
+  });
+
+  it("should return the formatted annotations when test.annotations is provided", () => {
+    const test: any = {
+      annotations: [
+        { type: "bug", description: "This is a bug" },
+        { type: "feature", description: "This is a feature" },
+      ],
+    };
+    const result = getTestAnnotations(test);
+    expect(result).toBe(
+      "**bug**: This is a bug\n**feature**: This is a feature"
+    );
+  });
+
+  it("should return the HTML formatted annotations when isHtml is set to true", () => {
+    const test: any = {
+      annotations: [
+        { type: "bug", description: "This is a bug" },
+        { type: "feature", description: "This is a feature" },
+      ],
+    };
+    const result = getTestAnnotations(test, true);
+    expect(result).toBe(
+      "<strong>bug</strong>: This is a bug<br><strong>feature</strong>: This is a feature"
+    );
+  });
+
+  it("should return an empty string if test.annotations is an empty array", () => {
+    const test: any = {
+      annotations: [],
+    };
+    const result = getTestAnnotations(test);
+    expect(result).toBe("");
+  });
+});
