@@ -1,18 +1,19 @@
 import { TestCase } from "@playwright/test/reporter";
+import { marked } from "marked";
 
-export const getTestAnnotations = (
-  test: TestCase,
-  isHtml: boolean = false
-): string => {
+export const getTestAnnotations = async (test: TestCase): Promise<string> => {
   if (!test || !test.annotations) {
     return "";
   }
 
   let list = [];
+  const isList = test.annotations.length > 1;
   for (const annotation of test.annotations) {
-    const type = `<b>${annotation.type}</b>`;
-    list.push(`${type}: ${annotation.description}`);
+    list.push(
+      `${isList ? "- " : ""}**${annotation.type}**: ${annotation.description}`
+    );
   }
 
-  return list.join(isHtml ? "<br>" : "\n");
+  const markdown = list.join("\n");
+  return (await marked.parse(markdown)).trim();
 };

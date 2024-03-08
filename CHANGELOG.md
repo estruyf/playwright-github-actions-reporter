@@ -5,6 +5,7 @@ All notable changes to this project will be documented in this file.
 ## [1.6.0]
 
 - [#10](https://github.com/estruyf/playwright-github-actions-reporter/issues/10): Added support for test annotations, tags, and describe titles per test
+- [#11](https://github.com/estruyf/playwright-github-actions-reporter/issues/11): Added the ability to hide the header
 
 ## [1.5.1]
 

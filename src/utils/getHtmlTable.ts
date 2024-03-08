@@ -6,12 +6,12 @@ import { getTestTags } from "./getTestTags";
 import { getTestAnnotations } from "./getTestAnnotations";
 import { getTestDuration } from "./getTestDuration";
 
-export const getHtmlTable = (
+export const getHtmlTable = async (
   tests: TestCase[],
   showAnnotations: boolean,
   showTags: boolean,
   showError: boolean
-): string => {
+): Promise<string> => {
   const convert = new Convert();
 
   const content: string[] = [];
@@ -47,7 +47,7 @@ export const getHtmlTable = (
         colLength++;
       }
 
-      const annotations = getTestAnnotations(test, true);
+      const annotations = await getTestAnnotations(test);
       if (annotations) {
         content.push(`<tr>`);
         content.push(`<td colspan="${colLength}">${annotations}</td>`);

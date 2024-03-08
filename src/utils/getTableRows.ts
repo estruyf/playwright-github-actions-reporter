@@ -7,12 +7,12 @@ import { getTestTags } from "./getTestTags";
 import { getTestAnnotations } from "./getTestAnnotations";
 import { getTestDuration } from "./getTestDuration";
 
-export const getTableRows = (
+export const getTableRows = async (
   tests: TestCase[],
   showAnnotations: boolean,
   showTags: boolean,
   showError: boolean
-): SummaryTableRow[] => {
+): Promise<SummaryTableRow[]> => {
   const convert = new Convert();
 
   const tableHeaders = [
@@ -63,7 +63,7 @@ export const getTableRows = (
         colLength++;
       }
 
-      const annotations = getTestAnnotations(test);
+      const annotations = await getTestAnnotations(test);
       if (annotations) {
         tableRows.push([
           {

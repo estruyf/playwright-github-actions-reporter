@@ -1,7 +1,7 @@
 import { getHtmlTable } from "./getHtmlTable";
 
 describe("getHtmlTable", () => {
-  it("should return the HTML table with error column", () => {
+  it("should return the HTML table with error column", async () => {
     const tests: any = [
       {
         title: "Test 1",
@@ -46,7 +46,7 @@ describe("getHtmlTable", () => {
       },
     ];
 
-    const result = getHtmlTable(tests, false, false, true);
+    const result = await getHtmlTable(tests, false, false, true);
 
     const expected = `
 <br>
@@ -89,8 +89,8 @@ describe("getHtmlTable", () => {
     expect(result.trim()).toEqual(expected.trim());
   });
 
-  it("should return an empty HTML table if tests is empty (without error column)", () => {
-    const result = getHtmlTable([], false, false, false);
+  it("should return an empty HTML table if tests is empty (without error column)", async () => {
+    const result = await getHtmlTable([], false, false, false);
 
     const expected = `
 <br>
@@ -111,8 +111,8 @@ describe("getHtmlTable", () => {
     expect(result.trim()).toEqual(expected.trim());
   });
 
-  it("should return an empty HTML table if tests is empty (including error column)", () => {
-    const result = getHtmlTable([], false, false, true);
+  it("should return an empty HTML table if tests is empty (including error column)", async () => {
+    const result = await getHtmlTable([], false, false, true);
 
     const expected = `
 <br>
@@ -134,7 +134,7 @@ describe("getHtmlTable", () => {
     expect(result.trim()).toEqual(expected.trim());
   });
 
-  it("should return the HTML table with annotations row", () => {
+  it("should return the HTML table with annotations row", async () => {
     const tests: any = [
       {
         title: "Test 1",
@@ -158,7 +158,7 @@ describe("getHtmlTable", () => {
       },
     ];
 
-    const result = getHtmlTable(tests, true, false, false);
+    const result = await getHtmlTable(tests, true, false, false);
 
     const expected = `
 <br>
@@ -173,7 +173,7 @@ describe("getHtmlTable", () => {
 </thead>
 <tbody>
 <tr>
-<td colspan="4"><b>info</b>: Annotation 1</td>
+<td colspan="4"><p><strong>info</strong>: Annotation 1</p></td>
 </tr>
 <tr>
 <td>Test 1</td>
@@ -187,7 +187,7 @@ describe("getHtmlTable", () => {
     expect(result.trim()).toEqual(expected.trim());
   });
 
-  it("should return the HTML table with annotations and tags columns", () => {
+  it("should return the HTML table with annotations and tags columns", async () => {
     const tests: any = [
       {
         title: "Test 1",
@@ -226,7 +226,7 @@ describe("getHtmlTable", () => {
       },
     ];
 
-    const result = getHtmlTable(tests, true, true, true);
+    const result = await getHtmlTable(tests, true, true, true);
 
     const expected = `
 <br>
@@ -243,7 +243,7 @@ describe("getHtmlTable", () => {
 </thead>
 <tbody>
 <tr>
-<td colspan="6"><b>info</b>: Annotation 1</td>
+<td colspan="6"><p><strong>info</strong>: Annotation 1</p></td>
 </tr>
 <tr>
 <td>Test 1</td>

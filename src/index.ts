@@ -138,7 +138,7 @@ class GitHubAction implements Reporter {
           const fileName = basename(filePath);
 
           if (this.options.useDetails) {
-            const content = getHtmlTable(
+            const content = await getHtmlTable(
               tests[filePath],
               this.options.showAnnotations,
               this.options.showTags,
@@ -162,7 +162,7 @@ class GitHubAction implements Reporter {
               2
             );
 
-            const tableRows = getTableRows(
+            const tableRows = await getTableRows(
               tests[filePath],
               this.options.showAnnotations,
               this.options.showTags,

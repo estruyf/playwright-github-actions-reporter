@@ -20,7 +20,7 @@ const tableHeaders = [
 ];
 
 describe("getTableRows", () => {
-  it("should return the table rows with headers and data", () => {
+  it("should return the table rows with headers and data", async () => {
     const tests: any = [
       {
         title: "Test 1",
@@ -52,7 +52,7 @@ describe("getTableRows", () => {
       },
     ];
 
-    const result = getTableRows(tests, false, false, true);
+    const result = await getTableRows(tests, false, false, true);
     const clonedTableHeaders = Object.assign([], tableHeaders);
     clonedTableHeaders.push({ data: "Error", header: true });
 
@@ -77,7 +77,7 @@ describe("getTableRows", () => {
     expect(result).toEqual(expected);
   });
 
-  it("should return the table rows without error column if showError is false", () => {
+  it("should return the table rows without error column if showError is false", async () => {
     const tests: any = [
       {
         title: "Test 1",
@@ -105,7 +105,7 @@ describe("getTableRows", () => {
       },
     ];
 
-    const result = getTableRows(tests, false, false, false);
+    const result = await getTableRows(tests, false, false, false);
 
     expect(result).toEqual([
       tableHeaders,
@@ -124,21 +124,21 @@ describe("getTableRows", () => {
     ]);
   });
 
-  it("should return an empty array if tests is empty (without error header)", () => {
-    const result = getTableRows([], false, false, false);
+  it("should return an empty array if tests is empty (without error header)", async () => {
+    const result = await getTableRows([], false, false, false);
 
     expect(result).toEqual([tableHeaders]);
   });
 
-  it("should return an empty array if tests is empty (including error header)", () => {
-    const result = getTableRows([], false, false, true);
+  it("should return an empty array if tests is empty (including error header)", async () => {
+    const result = await getTableRows([], false, false, true);
     const clonedTableHeaders = Object.assign([], tableHeaders);
     clonedTableHeaders.push({ data: "Error", header: true });
 
     expect(result).toEqual([clonedTableHeaders]);
   });
 
-  it("should return the table rows with annotations", () => {
+  it("should return the table rows with annotations", async () => {
     const tests: any = [
       {
         title: "Test 1",
@@ -171,13 +171,16 @@ describe("getTableRows", () => {
       },
     ];
 
-    const result = getTableRows(tests, true, false, false);
+    const result = await getTableRows(tests, true, false, false);
 
     const expected = [
       tableHeaders,
       [
         {
-          data: "<b>info</b>: Annotation 1\n<b>info</b>: Annotation 2",
+          data: `<ul>
+<li><strong>info</strong>: Annotation 1</li>
+<li><strong>info</strong>: Annotation 2</li>
+</ul>`,
           header: false,
           colspan: "4",
         },
@@ -188,7 +191,13 @@ describe("getTableRows", () => {
         { data: "1s", header: false },
         { data: "", header: false },
       ],
-      [{ data: "<b>doc</b>: Annotation 3", header: false, colspan: "4" }],
+      [
+        {
+          data: "<p><strong>doc</strong>: Annotation 3</p>",
+          header: false,
+          colspan: "4",
+        },
+      ],
       [
         { data: "Test 2", header: false },
         { data: "❌ Fail", header: false },
@@ -200,7 +209,7 @@ describe("getTableRows", () => {
     expect(result).toEqual(expected);
   });
 
-  it("should return the table rows with annotations and tags", () => {
+  it("should return the table rows with annotations and tags", async () => {
     const tests: any = [
       {
         title: "Test 1",
@@ -231,7 +240,7 @@ describe("getTableRows", () => {
       },
     ];
 
-    const result = getTableRows(tests, true, true, true);
+    const result = await getTableRows(tests, true, true, true);
 
     const clonedTableHeaders = Object.assign([], tableHeaders);
     clonedTableHeaders.push({ data: "Tags", header: true });
@@ -239,7 +248,13 @@ describe("getTableRows", () => {
 
     const expected = [
       clonedTableHeaders,
-      [{ data: "<b>info</b>: Annotation 1", header: false, colspan: "6" }],
+      [
+        {
+          data: "<p><strong>info</strong>: Annotation 1</p>",
+          header: false,
+          colspan: "6",
+        },
+      ],
       [
         { data: "Test 1", header: false },
         { data: "✅ Pass", header: false },
