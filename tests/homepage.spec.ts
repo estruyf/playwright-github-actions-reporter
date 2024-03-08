@@ -33,10 +33,16 @@ test.describe("Homepage", () => {
     "Check navigation",
     {
       tag: ["@website", "@navigation"],
-      annotation: {
-        type: "docs",
-        description: "This test validates the navigation",
-      },
+      annotation: [
+        {
+          type: "info",
+          description: "A test to check the navigation links.",
+        },
+        {
+          type: "website",
+          description: "https://www.eliostruyf.com",
+        },
+      ],
     },
     async () => {
       const nav = page.locator(`.navigation nav`);
