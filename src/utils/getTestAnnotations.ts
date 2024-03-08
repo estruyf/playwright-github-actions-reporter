@@ -16,5 +16,6 @@ export const getTestAnnotations = (
     list.push(`${type}: ${annotation.description}`);
   }
 
+  list.push("");
   return list.join(isHtml ? "<br>" : "\n");
 };
