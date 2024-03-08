@@ -10,9 +10,7 @@ export const getTestAnnotations = (
 
   let list = [];
   for (const annotation of test.annotations) {
-    const type = isHtml
-      ? `<strong>${annotation.type}</strong>`
-      : `<b>${annotation.type}</b>`;
+    const type = `<b>${annotation.type}</b>`;
     list.push(`${type}: ${annotation.description}`);
   }
 

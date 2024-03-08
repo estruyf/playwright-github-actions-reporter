@@ -177,7 +177,7 @@ describe("getTableRows", () => {
       tableHeaders,
       [
         {
-          data: "info: Annotation 1\ninfo: Annotation 2",
+          data: "<b>info</b>: Annotation 1\n<b>info</b>: Annotation 2",
           header: false,
           colspan: "4",
         },
@@ -188,7 +188,7 @@ describe("getTableRows", () => {
         { data: "1s", header: false },
         { data: "", header: false },
       ],
-      [{ data: "doc: Annotation 3", header: false, colspan: "4" }],
+      [{ data: "<b>doc</b>: Annotation 3", header: false, colspan: "4" }],
       [
         { data: "Test 2", header: false },
         { data: "❌ Fail", header: false },
@@ -239,7 +239,7 @@ describe("getTableRows", () => {
 
     const expected = [
       clonedTableHeaders,
-      [{ data: "info: Annotation 1", header: false, colspan: "6" }],
+      [{ data: "<b>info</b>: Annotation 1", header: false, colspan: "6" }],
       [
         { data: "Test 1", header: false },
         { data: "✅ Pass", header: false },

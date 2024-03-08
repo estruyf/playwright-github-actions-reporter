@@ -173,7 +173,7 @@ describe("getHtmlTable", () => {
 </thead>
 <tbody>
 <tr>
-<td colspan="4"><strong>info</strong>: Annotation 1</td>
+<td colspan="4"><b>info</b>: Annotation 1</td>
 </tr>
 <tr>
 <td>Test 1</td>
@@ -243,7 +243,7 @@ describe("getHtmlTable", () => {
 </thead>
 <tbody>
 <tr>
-<td colspan="6"><strong>info</strong>: Annotation 1</td>
+<td colspan="6"><b>info</b>: Annotation 1</td>
 </tr>
 <tr>
 <td>Test 1</td>
