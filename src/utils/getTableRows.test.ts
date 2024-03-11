@@ -20,7 +20,7 @@ const tableHeaders = [
 ];
 
 describe("getTableRows", () => {
-  it("should return the table rows with headers and data", () => {
+  it("should return the table rows with headers and data", async () => {
     const tests: any = [
       {
         title: "Test 1",
@@ -32,6 +32,9 @@ describe("getTableRows", () => {
             error: null,
           },
         ],
+        parent: {
+          title: "Parent Title",
+        },
       },
       {
         title: "Test 2",
@@ -45,17 +48,18 @@ describe("getTableRows", () => {
             },
           },
         ],
+        parent: null,
       },
     ];
 
-    const result = getTableRows(tests, true);
+    const result = await getTableRows(tests, false, false, true);
     const clonedTableHeaders = Object.assign([], tableHeaders);
     clonedTableHeaders.push({ data: "Error", header: true });
 
     const expected = [
       clonedTableHeaders,
       [
-        { data: "Test 1", header: false },
+        { data: "Parent Title > Test 1", header: false },
         { data: "✅ Pass", header: false },
         { data: "1s", header: false },
         { data: "", header: false },
@@ -73,7 +77,7 @@ describe("getTableRows", () => {
     expect(result).toEqual(expected);
   });
 
-  it("should return the table rows without error column if showError is false", () => {
+  it("should return the table rows without error column if showError is false", async () => {
     const tests: any = [
       {
         title: "Test 1",
@@ -101,7 +105,7 @@ describe("getTableRows", () => {
       },
     ];
 
-    const result = getTableRows(tests, false);
+    const result = await getTableRows(tests, false, false, false);
 
     expect(result).toEqual([
       tableHeaders,
@@ -120,17 +124,155 @@ describe("getTableRows", () => {
     ]);
   });
 
-  it("should return an empty array if tests is empty (without error header)", () => {
-    const result = getTableRows([], false);
+  it("should return an empty array if tests is empty (without error header)", async () => {
+    const result = await getTableRows([], false, false, false);
 
     expect(result).toEqual([tableHeaders]);
   });
 
-  it("should return an empty array if tests is empty (including error header)", () => {
-    const result = getTableRows([], true);
+  it("should return an empty array if tests is empty (including error header)", async () => {
+    const result = await getTableRows([], false, false, true);
     const clonedTableHeaders = Object.assign([], tableHeaders);
     clonedTableHeaders.push({ data: "Error", header: true });
 
     expect(result).toEqual([clonedTableHeaders]);
+  });
+
+  it("should return the table rows with annotations", async () => {
+    const tests: any = [
+      {
+        title: "Test 1",
+        results: [
+          {
+            status: "passed",
+            duration: 1000,
+            retry: 0,
+            error: null,
+          },
+        ],
+        annotations: [
+          { type: "info", description: "Annotation 1" },
+          { type: "info", description: "Annotation 2" },
+        ],
+      },
+      {
+        title: "Test 2",
+        results: [
+          {
+            status: "failed",
+            duration: 2000,
+            retry: 1,
+            error: {
+              message: "Test failed",
+            },
+          },
+        ],
+        annotations: [{ type: "doc", description: "Annotation 3" }],
+      },
+    ];
+
+    const result = await getTableRows(tests, true, false, false);
+
+    const expected = [
+      tableHeaders,
+      [
+        {
+          data: `<ul>
+<li><strong>info</strong>: Annotation 1</li>
+<li><strong>info</strong>: Annotation 2</li>
+</ul>`,
+          header: false,
+          colspan: "4",
+        },
+      ],
+      [
+        { data: "Test 1", header: false },
+        { data: "✅ Pass", header: false },
+        { data: "1s", header: false },
+        { data: "", header: false },
+      ],
+      [
+        {
+          data: "<p><strong>doc</strong>: Annotation 3</p>",
+          header: false,
+          colspan: "4",
+        },
+      ],
+      [
+        { data: "Test 2", header: false },
+        { data: "❌ Fail", header: false },
+        { data: "2s", header: false },
+        { data: "1", header: false },
+      ],
+    ];
+
+    expect(result).toEqual(expected);
+  });
+
+  it("should return the table rows with annotations and tags", async () => {
+    const tests: any = [
+      {
+        title: "Test 1",
+        results: [
+          {
+            status: "passed",
+            duration: 1000,
+            retry: 0,
+            error: null,
+          },
+        ],
+        tags: ["@tag1", "@tag2"],
+        annotations: [{ type: "info", description: "Annotation 1" }],
+      },
+      {
+        title: "Test 2",
+        results: [
+          {
+            status: "failed",
+            duration: 2000,
+            retry: 1,
+            error: {
+              message: "Test failed",
+            },
+          },
+        ],
+        tags: ["@tag1"],
+      },
+    ];
+
+    const result = await getTableRows(tests, true, true, true);
+
+    const clonedTableHeaders = Object.assign([], tableHeaders);
+    clonedTableHeaders.push({ data: "Tags", header: true });
+    clonedTableHeaders.push({ data: "Error", header: true });
+
+    const expected = [
+      clonedTableHeaders,
+      [
+        {
+          data: "<p><strong>info</strong>: Annotation 1</p>",
+          header: false,
+          colspan: "6",
+        },
+      ],
+      [
+        { data: "Test 1", header: false },
+        { data: "✅ Pass", header: false },
+        { data: "1s", header: false },
+        { data: "", header: false },
+        { data: "tag1, tag2", header: false },
+        { data: "", header: false },
+      ],
+      [
+        { data: "Test 2", header: false },
+        { data: "❌ Fail", header: false },
+        { data: "2s", header: false },
+        { data: "1", header: false },
+        { data: "tag1", header: false },
+        { data: "Test failed", header: false },
+      ],
+    ];
+
+    expect(result).toEqual(expected);
   });
 });

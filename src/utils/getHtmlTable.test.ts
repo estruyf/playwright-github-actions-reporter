@@ -1,7 +1,7 @@
 import { getHtmlTable } from "./getHtmlTable";
 
 describe("getHtmlTable", () => {
-  it("should return the HTML table with error column", () => {
+  it("should return the HTML table with error column", async () => {
     const tests: any = [
       {
         title: "Test 1",
@@ -13,6 +13,9 @@ describe("getHtmlTable", () => {
             error: null,
           },
         ],
+        parent: {
+          title: "Parent Title",
+        },
       },
       {
         title: "Test 2",
@@ -26,10 +29,24 @@ describe("getHtmlTable", () => {
             },
           },
         ],
+        parent: null,
+      },
+      {
+        title: "Test 3",
+        results: [
+          {
+            status: "failed",
+            duration: null,
+            retry: null,
+            error: {
+              message: "Test failed",
+            },
+          },
+        ],
       },
     ];
 
-    const result = getHtmlTable(tests, true);
+    const result = await getHtmlTable(tests, false, false, true);
 
     const expected = `
 <br>
@@ -45,7 +62,7 @@ describe("getHtmlTable", () => {
 </thead>
 <tbody>
 <tr>
-<td>Test 1</td>
+<td>Parent Title > Test 1</td>
 <td>✅ Pass</td>
 <td>1s</td>
 <td></td>
@@ -58,6 +75,13 @@ describe("getHtmlTable", () => {
 <td>1</td>
 <td>Test failed</td>
 </tr>
+<tr>
+<td>Test 3</td>
+<td>❌ Fail</td>
+<td></td>
+<td></td>
+<td>Test failed</td>
+</tr>
 </tbody>
 </table>
 `;
@@ -65,8 +89,8 @@ describe("getHtmlTable", () => {
     expect(result.trim()).toEqual(expected.trim());
   });
 
-  it("should return an empty HTML table if tests is empty (without error column)", () => {
-    const result = getHtmlTable([], false);
+  it("should return an empty HTML table if tests is empty (without error column)", async () => {
+    const result = await getHtmlTable([], false, false, false);
 
     const expected = `
 <br>
@@ -87,8 +111,8 @@ describe("getHtmlTable", () => {
     expect(result.trim()).toEqual(expected.trim());
   });
 
-  it("should return an empty HTML table if tests is empty (including error column)", () => {
-    const result = getHtmlTable([], true);
+  it("should return an empty HTML table if tests is empty (including error column)", async () => {
+    const result = await getHtmlTable([], false, false, true);
 
     const expected = `
 <br>
@@ -106,6 +130,139 @@ describe("getHtmlTable", () => {
 </tbody>
 </table>
 `;
+
+    expect(result.trim()).toEqual(expected.trim());
+  });
+
+  it("should return the HTML table with annotations row", async () => {
+    const tests: any = [
+      {
+        title: "Test 1",
+        results: [
+          {
+            status: "passed",
+            duration: 1000,
+            retry: 0,
+            error: null,
+          },
+          {
+            status: "failed",
+            duration: 2000,
+            retry: 1,
+            error: {
+              message: "Test failed",
+            },
+          },
+        ],
+        annotations: [{ type: "info", description: "Annotation 1" }],
+      },
+    ];
+
+    const result = await getHtmlTable(tests, true, false, false);
+
+    const expected = `
+<br>
+<table role="table">
+<thead>
+<tr>
+<th>Test</th>
+<th>Status</th>
+<th>Duration</th>
+<th>Retries</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td colspan="4"><p><strong>info</strong>: Annotation 1</p></td>
+</tr>
+<tr>
+<td>Test 1</td>
+<td>❌ Fail</td>
+<td>2s</td>
+<td>1</td>
+</tr>
+</tbody>
+</table>`;
+
+    expect(result.trim()).toEqual(expected.trim());
+  });
+
+  it("should return the HTML table with annotations and tags columns", async () => {
+    const tests: any = [
+      {
+        title: "Test 1",
+        results: [
+          {
+            status: "passed",
+            duration: 1000,
+            retry: 0,
+            error: null,
+          },
+          {
+            status: "failed",
+            duration: 2000,
+            retry: 1,
+            error: {
+              message: "Test failed",
+            },
+          },
+        ],
+        tags: ["@tag1", "@tag2"],
+        annotations: [{ type: "info", description: "Annotation 1" }],
+      },
+      {
+        title: "Test 2",
+        results: [
+          {
+            status: "failed",
+            duration: 2000,
+            retry: 1,
+            error: {
+              message: "Test failed",
+            },
+          },
+        ],
+        tags: ["@tag1"],
+      },
+    ];
+
+    const result = await getHtmlTable(tests, true, true, true);
+
+    const expected = `
+<br>
+<table role="table">
+<thead>
+<tr>
+<th>Test</th>
+<th>Status</th>
+<th>Duration</th>
+<th>Retries</th>
+<th>Tags</th>
+<th>Error</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td colspan="6"><p><strong>info</strong>: Annotation 1</p></td>
+</tr>
+<tr>
+<td>Test 1</td>
+<td>❌ Fail</td>
+<td>2s</td>
+<td>1</td>
+<td>tag1, tag2</td>
+<td>Test failed</td>
+</tr>
+<tr>
+<td>Test 2</td>
+<td>❌ Fail</td>
+<td>2s</td>
+<td>1</td>
+<td>tag1</td>
+<td>Test failed</td>
+</tr>
+</tbody>
+</table>`;
 
     expect(result.trim()).toEqual(expected.trim());
   });

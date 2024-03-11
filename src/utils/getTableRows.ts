@@ -2,11 +2,17 @@ import { SummaryTableRow } from "@actions/core/lib/summary";
 import { TestCase } from "@playwright/test/reporter";
 import Convert from "ansi-to-html";
 import { getTestStatus } from "./getTestStatus";
+import { getTestTitle } from "./getTestTitle";
+import { getTestTags } from "./getTestTags";
+import { getTestAnnotations } from "./getTestAnnotations";
+import { getTestDuration } from "./getTestDuration";
 
-export const getTableRows = (
+export const getTableRows = async (
   tests: TestCase[],
+  showAnnotations: boolean,
+  showTags: boolean,
   showError: boolean
-): SummaryTableRow[] => {
+): Promise<SummaryTableRow[]> => {
   const convert = new Convert();
 
   const tableHeaders = [
@@ -28,6 +34,13 @@ export const getTableRows = (
     },
   ];
 
+  if (showTags) {
+    tableHeaders.push({
+      data: "Tags",
+      header: true,
+    });
+  }
+
   if (showError) {
     tableHeaders.push({
       data: "Error",
@@ -35,15 +48,36 @@ export const getTableRows = (
     });
   }
 
-  const tableRows = [tableHeaders];
+  const tableRows: SummaryTableRow[] = [tableHeaders];
 
   for (const test of tests) {
     // Get the last result
     const result = test.results[test.results.length - 1];
 
+    if (showAnnotations && test.annotations) {
+      let colLength = 4;
+      if (showTags) {
+        colLength++;
+      }
+      if (showError) {
+        colLength++;
+      }
+
+      const annotations = await getTestAnnotations(test);
+      if (annotations) {
+        tableRows.push([
+          {
+            data: annotations,
+            header: false,
+            colspan: `${colLength}`,
+          },
+        ]);
+      }
+    }
+
     const tableRow = [
       {
-        data: test.title,
+        data: getTestTitle(test),
         header: false,
       },
       {
@@ -51,21 +85,26 @@ export const getTableRows = (
         header: false,
       },
       {
-        data: result?.duration ? `${result.duration / 1000}s` : "",
+        data: getTestDuration(result),
         header: false,
       },
       {
         data: `${result?.retry || ""}`,
         header: false,
       },
-    ];
+    ] as SummaryTableRow;
+
+    if (showTags) {
+      tableRow.push({
+        data: getTestTags(test),
+        header: false,
+      });
+    }
 
     if (showError) {
+      const error = result?.error?.message || "";
       tableRow.push({
-        data:
-          result?.error && result.error?.message
-            ? convert.toHtml(result.error.message!)
-            : "",
+        data: convert.toHtml(error),
         header: false,
       });
     }

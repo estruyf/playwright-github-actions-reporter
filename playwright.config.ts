@@ -11,11 +11,16 @@ const config: PlaywrightTestConfig<{}, {}> = {
   retries: process.env.CI ? 2 : 2,
   workers: process.env.CI ? 1 : 1,
   reporter: [
-    ["./src/index.ts", { title: "Reporter testing", showError: true }],
+    // ["html"],
     [
       "./src/index.ts",
-      { title: "Reporter testing with details", useDetails: true },
+      {
+        title: "Reporter testing",
+        useDetails: false,
+        showError: true,
+      },
     ],
+    ["./src/index.ts", { useDetails: true }],
   ],
   use: {
     actionTimeout: 0,
@@ -34,6 +39,14 @@ const config: PlaywrightTestConfig<{}, {}> = {
         viewport: { width: 1920, height: 1080 },
       },
     },
+    // {
+    //   name: "firefox",
+    //   // dependencies: ["setup"],
+    //   use: {
+    //     ...devices["Desktop Firefox"],
+    //     viewport: { width: 1920, height: 1080 },
+    //   },
+    // },
   ],
 };
 
