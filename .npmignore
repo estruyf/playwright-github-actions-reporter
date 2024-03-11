@@ -5,6 +5,11 @@ scripts
 src
 test-results
 tests
+coverage
+jest.config.js
+playwright-report
 
 playwright.config.ts
 tsconfig.json
+dist/**/*.test.js
+summary.html
