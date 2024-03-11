@@ -15,7 +15,6 @@ describe("getTestAnnotations", () => {
       ],
     };
     const result = await getTestAnnotations(test);
-    console.log(result);
     expect(result).toBe(`<ul>
 <li><strong>bug</strong>: This is a bug</li>
 <li><strong>feature</strong>: This is a feature</li>
