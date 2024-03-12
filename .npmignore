@@ -13,4 +13,3 @@ playwright.config.ts
 tsconfig.json
 dist/**/*.test.js
 summary.html
-requirements.txt
