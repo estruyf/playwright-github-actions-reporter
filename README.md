@@ -38,6 +38,7 @@ The reporter supports the following configuration options:
 | showAnnotations | Show annotations from tests | `true` |
 | showTags | Show tags from tests | `true` |
 | showError | Show error message in summary | `false` |
+| quiet | Do not show any output in the console | `false` |
 
 To use these option, you can update the reporter configuration:
 

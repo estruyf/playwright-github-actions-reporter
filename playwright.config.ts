@@ -11,16 +11,17 @@ const config: PlaywrightTestConfig<{}, {}> = {
   retries: process.env.CI ? 2 : 2,
   workers: process.env.CI ? 1 : 1,
   reporter: [
-    // ["html"],
+    // ["list"],
     [
       "./src/index.ts",
       {
         title: "Reporter testing",
         useDetails: false,
         showError: true,
+        quiet: false,
       },
     ],
-    ["./src/index.ts", { useDetails: true }],
+    ["./src/index.ts", { useDetails: true, quiet: true }],
   ],
   use: {
     actionTimeout: 0,
