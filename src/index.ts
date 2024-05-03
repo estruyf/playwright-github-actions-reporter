@@ -15,6 +15,7 @@ export interface GitHubActionOptions {
   showAnnotations: boolean;
   showTags: boolean;
   showError?: boolean;
+  quiet?: boolean;
 }
 
 class GitHubAction implements Reporter {
@@ -24,6 +25,7 @@ class GitHubAction implements Reporter {
     private options: GitHubActionOptions = {
       showAnnotations: true,
       showTags: true,
+      quiet: false,
     }
   ) {
     console.log(`Using GitHub Actions reporter`);
@@ -52,7 +54,21 @@ class GitHubAction implements Reporter {
     _: void | TestCase,
     __: void | TestResult
   ): void {
-    console.log(chunk.toString());
+    if (this.options.quiet) {
+      return;
+    }
+
+    const text = chunk.toString("utf-8");
+    process.stdout.write(text);
+  }
+
+  onStdErr(chunk: string | Buffer, _: TestCase, __: TestResult) {
+    if (this.options.quiet) {
+      return;
+    }
+
+    const text = chunk.toString("utf-8");
+    process.stderr.write(text);
   }
 
   async onEnd(result: FullResult) {
