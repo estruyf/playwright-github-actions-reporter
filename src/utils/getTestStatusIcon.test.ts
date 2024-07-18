@@ -10,12 +10,12 @@ describe("getTestStatusIcon", () => {
     expect(result).toBe("✅");
   });
 
-  it("should return ⚠️ if any test has been skipped", () => {
+  it("should return ⏭️ if any test has been skipped", () => {
     const tests = [{ results: [{ status: "skipped" }] }] as TestCase[];
 
     const result = getTestStatusIcon(tests);
 
-    expect(result).toBe("⚠️");
+    expect(result).toBe("⏭️");
   });
 
   it("should return ❌ if any test has failed, interrupted, or timed out", () => {

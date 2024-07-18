@@ -18,7 +18,7 @@ export const getTestStatusIcon = (tests: TestCase[]) => {
   ) {
     return "❌";
   } else if (testOutcomes.includes("skipped")) {
-    return "⚠️";
+    return "⏭️";
   }
 
   return "✅";
