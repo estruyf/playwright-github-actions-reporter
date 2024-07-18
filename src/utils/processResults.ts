@@ -17,7 +17,7 @@ export const processResults = async (
   options: GitHubActionOptions
 ) => {
   if (process.env.NODE_ENV === "development") {
-    const summaryFile = join(__dirname, "../summary.html");
+    const summaryFile = join(__dirname, "../../summary.html");
     if (existsSync(summaryFile)) {
       unlinkSync(summaryFile);
     }

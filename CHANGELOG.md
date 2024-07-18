@@ -2,6 +2,11 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.8.0]
+
+- Added `⏭️` icon for skipped tests
+- Added flaky test support
+
 ## [1.7.0]
 
 - [#14](https://github.com/estruyf/playwright-github-actions-reporter/issues/14): Added the `quiet` option to disable console logging + `stdErr` output support

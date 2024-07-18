@@ -7,11 +7,11 @@ export const getTestStatus = (test: TestCase, result: TestResult) => {
   let status = getTestOutcome(test, result);
 
   if (status === "passed" && result.retry > 0) {
-    value = `⚠️ Pass`;
+    value = `⚠️ Flaky`;
   } else if (status === "passed") {
     value = "✅ Pass";
   } else if (status === "skipped") {
-    value = `⚠️ Skipped`;
+    value = `⏭️ Skipped`;
   } else {
     value = "❌ Fail";
   }
