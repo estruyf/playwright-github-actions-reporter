@@ -8,6 +8,11 @@ export const getTestStatusIcon = (tests: TestCase[]) => {
 
   const testOutcomes = tests.map((test) => {
     const lastResult = test.results[test.results.length - 1];
+    const outcome = test.outcome();
+    if (outcome === "flaky") {
+      return "flaky";
+    }
+
     return getTestOutcome(test, lastResult);
   });
 
@@ -17,8 +22,8 @@ export const getTestStatusIcon = (tests: TestCase[]) => {
     testOutcomes.includes("timedOut")
   ) {
     return "❌";
-  } else if (testOutcomes.includes("skipped")) {
-    return "⏭️";
+  } else if (testOutcomes.includes("flaky")) {
+    return "⚠️";
   }
 
   return "✅";
