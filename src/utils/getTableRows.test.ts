@@ -1,3 +1,4 @@
+import { DisplayLevel } from "../models";
 import { getTableRows } from "./getTableRows";
 
 const tableHeaders = [
@@ -17,6 +18,13 @@ const tableHeaders = [
     data: "Retries",
     header: true,
   },
+];
+
+const defaultDisplayLevel: DisplayLevel[] = [
+  "pass",
+  "fail",
+  "flaky",
+  "skipped",
 ];
 
 describe("getTableRows", () => {
@@ -52,7 +60,13 @@ describe("getTableRows", () => {
       },
     ];
 
-    const result = await getTableRows(tests, false, false, true);
+    const result = await getTableRows(
+      tests,
+      false,
+      false,
+      true,
+      defaultDisplayLevel
+    );
     const clonedTableHeaders = Object.assign([], tableHeaders);
     clonedTableHeaders.push({ data: "Error", header: true });
 
@@ -65,6 +79,60 @@ describe("getTableRows", () => {
         { data: "", header: false },
         { data: "", header: false },
       ],
+      [
+        { data: "Test 2", header: false },
+        { data: "❌ Fail", header: false },
+        { data: "2s", header: false },
+        { data: "1", header: false },
+        { data: "Test failed", header: false },
+      ],
+    ];
+
+    expect(result).toEqual(expected);
+  });
+
+  it("should return the table rows with headers and data (excluding passed tests)", async () => {
+    const tests: any = [
+      {
+        title: "Test 1",
+        results: [
+          {
+            status: "passed",
+            duration: 1000,
+            retry: 0,
+            error: null,
+          },
+        ],
+        parent: {
+          title: "Parent Title",
+        },
+      },
+      {
+        title: "Test 2",
+        results: [
+          {
+            status: "failed",
+            duration: 2000,
+            retry: 1,
+            error: {
+              message: "Test failed",
+            },
+          },
+        ],
+        parent: null,
+      },
+    ];
+
+    const result = await getTableRows(tests, false, false, true, [
+      "fail",
+      "flaky",
+      "skipped",
+    ]);
+    const clonedTableHeaders = Object.assign([], tableHeaders);
+    clonedTableHeaders.push({ data: "Error", header: true });
+
+    const expected = [
+      clonedTableHeaders,
       [
         { data: "Test 2", header: false },
         { data: "❌ Fail", header: false },
@@ -105,7 +173,13 @@ describe("getTableRows", () => {
       },
     ];
 
-    const result = await getTableRows(tests, false, false, false);
+    const result = await getTableRows(
+      tests,
+      false,
+      false,
+      false,
+      defaultDisplayLevel
+    );
 
     expect(result).toEqual([
       tableHeaders,
@@ -125,17 +199,29 @@ describe("getTableRows", () => {
   });
 
   it("should return an empty array if tests is empty (without error header)", async () => {
-    const result = await getTableRows([], false, false, false);
+    const result = await getTableRows(
+      [],
+      false,
+      false,
+      false,
+      defaultDisplayLevel
+    );
 
-    expect(result).toEqual([tableHeaders]);
+    expect(result).toEqual([]);
   });
 
   it("should return an empty array if tests is empty (including error header)", async () => {
-    const result = await getTableRows([], false, false, true);
+    const result = await getTableRows(
+      [],
+      false,
+      false,
+      true,
+      defaultDisplayLevel
+    );
     const clonedTableHeaders = Object.assign([], tableHeaders);
     clonedTableHeaders.push({ data: "Error", header: true });
 
-    expect(result).toEqual([clonedTableHeaders]);
+    expect(result).toEqual([]);
   });
 
   it("should return the table rows with annotations", async () => {
@@ -171,7 +257,13 @@ describe("getTableRows", () => {
       },
     ];
 
-    const result = await getTableRows(tests, true, false, false);
+    const result = await getTableRows(
+      tests,
+      true,
+      false,
+      false,
+      defaultDisplayLevel
+    );
 
     const expected = [
       tableHeaders,
@@ -240,7 +332,13 @@ describe("getTableRows", () => {
       },
     ];
 
-    const result = await getTableRows(tests, true, true, true);
+    const result = await getTableRows(
+      tests,
+      true,
+      true,
+      true,
+      defaultDisplayLevel
+    );
 
     const clonedTableHeaders = Object.assign([], tableHeaders);
     clonedTableHeaders.push({ data: "Tags", header: true });

@@ -7,7 +7,6 @@
     "build": "tsc",
     "watch": "tsc -w",
     "test": "NODE_ENV=development npx playwright test",
-    "test:local": "act -j testing -P ubuntu-latest=catthehacker/ubuntu:act-latest --container-architecture linux/amd64 --env GITHUB_STEP_SUMMARY='/dev/stdout'",
     "test:jest": "jest --coverage --coverageDirectory=../coverage"
   },
   "author": "Elio Struyf <elio@struyfconsulting.be>",

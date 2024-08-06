@@ -1,7 +1,7 @@
 import { getTestStatus } from "./getTestStatus";
 
 describe("getTestStatus", () => {
-  it("should return '⚠️ Flaky' when test status is 'passed' and result retry is greater than 0", () => {
+  it("should return 'Flaky' when test status is 'passed' and result retry is greater than 0", () => {
     const test: any = {
       outcome: () => "expected",
     };
@@ -12,10 +12,10 @@ describe("getTestStatus", () => {
 
     const status = getTestStatus(test, result);
 
-    expect(status).toBe("⚠️ Flaky");
+    expect(status).toBe("Flaky");
   });
 
-  it("should return '✅ Pass' when test status is 'passed' and result retry is 0", () => {
+  it("should return 'Pass' when test status is 'passed' and result retry is 0", () => {
     const test: any = {
       outcome: () => "expected",
     };
@@ -26,10 +26,10 @@ describe("getTestStatus", () => {
 
     const status = getTestStatus(test, result);
 
-    expect(status).toBe("✅ Pass");
+    expect(status).toBe("Pass");
   });
 
-  it("should return '⏭️ Skipped' when test status is 'skipped'", () => {
+  it("should return 'Skipped' when test status is 'skipped'", () => {
     const test: any = {
       outcome: () => "expected",
     };
@@ -40,10 +40,10 @@ describe("getTestStatus", () => {
 
     const status = getTestStatus(test, result);
 
-    expect(status).toBe("⏭️ Skipped");
+    expect(status).toBe("Skipped");
   });
 
-  it("should return '❌ Fail' when test status is not 'passed' or 'skipped'", () => {
+  it("should return 'Fail' when test status is not 'passed' or 'skipped'", () => {
     const test: any = {
       outcome: () => "unexpected",
     };
@@ -54,10 +54,10 @@ describe("getTestStatus", () => {
 
     const status = getTestStatus(test, result);
 
-    expect(status).toBe("❌ Fail");
+    expect(status).toBe("Fail");
   });
 
-  it("should return '❌ Fail' when no test status is provided", () => {
+  it("should return 'Fail' when no test status is provided", () => {
     const test: any = {
       outcome: () => "unexpected",
     };
@@ -67,6 +67,6 @@ describe("getTestStatus", () => {
 
     const status = getTestStatus(test, result);
 
-    expect(status).toBe("❌ Fail");
+    expect(status).toBe("Fail");
   });
 });

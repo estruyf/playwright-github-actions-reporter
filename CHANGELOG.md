@@ -2,6 +2,10 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.9.0]
+
+- [#17](https://github.com/estruyf/playwright-github-actions-reporter/issues/17): Added the ability to define which types of test results should be shown in the summary
+
 ## [1.8.0]
 
 - Added `⏭️` icon for skipped tests

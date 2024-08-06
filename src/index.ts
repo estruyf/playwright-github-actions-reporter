@@ -8,15 +8,7 @@ import type {
   TestResult,
 } from "@playwright/test/reporter";
 import { processResults } from "./utils/processResults";
-
-export interface GitHubActionOptions {
-  title?: string;
-  useDetails?: boolean;
-  showAnnotations: boolean;
-  showTags: boolean;
-  showError?: boolean;
-  quiet?: boolean;
-}
+import { GitHubActionOptions } from "./models";
 
 class GitHubAction implements Reporter {
   private suite: Suite | undefined;
@@ -37,6 +29,10 @@ class GitHubAction implements Reporter {
 
     if (typeof options.showTags === "undefined") {
       this.options.showTags = true;
+    }
+
+    if (typeof options.report === "undefined") {
+      this.options.report = ["fail", "flaky", "pass", "skipped"];
     }
 
     if (process.env.NODE_ENV === "development") {

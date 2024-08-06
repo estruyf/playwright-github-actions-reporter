@@ -38,16 +38,18 @@ The reporter supports the following configuration options:
 | showAnnotations | Show annotations from tests | `true` |
 | showTags | Show tags from tests | `true` |
 | showError | Show error message in summary | `false` |
+| report | Define which types of test results should be shown in the summary | `['pass', 'skipped', 'fail', 'flaky']` |
 | quiet | Do not show any output in the console | `false` |
 
 To use these option, you can update the reporter configuration:
 
 ```ts
 import { defineConfig } from '@playwright/test';
+import type { GitHubActionOptions } from '@estruyf/github-actions-reporter';
 
 export default defineConfig({
   reporter: [
-    ['@estruyf/github-actions-reporter', {
+    ['@estruyf/github-actions-reporter', <GitHubActionOptions>{
       title: 'My custom title',
       useDetails: true,
       showError: true
