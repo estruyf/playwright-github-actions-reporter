@@ -1,6 +1,6 @@
 {
   "name": "@estruyf/github-actions-reporter",
-  "version": "1.8.0",
+  "version": "1.9.0",
   "description": "GitHub Actions reporter for Playwright",
   "main": "dist/index.js",
   "scripts": {
