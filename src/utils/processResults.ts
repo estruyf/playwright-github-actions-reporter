@@ -3,14 +3,14 @@ import { SUMMARY_ENV_VAR } from "@actions/core/lib/summary";
 import { Suite } from "@playwright/test/reporter";
 import { existsSync, unlinkSync, writeFileSync } from "fs";
 import { basename, join } from "path";
-import { GitHubActionOptions } from "..";
 import { getHtmlTable } from "./getHtmlTable";
-import { getTestStatusIcon } from "./getTestStatusIcon";
+import { getSuiteStatusIcon } from "./getSuiteStatusIcon";
 import { getTableRows } from "./getTableRows";
 import { getSummaryTitle } from "./getSummaryTitle";
 import { getSummaryDetails } from "./getSummaryDetails";
 import { getTestsPerFile } from "./getTestsPerFile";
 import { getTestHeading } from "./getTestHeading";
+import { DisplayLevel, GitHubActionOptions } from "../models";
 
 export const processResults = async (
   suite: Suite | undefined,
@@ -55,26 +55,34 @@ export const processResults = async (
             tests[filePath],
             options.showAnnotations,
             options.showTags,
-            !!options.showError
+            !!options.showError,
+            options.includeResults as DisplayLevel[]
           );
 
+          if (!content) {
+            continue;
+          }
+
           // Check if there are any failed tests
-          const testStatusIcon = getTestStatusIcon(tests[filePath]);
+          const testStatusIcon = getSuiteStatusIcon(tests[filePath]);
 
           summary.addDetails(
             `${testStatusIcon} ${getTestHeading(fileName, os, project)}`,
             content
           );
         } else {
-          summary.addHeading(getTestHeading(fileName, os, project), 2);
-
           const tableRows = await getTableRows(
             tests[filePath],
             options.showAnnotations,
             options.showTags,
-            !!options.showError
+            !!options.showError,
+            options.includeResults as DisplayLevel[]
           );
-          summary.addTable(tableRows);
+
+          if (tableRows.length !== 0) {
+            summary.addHeading(getTestHeading(fileName, os, project), 2);
+            summary.addTable(tableRows);
+          }
         }
       }
     }

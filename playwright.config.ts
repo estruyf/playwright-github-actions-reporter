@@ -1,3 +1,4 @@
+import type { GitHubActionOptions } from "./src/models/GitHubActionOptions";
 import { PlaywrightTestConfig, defineConfig, devices } from "@playwright/test";
 
 const config: PlaywrightTestConfig<{}, {}> = {
@@ -14,14 +15,33 @@ const config: PlaywrightTestConfig<{}, {}> = {
     // ["list"],
     [
       "./src/index.ts",
-      {
-        title: "Reporter testing",
+      <GitHubActionOptions>{
+        title: "Reporter (details: false, report: fail, flaky, skipped)",
         useDetails: false,
         showError: true,
         quiet: false,
+        includeResults: ["fail", "flaky", "skipped"],
       },
     ],
-    ["./src/index.ts", { useDetails: true, quiet: true }],
+    [
+      "./src/index.ts",
+      <GitHubActionOptions>{
+        title: "Reporter (details: false, report: pass, skipped)",
+        useDetails: false,
+        showError: true,
+        quiet: false,
+        includeResults: ["pass", "skipped"],
+      },
+    ],
+    [
+      "./src/index.ts",
+      <GitHubActionOptions>{
+        title: "Reporter (details: true, report: fail, flaky, skipped)",
+        useDetails: true,
+        quiet: true,
+        includeResults: ["fail", "flaky", "skipped"],
+      },
+    ],
   ],
   use: {
     actionTimeout: 0,

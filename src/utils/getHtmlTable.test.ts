@@ -1,4 +1,12 @@
+import { DisplayLevel } from "../models";
 import { getHtmlTable } from "./getHtmlTable";
+
+const defaultDisplayLevel: DisplayLevel[] = [
+  "pass",
+  "fail",
+  "flaky",
+  "skipped",
+];
 
 describe("getHtmlTable", () => {
   it("should return the HTML table with error column", async () => {
@@ -46,7 +54,13 @@ describe("getHtmlTable", () => {
       },
     ];
 
-    const result = await getHtmlTable(tests, false, false, true);
+    const result = await getHtmlTable(
+      tests,
+      false,
+      false,
+      true,
+      defaultDisplayLevel
+    );
 
     const expected = `
 <br>
@@ -86,33 +100,59 @@ describe("getHtmlTable", () => {
 </table>
 `;
 
-    expect(result.trim()).toEqual(expected.trim());
+    expect(result?.trim()).toEqual(expected.trim());
   });
 
-  it("should return an empty HTML table if tests is empty (without error column)", async () => {
-    const result = await getHtmlTable([], false, false, false);
+  it("should return the HTML table with error column (excluding passed tests)", async () => {
+    const tests: any = [
+      {
+        title: "Test 1",
+        results: [
+          {
+            status: "passed",
+            duration: 1000,
+            retry: 0,
+            error: null,
+          },
+        ],
+        parent: {
+          title: "Parent Title",
+        },
+      },
+      {
+        title: "Test 2",
+        results: [
+          {
+            status: "failed",
+            duration: 2000,
+            retry: 1,
+            error: {
+              message: "Test failed",
+            },
+          },
+        ],
+        parent: null,
+      },
+      {
+        title: "Test 3",
+        results: [
+          {
+            status: "failed",
+            duration: null,
+            retry: null,
+            error: {
+              message: "Test failed",
+            },
+          },
+        ],
+      },
+    ];
 
-    const expected = `
-<br>
-<table role="table">
-<thead>
-<tr>
-<th>Test</th>
-<th>Status</th>
-<th>Duration</th>
-<th>Retries</th>
-</tr>
-</thead>
-<tbody>
-</tbody>
-</table>
-`;
-
-    expect(result.trim()).toEqual(expected.trim());
-  });
-
-  it("should return an empty HTML table if tests is empty (including error column)", async () => {
-    const result = await getHtmlTable([], false, false, true);
+    const result = await getHtmlTable(tests, false, false, true, [
+      "fail",
+      "flaky",
+      "skipped",
+    ]);
 
     const expected = `
 <br>
@@ -127,11 +167,49 @@ describe("getHtmlTable", () => {
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>Test 2</td>
+<td>❌ Fail</td>
+<td>2s</td>
+<td>1</td>
+<td>Test failed</td>
+</tr>
+<tr>
+<td>Test 3</td>
+<td>❌ Fail</td>
+<td></td>
+<td></td>
+<td>Test failed</td>
+</tr>
 </tbody>
 </table>
 `;
 
-    expect(result.trim()).toEqual(expected.trim());
+    expect(result?.trim()).toEqual(expected.trim());
+  });
+
+  it("should not return a table when no tests are provided (without error column)", async () => {
+    const result = await getHtmlTable(
+      [],
+      false,
+      false,
+      false,
+      defaultDisplayLevel
+    );
+
+    expect(result).toBeUndefined();
+  });
+
+  it("should not return a table when no tests are provided (including error column)", async () => {
+    const result = await getHtmlTable(
+      [],
+      false,
+      false,
+      true,
+      defaultDisplayLevel
+    );
+
+    expect(result).toBeUndefined();
   });
 
   it("should return the HTML table with annotations row", async () => {
@@ -158,7 +236,13 @@ describe("getHtmlTable", () => {
       },
     ];
 
-    const result = await getHtmlTable(tests, true, false, false);
+    const result = await getHtmlTable(
+      tests,
+      true,
+      false,
+      false,
+      defaultDisplayLevel
+    );
 
     const expected = `
 <br>
@@ -184,7 +268,7 @@ describe("getHtmlTable", () => {
 </tbody>
 </table>`;
 
-    expect(result.trim()).toEqual(expected.trim());
+    expect(result?.trim()).toEqual(expected.trim());
   });
 
   it("should return the HTML table with annotations and tags columns", async () => {
@@ -226,7 +310,13 @@ describe("getHtmlTable", () => {
       },
     ];
 
-    const result = await getHtmlTable(tests, true, true, true);
+    const result = await getHtmlTable(
+      tests,
+      true,
+      true,
+      true,
+      defaultDisplayLevel
+    );
 
     const expected = `
 <br>
@@ -264,6 +354,6 @@ describe("getHtmlTable", () => {
 </tbody>
 </table>`;
 
-    expect(result.trim()).toEqual(expected.trim());
+    expect(result?.trim()).toEqual(expected.trim());
   });
 });

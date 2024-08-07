@@ -1,19 +1,22 @@
 import { TestCase, TestResult } from "@playwright/test/reporter";
 import { getTestOutcome } from "./getTestOutcome";
 
-export const getTestStatus = (test: TestCase, result: TestResult) => {
+export const getTestStatus = (
+  test: TestCase,
+  result: TestResult
+): "Flaky" | "Pass" | "Skipped" | "Fail" | string => {
   let value = "";
 
   let status = getTestOutcome(test, result);
 
   if (status === "passed" && result.retry > 0) {
-    value = `⚠️ Flaky`;
+    value = `Flaky`;
   } else if (status === "passed") {
-    value = "✅ Pass";
+    value = "Pass";
   } else if (status === "skipped") {
-    value = `⏭️ Skipped`;
+    value = `Skipped`;
   } else {
-    value = "❌ Fail";
+    value = "Fail";
   }
 
   return value;

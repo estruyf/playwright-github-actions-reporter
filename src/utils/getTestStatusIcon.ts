@@ -1,30 +1,18 @@
-import { TestCase } from "@playwright/test/reporter";
-import { getTestOutcome } from "./getTestOutcome";
+import { TestCase, TestResult } from "@playwright/test/reporter";
+import { getTestStatus } from "./getTestStatus";
 
-export const getTestStatusIcon = (tests: TestCase[]) => {
-  if (!tests || tests.length === 0) {
-    return "❌";
+export const getTestStatusIcon = (test: TestCase, result: TestResult) => {
+  let value = getTestStatus(test, result);
+
+  if (value === "Flaky") {
+    value = `⚠️`;
+  } else if (value === "Pass") {
+    value = "✅";
+  } else if (value === "Skipped") {
+    value = `⏭️`;
+  } else if (value === "Fail") {
+    value = "❌";
   }
 
-  const testOutcomes = tests.map((test) => {
-    const lastResult = test.results[test.results.length - 1];
-    const outcome = test.outcome();
-    if (outcome === "flaky") {
-      return "flaky";
-    }
-
-    return getTestOutcome(test, lastResult);
-  });
-
-  if (
-    testOutcomes.includes("failed") ||
-    testOutcomes.includes("interrupted") ||
-    testOutcomes.includes("timedOut")
-  ) {
-    return "❌";
-  } else if (testOutcomes.includes("flaky")) {
-    return "⚠️";
-  }
-
-  return "✅";
+  return value;
 };

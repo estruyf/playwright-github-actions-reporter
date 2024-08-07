@@ -1,58 +1,72 @@
-import { TestCase } from "@playwright/test/reporter";
 import { getTestStatusIcon } from "./getTestStatusIcon";
 
 describe("getTestStatusIcon", () => {
-  it("should return ✅ if all tests have passed", () => {
-    const tests = [
-      { results: [{ status: "passed" }], outcome: () => "expected" },
-    ] as TestCase[];
+  it("should return '⚠️' when test status is 'passed' and result retry is greater than 0", () => {
+    const test: any = {
+      outcome: () => "expected",
+    };
+    const result: any = {
+      retry: 1,
+      status: "passed",
+    };
 
-    const result = getTestStatusIcon(tests);
+    const status = getTestStatusIcon(test, result);
 
-    expect(result).toBe("✅");
+    expect(status).toBe("⚠️");
   });
 
-  it("should return ⏭️ if any test has been skipped", () => {
-    const tests = [
-      { results: [{ status: "skipped" }], outcome: () => "expected" },
-    ] as TestCase[];
+  it("should return '✅' when test status is 'passed' and result retry is 0", () => {
+    const test: any = {
+      outcome: () => "expected",
+    };
+    const result: any = {
+      retry: 0,
+      status: "passed",
+    };
 
-    const result = getTestStatusIcon(tests);
+    const status = getTestStatusIcon(test, result);
 
-    expect(result).toBe("✅");
+    expect(status).toBe("✅");
   });
 
-  it("should return ❌ if any test has failed, interrupted, or timed out", () => {
-    const tests = [
-      { results: [{ status: "failed" }], outcome: () => "expected" },
-    ] as TestCase[];
+  it("should return '⏭️' when test status is 'skipped'", () => {
+    const test: any = {
+      outcome: () => "expected",
+    };
+    const result: any = {
+      retry: 1,
+      status: "skipped",
+    };
 
-    const result = getTestStatusIcon(tests);
+    const status = getTestStatusIcon(test, result);
 
-    expect(result).toBe("❌");
+    expect(status).toBe("⏭️");
   });
 
-  it("should return ❌ if no tests", () => {
-    const result = getTestStatusIcon(undefined as any);
+  it("should return '❌' when test status is not 'passed' or 'skipped'", () => {
+    const test: any = {
+      outcome: () => "unexpected",
+    };
+    const result: any = {
+      retry: 1,
+      status: "failed",
+    };
 
-    expect(result).toBe("❌");
+    const status = getTestStatusIcon(test, result);
+
+    expect(status).toBe("❌");
   });
 
-  it("should return ❌ if there is no test status", () => {
-    const tests = [
-      { results: [{}], outcome: () => "unexpected" },
-    ] as TestCase[];
+  it("should return '❌' when no test status is provided", () => {
+    const test: any = {
+      outcome: () => "unexpected",
+    };
+    const result: any = {
+      retry: 1,
+    };
 
-    const result = getTestStatusIcon(tests);
+    const status = getTestStatusIcon(test, result);
 
-    expect(result).toBe("❌");
-  });
-
-  it("should return ⚠️ if any test is flaky", () => {
-    const tests = [{ results: [{}], outcome: () => "flaky" }] as TestCase[];
-
-    const result = getTestStatusIcon(tests);
-
-    expect(result).toBe("⚠️");
+    expect(status).toBe("❌");
   });
 });

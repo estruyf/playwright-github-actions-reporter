@@ -6,12 +6,15 @@ import { getTestTitle } from "./getTestTitle";
 import { getTestTags } from "./getTestTags";
 import { getTestAnnotations } from "./getTestAnnotations";
 import { getTestDuration } from "./getTestDuration";
+import { getTestStatusIcon } from "./getTestStatusIcon";
+import { DisplayLevel } from "../models";
 
 export const getTableRows = async (
   tests: TestCase[],
   showAnnotations: boolean,
   showTags: boolean,
-  showError: boolean
+  showError: boolean,
+  displayLevel: DisplayLevel[]
 ): Promise<SummaryTableRow[]> => {
   const convert = new Convert();
 
@@ -48,11 +51,17 @@ export const getTableRows = async (
     });
   }
 
-  const tableRows: SummaryTableRow[] = [tableHeaders];
+  const tableRows: SummaryTableRow[] = [];
 
   for (const test of tests) {
     // Get the last result
     const result = test.results[test.results.length - 1];
+
+    // Check if the test should be shown
+    const testStatus = getTestStatus(test, result);
+    if (!displayLevel.includes(testStatus.toLowerCase() as DisplayLevel)) {
+      continue;
+    }
 
     if (showAnnotations && test.annotations) {
       let colLength = 4;
@@ -81,7 +90,7 @@ export const getTableRows = async (
         header: false,
       },
       {
-        data: getTestStatus(test, result),
+        data: `${getTestStatusIcon(test, result)} ${testStatus}`,
         header: false,
       },
       {
@@ -112,5 +121,9 @@ export const getTableRows = async (
     tableRows.push(tableRow);
   }
 
-  return tableRows;
+  if (tableRows.length === 0) {
+    return [];
+  }
+
+  return [tableHeaders, ...tableRows];
 };
