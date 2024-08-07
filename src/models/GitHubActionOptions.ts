@@ -7,5 +7,5 @@ export interface GitHubActionOptions {
   showTags: boolean;
   showError?: boolean;
   quiet?: boolean;
-  report?: DisplayLevel[];
+  includeResults?: DisplayLevel[];
 }
