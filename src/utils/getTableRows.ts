@@ -138,7 +138,7 @@ export const getTableRows = async (
 
       tableRow.push({
         data: (mediaFiles || [])
-          .map((m) => `<img src="${m.url}" alt="${m.name}" height: "25px" />`)
+          .map((m) => `![${m.name}](${m.url})`)
           .join("\n"),
         header: false,
       });
