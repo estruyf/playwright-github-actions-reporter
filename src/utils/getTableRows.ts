@@ -138,7 +138,11 @@ export const getTableRows = async (
 
       tableRow.push({
         data: (mediaFiles || [])
-          .map((m) => `![${m.name}](${m.url})`)
+          .map(
+            (m) => `![${m.name}](${m.url})
+          
+**${m.name}**`
+          )
           .join("\n"),
         header: false,
       });
