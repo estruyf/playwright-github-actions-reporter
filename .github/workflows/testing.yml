@@ -45,4 +45,4 @@ jobs:
         continue-on-error: true
         env:
           AZURE_STORAGE_SAS: ${{ secrets.AZURE_STORAGE_SAS }}
-          AZURE_STORAGE_URL: ${{ secrets.AZURE_STORAGE_URL }}
+          AZURE_STORAGE_URL: ${{ vars.AZURE_STORAGE_URL }}

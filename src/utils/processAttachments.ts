@@ -24,7 +24,7 @@ export const processAttachments = async (
 
     for (const attachment of attachments) {
       try {
-        if (attachment.path && azureContainerUrl && azureContainerSas) {
+        if (attachment.path) {
           const parsedFile = parse(attachment.path);
           const fileUrl = `${azureContainerUrl}/${
             parsedFile.name
