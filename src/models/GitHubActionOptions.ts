@@ -8,4 +8,8 @@ export interface GitHubActionOptions {
   showError?: boolean;
   quiet?: boolean;
   includeResults?: DisplayLevel[];
+
+  // Azure Storage
+  azureStorageUrl?: string;
+  azureStorageSAS?: string;
 }

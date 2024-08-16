@@ -8,13 +8,18 @@ import { getTestAnnotations } from "./getTestAnnotations";
 import { getTestDuration } from "./getTestDuration";
 import { getTestStatusIcon } from "./getTestStatusIcon";
 import { DisplayLevel } from "../models";
+import { processAttachments } from "./processAttachments";
 
 export const getTableRows = async (
   tests: TestCase[],
   showAnnotations: boolean,
   showTags: boolean,
   showError: boolean,
-  displayLevel: DisplayLevel[]
+  displayLevel: DisplayLevel[],
+  azure?: {
+    azureStorageUrl?: string;
+    azureStorageSAS?: string;
+  }
 ): Promise<SummaryTableRow[]> => {
   const convert = new Convert();
 
@@ -49,6 +54,10 @@ export const getTableRows = async (
       data: "Error",
       header: true,
     });
+    tableHeaders.push({
+      data: "Attachments",
+      header: true,
+    });
   }
 
   const tableRows: SummaryTableRow[] = [];
@@ -69,6 +78,7 @@ export const getTableRows = async (
         colLength++;
       }
       if (showError) {
+        colLength++;
         colLength++;
       }
 
@@ -114,6 +124,22 @@ export const getTableRows = async (
       const error = result?.error?.message || "";
       tableRow.push({
         data: convert.toHtml(error),
+        header: false,
+      });
+
+      const mediaFiles =
+        (azure &&
+          (await processAttachments(
+            azure?.azureStorageUrl,
+            azure?.azureStorageSAS,
+            result.attachments
+          ))) ||
+        [];
+
+      tableRow.push({
+        data: (mediaFiles || [])
+          .map((m) => `<img src="${m.url}" alt="${m.name}" height: 25px; />`)
+          .join("\n"),
         header: false,
       });
     }

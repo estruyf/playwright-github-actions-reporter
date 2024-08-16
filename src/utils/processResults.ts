@@ -76,7 +76,11 @@ export const processResults = async (
             options.showAnnotations,
             options.showTags,
             !!options.showError,
-            options.includeResults as DisplayLevel[]
+            options.includeResults as DisplayLevel[],
+            {
+              azureStorageSAS: options.azureStorageSAS,
+              azureStorageUrl: options.azureStorageUrl,
+            }
           );
 
           if (tableRows.length !== 0) {

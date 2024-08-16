@@ -12,7 +12,7 @@ const config: PlaywrightTestConfig<{}, {}> = {
   retries: process.env.CI ? 2 : 2,
   workers: process.env.CI ? 1 : 1,
   reporter: [
-    // ["list"],
+    // ["json", { outputFile: "results.json" }],
     [
       "./src/index.ts",
       <GitHubActionOptions>{
