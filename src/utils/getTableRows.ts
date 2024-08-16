@@ -141,7 +141,7 @@ export const getTableRows = async (
           .map(
             (
               m
-            ) => `<p align="center"><img src="${m.url}" alt="${m.name}" height="250"></p>
+            ) => `<p align="center"><img src="${m.url}" alt="${m.name}" width="250"></p>
 <p align="center"><b>${m.name}</b></p>`
           )
           .join("\n\n"),
