@@ -139,10 +139,10 @@ export const getTableRows = async (
       tableRow.push({
         data: (mediaFiles || [])
           .map(
-            (m) => `![${m.name}](${m.url})
-          
-<img src="${m.url}" alt="${m.name}" width="25" height="25">
-<p align="center">${m.name}</p>`
+            (
+              m
+            ) => `<p align="center"><img src="${m.url}" alt="${m.name}" height="250"></p>
+<p align="center"><b>${m.name}</b></p>`
           )
           .join("\n\n"),
         header: false,
