@@ -22,4 +22,14 @@ test.describe("Failing test", () => {
 
     expect((await logo.allInnerTexts()).join()).toBe("PYOD");
   });
+
+  test("Make screenshot fail", async () => {
+    await page.goto(
+      `https://www.eliostruyf.com?playwright=margin-left:10px;%20text-transform:%20lowercase;`
+    );
+
+    await expect(page).toHaveScreenshot("layout-mask.png", {
+      mask: [page.locator(`.sidebar__content`)],
+    });
+  });
 });
