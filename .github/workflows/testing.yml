@@ -43,3 +43,6 @@ jobs:
       - name: Run Playwright tests
         run: npx playwright test
         continue-on-error: true
+        env:
+          AZURE_STORAGE_SAS: ${{ secrets.AZURE_STORAGE_SAS }}
+          AZURE_STORAGE_URL: ${{ secrets.AZURE_STORAGE_URL }}
