@@ -141,9 +141,10 @@ export const getTableRows = async (
           .map(
             (m) => `![${m.name}](${m.url})
           
-**${m.name}**`
+<img src="${m.url}" alt="${m.name}" width="25" height="25">
+<p align="center">${m.name}</p>`
           )
-          .join("\n"),
+          .join("\n\n"),
         header: false,
       });
     }
