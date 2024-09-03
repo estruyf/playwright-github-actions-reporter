@@ -2,6 +2,10 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.9.2]
+
+- [#20](https://github.com/estruyf/playwright-github-actions-reporter/issues/20): Added `GitHubActionOptions` as export
+
 ## [1.9.1]
 
 - [#20](https://github.com/estruyf/playwright-github-actions-reporter/issues/20): Add declaration file to the package

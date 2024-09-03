@@ -9,6 +9,7 @@ import type {
 } from "@playwright/test/reporter";
 import { processResults } from "./utils/processResults";
 import { GitHubActionOptions } from "./models";
+export { GitHubActionOptions } from "./models";
 
 class GitHubAction implements Reporter {
   private suite: Suite | undefined;
