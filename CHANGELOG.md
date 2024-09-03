@@ -2,6 +2,10 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.9.1]
+
+- [#20](https://github.com/estruyf/playwright-github-actions-reporter/issues/20): Add declaration file to the package
+
 ## [1.9.0]
 
 - [#17](https://github.com/estruyf/playwright-github-actions-reporter/issues/17): Added the ability to define which types of test results should be shown in the summary

@@ -20,7 +20,7 @@ const config: PlaywrightTestConfig<{}, {}> = {
         useDetails: false,
         showError: true,
         quiet: false,
-        report: ["fail", "flaky", "skipped"],
+        includeResults: ["fail", "flaky", "skipped"],
       },
     ],
     [
@@ -30,7 +30,7 @@ const config: PlaywrightTestConfig<{}, {}> = {
         useDetails: false,
         showError: true,
         quiet: false,
-        report: ["pass", "skipped"],
+        includeResults: ["pass", "skipped"],
       },
     ],
     [
@@ -39,7 +39,7 @@ const config: PlaywrightTestConfig<{}, {}> = {
         title: "Reporter (details: true, report: fail, flaky, skipped)",
         useDetails: true,
         quiet: true,
-        report: ["fail", "flaky", "skipped"],
+        includeResults: ["fail", "flaky", "skipped"],
       },
     ],
   ],

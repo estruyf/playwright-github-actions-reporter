@@ -31,8 +31,8 @@ class GitHubAction implements Reporter {
       this.options.showTags = true;
     }
 
-    if (typeof options.report === "undefined") {
-      this.options.report = ["fail", "flaky", "pass", "skipped"];
+    if (typeof options.includeResults === "undefined") {
+      this.options.includeResults = ["fail", "flaky", "pass", "skipped"];
     }
 
     if (process.env.NODE_ENV === "development") {
