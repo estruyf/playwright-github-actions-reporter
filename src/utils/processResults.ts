@@ -74,12 +74,11 @@ export const processResults = async (
           for (const test of tests[filePath]) {
             for (const result of test.results) {
               if (result.status === "failed") {
-                summary.addRaw(`<pre>${result.error?.message}</pre>`);
-                const screenshotPath = getFailureScreenshot(test, result);
-                if (screenshotPath !== "No failure screenshot available.") {
+                const screenshotBase64 = await getFailureScreenshot(test, result);
+                if (screenshotBase64 !== "No failure screenshot available.") {
                   summary.addDetails(
                     `Error Screenshot for ${test.title}`,
-                    `<img src="${screenshotPath}" alt="Error Screenshot for ${test.title}" />`
+                    `<img src="data:image/png;base64,${screenshotBase64}" alt="Error Screenshot for ${test.title}" />`
                   );
                 }
               }
@@ -101,12 +100,11 @@ export const processResults = async (
             for (const test of tests[filePath]) {
               for (const result of test.results) {
                 if (result.status === "failed") {
-                  summary.addRaw(`<pre>${result.error?.message}</pre>`);
-                  const screenshotPath = getFailureScreenshot(test, result);
-                  if (screenshotPath !== "No failure screenshot available.") {
+                  const screenshotBase64 = await getFailureScreenshot(test, result);
+                  if (screenshotBase64 !== "No failure screenshot available.") {
                     summary.addDetails(
                       `Error Screenshot for ${test.title}`,
-                      `<img src="${screenshotPath}" alt="Error Screenshot for ${test.title}" />`
+                      `<img src="data:image/png;base64,${screenshotBase64}" alt="Error Screenshot for ${test.title}" />`
                     );
                   }
                 }

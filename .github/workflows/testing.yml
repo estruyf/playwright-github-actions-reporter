@@ -42,3 +42,4 @@ jobs:
       - name: Run Playwright tests
         run: npx playwright test
         continue-on-error: true
+        
