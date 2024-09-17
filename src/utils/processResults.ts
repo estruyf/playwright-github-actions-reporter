@@ -11,6 +11,7 @@ import { getSummaryDetails } from "./getSummaryDetails";
 import { getTestsPerFile } from "./getTestsPerFile";
 import { getTestHeading } from "./getTestHeading";
 import { DisplayLevel, GitHubActionOptions } from "../models";
+import { getFailureScreenshot } from "./getFailureScreenshot";
 
 export const processResults = async (
   suite: Suite | undefined,
@@ -62,7 +63,6 @@ export const processResults = async (
           if (!content) {
             continue;
           }
-
           // Check if there are any failed tests
           const testStatusIcon = getSuiteStatusIcon(tests[filePath]);
 
@@ -70,6 +70,21 @@ export const processResults = async (
             `${testStatusIcon} ${getTestHeading(fileName, os, project)}`,
             content
           );
+
+          for (const test of tests[filePath]) {
+            for (const result of test.results) {
+              if (result.status === "failed") {
+                summary.addRaw(`<pre>${result.error?.message}</pre>`);
+                const screenshotPath = getFailureScreenshot(test, result);
+                if (screenshotPath !== "No failure screenshot available.") {
+                  summary.addDetails(
+                    `Error Screenshot for ${test.title}`,
+                    `<img src="${screenshotPath}" alt="Error Screenshot for ${test.title}" />`
+                  );
+                }
+              }
+            }
+          }
         } else {
           const tableRows = await getTableRows(
             tests[filePath],
@@ -82,6 +97,21 @@ export const processResults = async (
           if (tableRows.length !== 0) {
             summary.addHeading(getTestHeading(fileName, os, project), 2);
             summary.addTable(tableRows);
+
+            for (const test of tests[filePath]) {
+              for (const result of test.results) {
+                if (result.status === "failed") {
+                  summary.addRaw(`<pre>${result.error?.message}</pre>`);
+                  const screenshotPath = getFailureScreenshot(test, result);
+                  if (screenshotPath !== "No failure screenshot available.") {
+                    summary.addDetails(
+                      `Error Screenshot for ${test.title}`,
+                      `<img src="${screenshotPath}" alt="Error Screenshot for ${test.title}" />`
+                    );
+                  }
+                }
+              }
+            }
           }
         }
       }
