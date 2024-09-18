@@ -11,6 +11,7 @@ import { getSummaryDetails } from "./getSummaryDetails";
 import { getTestsPerFile } from "./getTestsPerFile";
 import { getTestHeading } from "./getTestHeading";
 import { DisplayLevel, GitHubActionOptions } from "../models";
+import { getFailureScreenshot } from "./getFailureScreenshot";
 
 export const processResults = async (
   suite: Suite | undefined,
@@ -25,6 +26,8 @@ export const processResults = async (
     process.env[SUMMARY_ENV_VAR] = summaryFile;
     process.env.GITHUB_ACTIONS = "true";
   }
+
+  const screenshotsDir = join(__dirname, "../../unzipped-screenshots/test-results/screenshots");
 
   if (process.env.GITHUB_ACTIONS && suite) {
     const os = process.platform;
@@ -62,7 +65,6 @@ export const processResults = async (
           if (!content) {
             continue;
           }
-
           // Check if there are any failed tests
           const testStatusIcon = getSuiteStatusIcon(tests[filePath]);
 
@@ -70,6 +72,22 @@ export const processResults = async (
             `${testStatusIcon} ${getTestHeading(fileName, os, project)}`,
             content
           );
+
+          for (const test of tests[filePath]) {
+            for (const result of test.results) {
+              if (result.status === "failed") {
+                const screenshotPath = getFailureScreenshot(test, result);
+                if (screenshotPath !== "No failure screenshot available.") {
+                  const screenshotFileName = basename(screenshotPath);
+                  const screenshotUrl = `${process.env.GITHUB_SERVER_URL}/${process.env.GITHUB_REPOSITORY}/actions/runs/${process.env.GITHUB_RUN_ID}/artifacts/playwright-screenshots/contents/test-results/screenshots/${screenshotFileName}`;
+                  summary.addDetails(
+                    `Error Screenshot for ${test.title}`,
+                    `<img src="${screenshotUrl}" alt="Error Screenshot for ${test.title}" />`
+                  );
+                }
+              }
+            }
+          }
         } else {
           const tableRows = await getTableRows(
             tests[filePath],
@@ -82,6 +100,22 @@ export const processResults = async (
           if (tableRows.length !== 0) {
             summary.addHeading(getTestHeading(fileName, os, project), 2);
             summary.addTable(tableRows);
+
+            for (const test of tests[filePath]) {
+              for (const result of test.results) {
+                if (result.status === "failed") {
+                  const screenshotPath = getFailureScreenshot(test, result);
+                  if (screenshotPath !== "No failure screenshot available.") {
+                    const screenshotFileName = basename(screenshotPath);
+                    const screenshotUrl = `${process.env.GITHUB_SERVER_URL}/${process.env.GITHUB_REPOSITORY}/actions/runs/${process.env.GITHUB_RUN_ID}/artifacts/playwright-screenshots/contents/test-results/screenshots/${screenshotFileName}`;
+                    summary.addDetails(
+                      `Error Screenshot for ${test.title}`,
+                      `<img src="${screenshotUrl}" alt="Error Screenshot for ${test.title}" />`
+                    );
+                  }
+                }
+              }
+            }
           }
         }
       }

@@ -5,3 +5,4 @@ test-results
 summary.html
 playwright-report
 coverage
+.idea
