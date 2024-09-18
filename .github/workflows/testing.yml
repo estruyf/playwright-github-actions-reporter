@@ -42,4 +42,48 @@ jobs:
       - name: Run Playwright tests
         run: npx playwright test
         continue-on-error: true
+
+      - name: List test-results directory
+        run: ls -R test-results
+
+      - name: Upload Playwright test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-test-results
+          path: test-results/
+          retention-days: 1
+
+      - name: Upload Playwright screenshots
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-screenshots
+          path: test-results/screenshots/
+          retention-days: 1     
+
+      - name: Download Playwright test results
+        uses: actions/download-artifact@v3
+        with:
+          name: playwright-test-results
+          path: downloaded-test-results
         
+      - name: Download Playwright screenshots
+        uses: actions/download-artifact@v3
+        with:
+          name: playwright-screenshots
+          path: downloaded-screenshots
+
+      - name: Unzip Playwright test results
+        run: unzip downloaded-test/playwright-test-results.zip -d unzipped-test-results
+
+      - name: Unzip Playwright screenshots
+        run: unzip downloaded-screenshots/playwright-screenshots.zip -d unzipped-screenshots
+
+      - name: Upload Summary
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-summary
+          path: summary.html
+          retention-days: 1

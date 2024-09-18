@@ -27,6 +27,8 @@ export const processResults = async (
     process.env.GITHUB_ACTIONS = "true";
   }
 
+  const screenshotsDir = join(__dirname, "../../unzipped-screenshots/test-results/screenshots");
+
   if (process.env.GITHUB_ACTIONS && suite) {
     const os = process.platform;
     const summary = core.summary;
@@ -74,11 +76,13 @@ export const processResults = async (
           for (const test of tests[filePath]) {
             for (const result of test.results) {
               if (result.status === "failed") {
-                const screenshotBase64 = await getFailureScreenshot(test, result);
-                if (screenshotBase64 !== "No failure screenshot available.") {
+                const screenshotPath = getFailureScreenshot(test, result);
+                if (screenshotPath !== "No failure screenshot available.") {
+                  const screenshotFileName = basename(screenshotPath);
+                  const screenshotUrl = `${process.env.GITHUB_SERVER_URL}/${process.env.GITHUB_REPOSITORY}/actions/runs/${process.env.GITHUB_RUN_ID}/artifacts/playwright-screenshots/contents/test-results/screenshots/${screenshotFileName}`;
                   summary.addDetails(
                     `Error Screenshot for ${test.title}`,
-                    `<img src="data:image/png;base64,${screenshotBase64}" alt="Error Screenshot for ${test.title}" />`
+                    `<img src="${screenshotUrl}" alt="Error Screenshot for ${test.title}" />`
                   );
                 }
               }
@@ -100,11 +104,13 @@ export const processResults = async (
             for (const test of tests[filePath]) {
               for (const result of test.results) {
                 if (result.status === "failed") {
-                  const screenshotBase64 = await getFailureScreenshot(test, result);
-                  if (screenshotBase64 !== "No failure screenshot available.") {
+                  const screenshotPath = getFailureScreenshot(test, result);
+                  if (screenshotPath !== "No failure screenshot available.") {
+                    const screenshotFileName = basename(screenshotPath);
+                    const screenshotUrl = `${process.env.GITHUB_SERVER_URL}/${process.env.GITHUB_REPOSITORY}/actions/runs/${process.env.GITHUB_RUN_ID}/artifacts/playwright-screenshots/contents/test-results/screenshots/${screenshotFileName}`;
                     summary.addDetails(
                       `Error Screenshot for ${test.title}`,
-                      `<img src="data:image/png;base64,${screenshotBase64}" alt="Error Screenshot for ${test.title}" />`
+                      `<img src="${screenshotUrl}" alt="Error Screenshot for ${test.title}" />`
                     );
                   }
                 }
