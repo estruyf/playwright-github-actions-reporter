@@ -94,21 +94,17 @@ export const getHtmlTable = async (
       testRows.push(`<td>${convert.toHtml(error)}</td>`);
 
       if (hasBlobService) {
-        const mediaFiles = await processAttachments(
-          blobService,
-          result.attachments
-        );
+        const mediaFiles =
+          (await processAttachments(blobService, result.attachments)) || [];
 
-        if (mediaFiles) {
-          const mediaLinks = mediaFiles
-            .map(
-              (m) =>
-                `<p align="center"><img src="${m.url}" alt="${m.name}" width="250"></p>
+        const mediaLinks = mediaFiles
+          .map(
+            (m) =>
+              `<p align="center"><img src="${m.url}" alt="${m.name}" width="250"></p>
 <p align="center"><b>${m.name}</b></p>`
-            )
-            .join(", ");
-          testRows.push(`<td>${mediaLinks}</td>`);
-        }
+          )
+          .join(", ");
+        testRows.push(`<td>${mediaLinks}</td>`);
       }
     }
     testRows.push(`</tr>`);

@@ -132,10 +132,8 @@ export const getTableRows = async (
       });
 
       if (hasBlobService) {
-        const mediaFiles = await processAttachments(
-          blobService,
-          result.attachments
-        );
+        const mediaFiles =
+          (await processAttachments(blobService, result.attachments)) || [];
 
         tableRow.push({
           data: (mediaFiles || [])
