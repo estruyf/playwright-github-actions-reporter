@@ -41,6 +41,7 @@ const config: PlaywrightTestConfig<{}, {}> = {
       <GitHubActionOptions>{
         title: "Reporter (details: true, report: fail, flaky, skipped)",
         useDetails: true,
+        showError: true,
         quiet: true,
         includeResults: ["fail", "flaky", "skipped"],
       },
