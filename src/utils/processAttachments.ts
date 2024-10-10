@@ -1,11 +1,14 @@
 import { parse } from "path";
 import { readFile } from "fs/promises";
+import { BlobService } from "../models";
 
 export const processAttachments = async (
-  azureContainerUrl?: string,
-  azureContainerSas?: string,
+  blobService: BlobService,
   attachments?: { name: string; path?: string; contentType: string }[]
 ) => {
+  const azureContainerUrl = blobService.azure?.azureStorageUrl;
+  const azureContainerSas = blobService.azure?.azureStorageSAS;
+
   if (
     !attachments ||
     attachments.length === 0 ||
