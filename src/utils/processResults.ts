@@ -10,7 +10,7 @@ import { getSummaryTitle } from "./getSummaryTitle";
 import { getSummaryDetails } from "./getSummaryDetails";
 import { getTestsPerFile } from "./getTestsPerFile";
 import { getTestHeading } from "./getTestHeading";
-import { DisplayLevel, GitHubActionOptions } from "../models";
+import { BlobService, DisplayLevel, GitHubActionOptions } from "../models";
 
 export const processResults = async (
   suite: Suite | undefined,
@@ -29,6 +29,14 @@ export const processResults = async (
   if (process.env.GITHUB_ACTIONS && suite) {
     const os = process.platform;
     const summary = core.summary;
+
+    let blobService: BlobService | undefined = undefined;
+    if (options.azureStorageSAS && options.azureStorageUrl) {
+      blobService = {};
+      blobService.azure = {};
+      blobService.azure.azureStorageSAS = options.azureStorageSAS;
+      blobService.azure.azureStorageUrl = options.azureStorageUrl;
+    }
 
     const summaryTitle = getSummaryTitle(options.title);
     if (summaryTitle) {
@@ -56,7 +64,8 @@ export const processResults = async (
             options.showAnnotations,
             options.showTags,
             !!options.showError,
-            options.includeResults as DisplayLevel[]
+            options.includeResults as DisplayLevel[],
+            blobService
           );
 
           if (!content) {
@@ -76,7 +85,8 @@ export const processResults = async (
             options.showAnnotations,
             options.showTags,
             !!options.showError,
-            options.includeResults as DisplayLevel[]
+            options.includeResults as DisplayLevel[],
+            blobService
           );
 
           if (tableRows.length !== 0) {

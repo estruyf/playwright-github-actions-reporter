@@ -36,7 +36,7 @@ class GitHubAction implements Reporter {
       this.options.includeResults = ["fail", "flaky", "pass", "skipped"];
     }
 
-    if (process.env.NODE_ENV === "development") {
+    if (process.env.NODE_ENV === "development" || options.debug) {
       console.log(`Using development mode`);
       console.log(`Options: ${JSON.stringify(this.options, null, 2)}`);
     }

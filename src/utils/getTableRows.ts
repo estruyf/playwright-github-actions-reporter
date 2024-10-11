@@ -7,16 +7,19 @@ import { getTestTags } from "./getTestTags";
 import { getTestAnnotations } from "./getTestAnnotations";
 import { getTestDuration } from "./getTestDuration";
 import { getTestStatusIcon } from "./getTestStatusIcon";
-import { DisplayLevel } from "../models";
+import { BlobService, DisplayLevel } from "../models";
+import { processAttachments } from "./processAttachments";
 
 export const getTableRows = async (
   tests: TestCase[],
   showAnnotations: boolean,
   showTags: boolean,
   showError: boolean,
-  displayLevel: DisplayLevel[]
+  displayLevel: DisplayLevel[],
+  blobService?: BlobService
 ): Promise<SummaryTableRow[]> => {
   const convert = new Convert();
+  const hasBlobService = blobService && blobService.azure;
 
   const tableHeaders = [
     {
@@ -49,6 +52,13 @@ export const getTableRows = async (
       data: "Error",
       header: true,
     });
+
+    if (hasBlobService) {
+      tableHeaders.push({
+        data: "Attachments",
+        header: true,
+      });
+    }
   }
 
   const tableRows: SummaryTableRow[] = [];
@@ -70,6 +80,10 @@ export const getTableRows = async (
       }
       if (showError) {
         colLength++;
+
+        if (hasBlobService) {
+          colLength++;
+        }
       }
 
       const annotations = await getTestAnnotations(test);
@@ -116,6 +130,23 @@ export const getTableRows = async (
         data: convert.toHtml(error),
         header: false,
       });
+
+      if (hasBlobService) {
+        const mediaFiles =
+          (await processAttachments(blobService, result.attachments)) || [];
+
+        tableRow.push({
+          data: (mediaFiles || [])
+            .map(
+              (
+                m
+              ) => `<p align="center"><img src="${m.url}" alt="${m.name}" width="250"></p>
+<p align="center"><b>${m.name}</b></p>`
+            )
+            .join("\n\n"),
+          header: false,
+        });
+      }
     }
 
     tableRows.push(tableRow);
