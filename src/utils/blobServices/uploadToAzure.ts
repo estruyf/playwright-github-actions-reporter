@@ -23,10 +23,17 @@ export const uploadToAzure = async (
     for (const attachment of attachments) {
       try {
         if (attachment.path) {
+          const githubRunId = process.env.GITHUB_RUN_ID || "";
           const parsedFile = parse(attachment.path);
-          const fileUrl = `${azureContainerUrl}/${
-            parsedFile.name
-          }_${Date.now()}${parsedFile.ext}`;
+          let fileUrl = `${azureContainerUrl}`;
+
+          if (githubRunId) {
+            fileUrl = `${fileUrl}/${githubRunId}`;
+          }
+
+          fileUrl = `${fileUrl}/${parsedFile.name}_${Date.now()}${
+            parsedFile.ext
+          }`;
 
           const putResponse = await fetch(`${fileUrl}?${azureContainerSas}`, {
             method: "PUT",

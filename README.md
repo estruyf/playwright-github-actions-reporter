@@ -92,7 +92,7 @@ Follow the next steps to get the URL and SAS token:
 - Create a new container. Set the access level to **Blob (anonymous read access for blobs only)**
 - Open the container, and click on **Shared access signature**
 - Create a new shared access signature with the following settings:
-  - Allowed permissions: **Add**
+  - Allowed permissions: **Create**
   - Expiry time: **Custom** (set the time you want)
   - Allowed protocols: **HTTPS only**
 - Click on **Generate SAS and URL**
