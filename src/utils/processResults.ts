@@ -38,6 +38,10 @@ export const processResults = async (
       blobService.azure.azureStorageUrl = options.azureStorageUrl;
     }
 
+    if (options.showArtifactsLink) {
+      summary.addLink("Go to artifacts", "#artifacts");
+    }
+
     const summaryTitle = getSummaryTitle(options.title);
     if (summaryTitle) {
       summary.addHeading(summaryTitle, 1);

@@ -10,6 +10,9 @@ export interface GitHubActionOptions {
   includeResults?: DisplayLevel[];
   debug?: boolean;
 
+  // Useful links
+  showArtifactsLink?: boolean;
+
   // Azure Storage
   azureStorageUrl?: string;
   azureStorageSAS?: string;

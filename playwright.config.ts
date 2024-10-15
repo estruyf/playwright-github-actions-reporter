@@ -22,6 +22,7 @@ const config: PlaywrightTestConfig<{}, {}> = {
         quiet: false,
         includeResults: ["fail", "flaky", "skipped"],
         debug: true,
+        showArtifactsLink: true,
         azureStorageSAS: process.env.AZURE_STORAGE_SAS,
         azureStorageUrl: process.env.AZURE_STORAGE_URL,
       },

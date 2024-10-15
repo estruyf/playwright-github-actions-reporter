@@ -40,6 +40,7 @@ The reporter supports the following configuration options:
 | showError | Show error message in summary | `false` |
 | includeResults | Define which types of test results should be shown in the summary | `['pass', 'skipped', 'fail', 'flaky']` |
 | quiet | Do not show any output in the console | `false` |
+| showArtifactsLink | Show a link to the artifacts section in the workflow overview | `false` |
 | azureStorageUrl | URL to the Azure Storage account where the screenshots are stored (optional) | `""` |
 | azureStorageSAS | Shared Access Signature (SAS) token to access the Azure Storage account (optional) | `""` |
 
