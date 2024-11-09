@@ -1,5 +1,5 @@
 {
-  "name": "@estruyf/github-actions-reporter",
+  "name": "@midleman/pw-github-actions-reporter",
   "version": "1.9.2",
   "description": "GitHub Actions reporter for Playwright",
   "main": "dist/index.js",
@@ -10,10 +10,16 @@
     "test:jest": "jest --coverage --coverageDirectory=../coverage"
   },
   "author": "Elio Struyf <elio@struyfconsulting.be>",
+  "maintainers": [
+    {
+      "name": "Marie Idleman",
+      "email": "marie@iamfurious.com"
+    }
+  ],
   "license": "MIT",
-  "homepage": "https://github.com/estruyf/playwright-github-actions-reporter",
+  "homepage": "https://github.com/midleman/pw-github-actions-reporter",
   "bugs": {
-    "url": "https://github.com/estruyf/playwright-github-actions-reporter/issues"
+    "url": "https://github.com/midleman/pw-github-actions-reporter/issues"
   },
   "funding": {
     "type": "github",
@@ -21,7 +27,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+ssh://git@github.com/estruyf/playwright-github-actions-reporter.git"
+    "url": "git+ssh://git@github.com/midleman/pw-github-actions-reporter"
   },
   "keywords": [
     "playwright",
