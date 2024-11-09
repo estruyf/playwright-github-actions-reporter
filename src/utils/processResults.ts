@@ -36,7 +36,7 @@ export const processResults = async (
     // }
 
     const headerText = getSummaryDetails(suite);
-    summary.addRaw(headerText.join(` | `));
+    summary.addRaw(headerText.join(` &nbsp;|&nbsp; `));
 
     // if (options.useDetails) {
     //   summary.addSeparator();
