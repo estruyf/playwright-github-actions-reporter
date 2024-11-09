@@ -7,7 +7,7 @@ describe("getSummaryDetails", () => {
       allTests: () => [{}, {}, {}],
     };
     const result = getSummaryDetails(suite as any);
-    expect(result).toContain("Total tests: 3");
+    expect(result).toContain("🧪 Total: 3");
     expect(result.length).toBe(1);
   });
 
@@ -27,7 +27,7 @@ describe("getSummaryDetails", () => {
       allTests: () => [{}, {}, {}],
     };
     const result = getSummaryDetails(suite as any);
-    expect(result).toContain("Passed: 3");
+    expect(result).toContain("✅ Pass: 3");
     expect(result.length).toBe(2);
   });
 
@@ -47,7 +47,7 @@ describe("getSummaryDetails", () => {
       allTests: () => [{}, {}, {}],
     };
     const result = getSummaryDetails(suite as any);
-    expect(result).toContain("Failed: 1");
+    expect(result).toContain("❌ Fail: 1");
     expect(result.length).toBe(3);
   });
 
@@ -64,7 +64,7 @@ describe("getSummaryDetails", () => {
       allTests: () => [{}, {}],
     };
     const result = getSummaryDetails(suite as any);
-    expect(result).toContain("Skipped: 2");
+    expect(result).toContain("⏭️ Skip: 2");
     expect(result.length).toBe(2);
   });
 
@@ -78,7 +78,7 @@ describe("getSummaryDetails", () => {
       allTests: () => [{}],
     };
     const result = getSummaryDetails(suite as any);
-    expect(result).toContain("Timed Out: 1");
+    expect(result).toContain("🕐 Time Out: 1");
     expect(result.length).toBe(2);
   });
 
