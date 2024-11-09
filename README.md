@@ -5,9 +5,9 @@ This action reports test results from Playwright to GitHub summaries.
 ## Installation
 
 Install from npm:
-  
+
 ```bash
-npm install @estruyf/github-actions-reporter
+npm install @midleman/github-actions-reporter
 ```
 
 ## Usage
@@ -15,13 +15,10 @@ npm install @estruyf/github-actions-reporter
 You can configure the reporter by adding it to the `playwright.config.js` file:
 
 ```ts
-import { defineConfig } from '@playwright/test';
+import { defineConfig } from "@playwright/test";
 
 export default defineConfig({
-  reporter: [
-    ['list'],
-    ['@estruyf/github-actions-reporter']
-  ],
+  reporter: [["list"], ["@midleman/github-actions-reporter"]],
 });
 ```
 
@@ -31,29 +28,31 @@ export default defineConfig({
 
 The reporter supports the following configuration options:
 
-| Option | Description | Default |
-| --- | --- | --- |
-| title | Title of the report. Use an empty string (`""`) to remove the heading.  | `Test results` |
-| useDetails | Use details in summary which creates expandable content | `false` |
-| showAnnotations | Show annotations from tests | `true` |
-| showTags | Show tags from tests | `true` |
-| showError | Show error message in summary | `false` |
-| includeResults | Define which types of test results should be shown in the summary | `['pass', 'skipped', 'fail', 'flaky']` |
-| quiet | Do not show any output in the console | `false` |
+| Option          | Description                                                       | Default                                |
+| --------------- | ----------------------------------------------------------------- | -------------------------------------- |
+| useDetails      | Use details in summary which creates expandable content           | `false`                                |
+| showAnnotations | Show annotations from tests                                       | `true`                                 |
+| showTags        | Show tags from tests                                              | `true`                                 |
+| showError       | Show error message in summary                                     | `false`                                |
+| includeResults  | Define which types of test results should be shown in the summary | `['pass', 'skipped', 'fail', 'flaky']` |
+| quiet           | Do not show any output in the console                             | `false`                                |
 
 To use these option, you can update the reporter configuration:
 
 ```ts
-import { defineConfig } from '@playwright/test';
-import type { GitHubActionOptions } from '@estruyf/github-actions-reporter';
+import { defineConfig } from "@playwright/test";
+import type { GitHubActionOptions } from "@estruyf/github-actions-reporter";
 
 export default defineConfig({
   reporter: [
-    ['@estruyf/github-actions-reporter', <GitHubActionOptions>{
-      title: 'My custom title',
-      useDetails: true,
-      showError: true
-    }]
+    [
+      "@midleman/github-actions-reporter",
+      <GitHubActionOptions>{
+        title: "My custom title",
+        useDetails: true,
+        showError: true,
+      },
+    ],
   ],
 });
 ```
