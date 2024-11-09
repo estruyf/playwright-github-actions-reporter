@@ -34,6 +34,7 @@ export const processResults = async (
     if (summaryTitle) {
       summary.addHeading(summaryTitle, 1);
     }
+    console.log(summaryTitle);
 
     const headerText = getSummaryDetails(suite);
     summary.addRaw(headerText.join(` &nbsp;|&nbsp; `));
