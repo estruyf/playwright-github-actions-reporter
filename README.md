@@ -2,12 +2,24 @@
 
 This action reports test results from Playwright to GitHub summaries.
 
-## Installation
+This repository is a fork with enhancements focused on result formatting. Key differences include:
 
-Install from npm:
+- Minimal Header: The header line has been removed for a cleaner look.
+- Emoji Summary: Summaries now feature emojis for improved readability.
+
+## Source repo
+
+![This fork](./assets/midleman-original.png)
+
+## This fork
+
+![This fork](./assets/midleman-example.png)
+
+## Installation
 
 ```bash
 npm install @midleman/github-actions-reporter
+yarn add @midleman/github-actions-reporter --dev
 ```
 
 ## Usage
@@ -28,14 +40,15 @@ export default defineConfig({
 
 The reporter supports the following configuration options:
 
-| Option          | Description                                                       | Default                                |
-| --------------- | ----------------------------------------------------------------- | -------------------------------------- |
-| useDetails      | Use details in summary which creates expandable content           | `false`                                |
-| showAnnotations | Show annotations from tests                                       | `true`                                 |
-| showTags        | Show tags from tests                                              | `true`                                 |
-| showError       | Show error message in summary                                     | `false`                                |
-| includeResults  | Define which types of test results should be shown in the summary | `['pass', 'skipped', 'fail', 'flaky']` |
-| quiet           | Do not show any output in the console                             | `false`                                |
+| Option          | Description                                                            | Default                                |
+| --------------- | ---------------------------------------------------------------------- | -------------------------------------- |
+| title           | Title of the report. Use an empty string (`""`) to remove the heading. | `Test results`                         |
+| useDetails      | Use details in summary which creates expandable content                | `false`                                |
+| showAnnotations | Show annotations from tests                                            | `true`                                 |
+| showTags        | Show tags from tests                                                   | `true`                                 |
+| showError       | Show error message in summary                                          | `false`                                |
+| includeResults  | Define which types of test results should be shown in the summary      | `['pass', 'skipped', 'fail', 'flaky']` |
+| quiet           | Do not show any output in the console                                  | `false`                                |
 
 To use these option, you can update the reporter configuration:
 
