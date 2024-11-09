@@ -30,17 +30,17 @@ export const processResults = async (
     const os = process.platform;
     const summary = core.summary;
 
-    const summaryTitle = getSummaryTitle(options.title);
-    if (summaryTitle) {
-      summary.addHeading(summaryTitle, 1);
-    }
+    // const summaryTitle = getSummaryTitle(options.title);
+    // if (summaryTitle) {
+    //   summary.addHeading(summaryTitle, 1);
+    // }
 
     const headerText = getSummaryDetails(suite);
-    summary.addRaw(headerText.join(` - `));
+    summary.addRaw(headerText.join(` | `));
 
-    if (options.useDetails) {
-      summary.addSeparator();
-    }
+    // if (options.useDetails) {
+    //   summary.addSeparator();
+    // }
 
     for (const crntSuite of suite?.suites) {
       const project = crntSuite.project();
