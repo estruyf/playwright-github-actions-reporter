@@ -56,7 +56,8 @@ export const processResults = async (
             options.showAnnotations,
             options.showTags,
             !!options.showError,
-            options.includeResults as DisplayLevel[]
+            options.includeResults as DisplayLevel[],
+            options.showAnnotationsInColumn,
           );
 
           if (!content) {
@@ -76,7 +77,8 @@ export const processResults = async (
             options.showAnnotations,
             options.showTags,
             !!options.showError,
-            options.includeResults as DisplayLevel[]
+            options.includeResults as DisplayLevel[],
+            options.showAnnotationsInColumn,
           );
 
           if (tableRows.length !== 0) {

@@ -14,7 +14,8 @@ export const getTableRows = async (
   showAnnotations: boolean,
   showTags: boolean,
   showError: boolean,
-  displayLevel: DisplayLevel[]
+  displayLevel: DisplayLevel[],
+  showAnnotationsInColumn: boolean = false,
 ): Promise<SummaryTableRow[]> => {
   const convert = new Convert();
 
@@ -44,6 +45,13 @@ export const getTableRows = async (
     });
   }
 
+  if (showAnnotations && showAnnotationsInColumn){
+    tableHeaders.push({
+      data: "Annotations",
+      header: true,
+    });
+  }
+
   if (showError) {
     tableHeaders.push({
       data: "Error",
@@ -63,7 +71,7 @@ export const getTableRows = async (
       continue;
     }
 
-    if (showAnnotations && test.annotations) {
+    if (showAnnotations && !showAnnotationsInColumn && test.annotations) {
       let colLength = 4;
       if (showTags) {
         colLength++;
@@ -108,6 +116,21 @@ export const getTableRows = async (
         data: getTestTags(test),
         header: false,
       });
+    }
+
+    if(showAnnotations && showAnnotationsInColumn && test.annotations) {
+      const annotations = await getTestAnnotations(test);
+      if (annotations) {
+        tableRow.push({
+          data: annotations,
+          header: false,
+        });
+      }else{
+        tableRow.push({
+          data: "",
+          header: false,
+        });
+      }
     }
 
     if (showError) {

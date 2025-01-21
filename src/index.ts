@@ -17,6 +17,7 @@ class GitHubAction implements Reporter {
   constructor(
     private options: GitHubActionOptions = {
       showAnnotations: true,
+      showAnnotationsInColumn: false,
       showTags: true,
       quiet: false,
     }
@@ -26,6 +27,9 @@ class GitHubAction implements Reporter {
     // Set default options
     if (typeof options.showAnnotations === "undefined") {
       this.options.showAnnotations = true;
+    }
+    if (typeof options.showAnnotationsInColumn === "undefined") {
+      this.options.showAnnotationsInColumn = false;
     }
 
     if (typeof options.showTags === "undefined") {

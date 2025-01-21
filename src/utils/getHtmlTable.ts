@@ -13,7 +13,8 @@ export const getHtmlTable = async (
   showAnnotations: boolean,
   showTags: boolean,
   showError: boolean,
-  displayLevel: DisplayLevel[]
+  displayLevel: DisplayLevel[],
+  showAnnotationsInColumn: boolean = false,
 ): Promise<string | undefined> => {
   const convert = new Convert();
 
@@ -29,6 +30,9 @@ export const getHtmlTable = async (
   content.push(`<th>Retries</th>`);
   if (showTags) {
     content.push(`<th>Tags</th>`);
+  }
+  if (showAnnotations && showAnnotationsInColumn){
+    content.push(`<th>Annotations</th>`);
   }
   if (showError) {
     content.push(`<th>Error</th>`);
@@ -46,7 +50,7 @@ export const getHtmlTable = async (
       continue;
     }
 
-    if (showAnnotations && test.annotations) {
+    if (showAnnotations && !showAnnotationsInColumn && test.annotations) {
       let colLength = 4;
       if (showTags) {
         colLength++;
@@ -77,7 +81,12 @@ export const getHtmlTable = async (
     if (showTags) {
       testRows.push(`<td>${getTestTags(test)}</td>`);
     }
-
+    if (showAnnotations && showAnnotationsInColumn && test.annotations) {
+      const annotations = await getTestAnnotations(test);
+      if (annotations) {
+        testRows.push(`<td>${annotations}</td>`);
+      }
+    }
     if (showError) {
       const error = result?.error?.message || "";
       testRows.push(`<td>${convert.toHtml(error)}</td>`);
