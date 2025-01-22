@@ -2,6 +2,11 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.10.0]
+
+- Added `showArtifactsLink` property which allows you to show a link to the artifacts section in the workflow overview
+- [#19](https://github.com/estruyf/playwright-github-actions-reporter/issues/19): Added the ability to show image attachments in the summary
+
 ## [1.9.2]
 
 - [#20](https://github.com/estruyf/playwright-github-actions-reporter/issues/20): Added `GitHubActionOptions` as export

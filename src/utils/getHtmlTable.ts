@@ -6,7 +6,8 @@ import { getTestTitle } from "./getTestTitle";
 import { getTestTags } from "./getTestTags";
 import { getTestAnnotations } from "./getTestAnnotations";
 import { getTestDuration } from "./getTestDuration";
-import { DisplayLevel } from "../models";
+import { BlobService, DisplayLevel } from "../models";
+import { processAttachments } from "./processAttachments";
 
 export const getHtmlTable = async (
   tests: TestCase[],
@@ -15,8 +16,10 @@ export const getHtmlTable = async (
   showError: boolean,
   displayLevel: DisplayLevel[],
   showAnnotationsInColumn: boolean = false,
+  blobService?: BlobService
 ): Promise<string | undefined> => {
   const convert = new Convert();
+  const hasBlobService = blobService && blobService.azure;
 
   const content: string[] = [];
 
@@ -36,6 +39,10 @@ export const getHtmlTable = async (
   }
   if (showError) {
     content.push(`<th>Error</th>`);
+
+    if (hasBlobService) {
+      content.push(`<th>Attachments</th>`);
+    }
   }
   content.push(`</tr>`);
   content.push(`</thead>`);
@@ -57,6 +64,10 @@ export const getHtmlTable = async (
       }
       if (showError) {
         colLength++;
+
+        if (hasBlobService) {
+          colLength++;
+        }
       }
 
       const annotations = await getTestAnnotations(test);
@@ -90,6 +101,20 @@ export const getHtmlTable = async (
     if (showError) {
       const error = result?.error?.message || "";
       testRows.push(`<td>${convert.toHtml(error)}</td>`);
+
+      if (hasBlobService) {
+        const mediaFiles =
+          (await processAttachments(blobService, result.attachments)) || [];
+
+        const mediaLinks = mediaFiles
+          .map(
+            (m) =>
+              `<p align="center"><img src="${m.url}" alt="${m.name}" width="250"></p>
+<p align="center"><b>${m.name}</b></p>`
+          )
+          .join(", ");
+        testRows.push(`<td>${mediaLinks}</td>`);
+      }
     }
     testRows.push(`</tr>`);
   }

@@ -5,3 +5,5 @@ test-results
 summary.html
 playwright-report
 coverage
+
+results.json

@@ -12,7 +12,7 @@ const config: PlaywrightTestConfig<{}, {}> = {
   retries: process.env.CI ? 2 : 2,
   workers: process.env.CI ? 1 : 1,
   reporter: [
-    // ["list"],
+    // ["json", { outputFile: "results.json" }],
     [
       "./src/index.ts",
       <GitHubActionOptions>{
@@ -21,6 +21,10 @@ const config: PlaywrightTestConfig<{}, {}> = {
         showError: true,
         quiet: false,
         includeResults: ["fail", "flaky", "skipped"],
+        debug: true,
+        showArtifactsLink: true,
+        azureStorageSAS: process.env.AZURE_STORAGE_SAS,
+        azureStorageUrl: process.env.AZURE_STORAGE_URL,
       },
     ],
     [
@@ -38,8 +42,11 @@ const config: PlaywrightTestConfig<{}, {}> = {
       <GitHubActionOptions>{
         title: "Reporter (details: true, report: fail, flaky, skipped)",
         useDetails: true,
+        showError: true,
         quiet: true,
         includeResults: ["fail", "flaky", "skipped"],
+        azureStorageSAS: process.env.AZURE_STORAGE_SAS,
+        azureStorageUrl: process.env.AZURE_STORAGE_URL,
       },
     ],
   ],
