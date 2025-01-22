@@ -415,4 +415,62 @@ describe("getHtmlTable", () => {
 
     expect(result?.trim()).toEqual(expected.trim());
   });
+
+  it("should return the HTML table with annotations column with no annotation", async () => {
+    const tests: any = [
+      {
+        title: "Test 1",
+        results: [
+          {
+            status: "passed",
+            duration: 1000,
+            retry: 0,
+            error: null,
+          },
+          {
+            status: "failed",
+            duration: 2000,
+            retry: 1,
+            error: {
+              message: "Test failed",
+            },
+          },
+        ],
+      },
+    ];
+
+    const result = await getHtmlTable(
+      tests,
+      true,
+      false,
+      false,
+      defaultDisplayLevel,
+      true
+    );
+
+    const expected = `
+<br>
+<table role="table">
+<thead>
+<tr>
+<th>Test</th>
+<th>Status</th>
+<th>Duration</th>
+<th>Retries</th>
+<th>Annotations</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Test 1</td>
+<td>❌ Fail</td>
+<td>2s</td>
+<td>1</td>
+<td></td>
+</tr>
+</tbody>
+</table>`;
+
+    expect(result?.trim()).toEqual(expected.trim());
+  });
 });

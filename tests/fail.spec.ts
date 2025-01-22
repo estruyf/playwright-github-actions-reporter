@@ -16,7 +16,7 @@ test.describe("Failing test", () => {
     await browser.close();
   });
 
-  test("Test should fail", async () => {
+  test("Test should fail", {annotation: { type: "info", description: "A test check failure.",},},async () => {
     const logo = page.locator(`#logo`);
     await logo.waitFor();
 

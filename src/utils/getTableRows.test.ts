@@ -20,6 +20,8 @@ const tableHeaders = [
   },
 ];
 
+const tableHeadersWithAnnotationColumn = [...tableHeaders,...[{ data: "Annotations", header: true }]];
+
 const defaultDisplayLevel: DisplayLevel[] = [
   "pass",
   "fail",
@@ -415,9 +417,8 @@ describe("getTableRows", () => {
       defaultDisplayLevel,
       true
     );
-    const tableHeadersWithAnnotationColumn = tableHeaders.push({ data: "Annotations", header: true });
     const expected = [
-      tableHeaders,
+      tableHeadersWithAnnotationColumn,
       [
         { data: "Test 1", header: false },
         { data: "✅ Pass", header: false },
@@ -438,6 +439,68 @@ describe("getTableRows", () => {
         { data: "1", header: false },
         {
           data: "<p><strong>doc</strong>: Annotation 3</p>",
+          header: false,
+        },
+      ],
+    ];
+
+    expect(result).toEqual(expected);
+  });
+  it("should return the table rows with annotations in column without annotations", async () => {
+    const tests: any = [
+      {
+        title: "Test 1",
+        results: [
+          {
+            status: "passed",
+            duration: 1000,
+            retry: 0,
+            error: null,
+          },
+        ],
+      },
+      {
+        title: "Test 2",
+        results: [
+          {
+            status: "failed",
+            duration: 2000,
+            retry: 1,
+            error: {
+              message: "Test failed",
+            },
+          },
+        ],
+      },
+    ];
+
+    const result = await getTableRows(
+      tests,
+      true,
+      false,
+      false,
+      defaultDisplayLevel,
+      true
+    );
+    const expected = [
+      tableHeadersWithAnnotationColumn,
+      [
+        { data: "Test 1", header: false },
+        { data: "✅ Pass", header: false },
+        { data: "1s", header: false },
+        { data: "", header: false },
+        {
+          data: "",
+          header: false,
+        },
+      ],
+      [
+        { data: "Test 2", header: false },
+        { data: "❌ Fail", header: false },
+        { data: "2s", header: false },
+        { data: "1", header: false },
+        {
+          data: "",
           header: false,
         },
       ],

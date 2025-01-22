@@ -92,10 +92,12 @@ export const getHtmlTable = async (
     if (showTags) {
       testRows.push(`<td>${getTestTags(test)}</td>`);
     }
-    if (showAnnotations && showAnnotationsInColumn && test.annotations) {
+    if (showAnnotations && showAnnotationsInColumn) {
       const annotations = await getTestAnnotations(test);
       if (annotations) {
         testRows.push(`<td>${annotations}</td>`);
+      }else{
+        testRows.push(`<td></td>`);
       }
     }
     if (showError) {

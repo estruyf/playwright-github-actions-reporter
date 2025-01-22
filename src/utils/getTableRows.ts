@@ -132,7 +132,7 @@ export const getTableRows = async (
       });
     }
 
-    if(showAnnotations && showAnnotationsInColumn && test.annotations) {
+    if(showAnnotations && showAnnotationsInColumn) {
       const annotations = await getTestAnnotations(test);
       if (annotations) {
         tableRow.push({

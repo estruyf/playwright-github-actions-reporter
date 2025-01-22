@@ -36,7 +36,7 @@ The reporter supports the following configuration options:
 | title | Title of the report. Use an empty string (`""`) to remove the heading.  | `Test results` |
 | useDetails | Use details in summary which creates expandable content | `false` |
 | showAnnotations | Show annotations from tests | `true` |
-| showAnnotationsInColumn | Shows annotations from tests but in a column.  Required to set showAnnotations to `true` | `false` |
+| showAnnotationsInColumn | Shows annotations from tests but in a column.  To enable showAnnotations must be set to `true` | `false` |
 | showTags | Show tags from tests | `true` |
 | showError | Show error message in summary | `false` |
 | includeResults | Define which types of test results should be shown in the summary | `['pass', 'skipped', 'fail', 'flaky']` |
