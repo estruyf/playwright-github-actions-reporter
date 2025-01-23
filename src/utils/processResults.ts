@@ -69,6 +69,7 @@ export const processResults = async (
             options.showTags,
             !!options.showError,
             options.includeResults as DisplayLevel[],
+            options.showAnnotationsInColumn,
             blobService
           );
 
@@ -90,6 +91,7 @@ export const processResults = async (
             options.showTags,
             !!options.showError,
             options.includeResults as DisplayLevel[],
+            options.showAnnotationsInColumn,
             blobService
           );
 

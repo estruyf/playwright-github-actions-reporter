@@ -49,6 +49,18 @@ const config: PlaywrightTestConfig<{}, {}> = {
         azureStorageUrl: process.env.AZURE_STORAGE_URL,
       },
     ],
+    // [
+    //   "./src/index.ts",
+    //   <GitHubActionOptions>{
+    //     title: "Reporter (details: true, report: fail, flaky, skipped, pass showAnnotations: true, showAnnotationsInColumn: true)",
+    //     useDetails: true,
+    //     quiet: true,
+    //     includeResults: ["fail", "flaky", "skipped","pass"],
+    //     showAnnotations: true,
+    //     showAnnotationsInColumn: true,
+    //     showError: true,
+    //   },
+    // ],
   ],
   use: {
     actionTimeout: 0,
