@@ -17,6 +17,7 @@ class GitHubAction implements Reporter {
   constructor(
     private options: GitHubActionOptions = {
       showAnnotations: true,
+      showAnnotationsInColumn: false,
       showTags: true,
       quiet: false,
     }
@@ -27,6 +28,9 @@ class GitHubAction implements Reporter {
     if (typeof options.showAnnotations === "undefined") {
       this.options.showAnnotations = true;
     }
+    if (typeof options.showAnnotationsInColumn === "undefined") {
+      this.options.showAnnotationsInColumn = false;
+    }
 
     if (typeof options.showTags === "undefined") {
       this.options.showTags = true;
@@ -36,7 +40,7 @@ class GitHubAction implements Reporter {
       this.options.includeResults = ["fail", "flaky", "pass", "skipped"];
     }
 
-    if (process.env.NODE_ENV === "development") {
+    if (process.env.NODE_ENV === "development" || options.debug) {
       console.log(`Using development mode`);
       console.log(`Options: ${JSON.stringify(this.options, null, 2)}`);
     }

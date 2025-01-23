@@ -6,16 +6,20 @@ import { getTestTitle } from "./getTestTitle";
 import { getTestTags } from "./getTestTags";
 import { getTestAnnotations } from "./getTestAnnotations";
 import { getTestDuration } from "./getTestDuration";
-import { DisplayLevel } from "../models";
+import { BlobService, DisplayLevel } from "../models";
+import { processAttachments } from "./processAttachments";
 
 export const getHtmlTable = async (
   tests: TestCase[],
   showAnnotations: boolean,
   showTags: boolean,
   showError: boolean,
-  displayLevel: DisplayLevel[]
+  displayLevel: DisplayLevel[],
+  showAnnotationsInColumn: boolean = false,
+  blobService?: BlobService
 ): Promise<string | undefined> => {
   const convert = new Convert();
+  const hasBlobService = blobService && blobService.azure;
 
   const content: string[] = [];
 
@@ -30,8 +34,15 @@ export const getHtmlTable = async (
   if (showTags) {
     content.push(`<th>Tags</th>`);
   }
+  if (showAnnotations && showAnnotationsInColumn){
+    content.push(`<th>Annotations</th>`);
+  }
   if (showError) {
     content.push(`<th>Error</th>`);
+
+    if (hasBlobService) {
+      content.push(`<th>Attachments</th>`);
+    }
   }
   content.push(`</tr>`);
   content.push(`</thead>`);
@@ -46,13 +57,17 @@ export const getHtmlTable = async (
       continue;
     }
 
-    if (showAnnotations && test.annotations) {
+    if (showAnnotations && !showAnnotationsInColumn && test.annotations) {
       let colLength = 4;
       if (showTags) {
         colLength++;
       }
       if (showError) {
         colLength++;
+
+        if (hasBlobService) {
+          colLength++;
+        }
       }
 
       const annotations = await getTestAnnotations(test);
@@ -77,10 +92,31 @@ export const getHtmlTable = async (
     if (showTags) {
       testRows.push(`<td>${getTestTags(test)}</td>`);
     }
-
+    if (showAnnotations && showAnnotationsInColumn) {
+      const annotations = await getTestAnnotations(test);
+      if (annotations) {
+        testRows.push(`<td>${annotations}</td>`);
+      }else{
+        testRows.push(`<td></td>`);
+      }
+    }
     if (showError) {
       const error = result?.error?.message || "";
       testRows.push(`<td>${convert.toHtml(error)}</td>`);
+
+      if (hasBlobService) {
+        const mediaFiles =
+          (await processAttachments(blobService, result.attachments)) || [];
+
+        const mediaLinks = mediaFiles
+          .map(
+            (m) =>
+              `<p align="center"><img src="${m.url}" alt="${m.name}" width="250"></p>
+<p align="center"><b>${m.name}</b></p>`
+          )
+          .join(", ");
+        testRows.push(`<td>${mediaLinks}</td>`);
+      }
     }
     testRows.push(`</tr>`);
   }
