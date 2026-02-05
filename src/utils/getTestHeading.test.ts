@@ -1,4 +1,4 @@
-import { getTestHeading } from "./getTestHeading";
+import { getTestHeading } from "./getTestHeading.js";
 
 describe("getTestHeading", () => {
   test("should return a string with the file name, OS and project name when all parameters are provided", () => {

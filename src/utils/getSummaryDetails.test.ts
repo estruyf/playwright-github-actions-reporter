@@ -1,4 +1,4 @@
-import { getSummaryDetails } from "./getSummaryDetails";
+import { getSummaryDetails } from "./getSummaryDetails.js";
 
 describe("getSummaryDetails", () => {
   it("should return the total number of tests", () => {

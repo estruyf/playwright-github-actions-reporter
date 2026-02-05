@@ -1,10 +1,10 @@
 import { parse } from "path";
 import { readFile } from "fs/promises";
-import { BlobService } from "../../models";
+import { BlobService } from "../../models/index.js";
 
 export const uploadToAzure = async (
   blobService: BlobService,
-  attachments: { name: string; path?: string; contentType: string }[]
+  attachments: { name: string; path?: string; contentType: string }[],
 ) => {
   const azureContainerUrl = blobService.azure?.azureStorageUrl;
   const azureContainerSas = blobService.azure?.azureStorageSAS;
@@ -17,7 +17,7 @@ export const uploadToAzure = async (
 
   if (attachments.length > 0) {
     attachments = attachments.filter(
-      (a) => a.contentType.startsWith("image/") && a.path
+      (a) => a.contentType.startsWith("image/") && a.path,
     );
 
     for (const attachment of attachments) {

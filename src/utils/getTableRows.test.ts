@@ -1,5 +1,5 @@
-import { DisplayLevel } from "../models";
-import { getTableRows } from "./getTableRows";
+import { DisplayLevel } from "../models/index.js";
+import { getTableRows } from "./getTableRows.js";
 
 const tableHeaders = [
   {
@@ -20,7 +20,10 @@ const tableHeaders = [
   },
 ];
 
-const tableHeadersWithAnnotationColumn = [...tableHeaders,...[{ data: "Annotations", header: true }]];
+const tableHeadersWithAnnotationColumn = [
+  ...tableHeaders,
+  ...[{ data: "Annotations", header: true }],
+];
 
 const defaultDisplayLevel: DisplayLevel[] = [
   "pass",
@@ -67,7 +70,7 @@ describe("getTableRows", () => {
       false,
       false,
       true,
-      defaultDisplayLevel
+      defaultDisplayLevel,
     );
     const clonedTableHeaders = Object.assign([], tableHeaders);
     clonedTableHeaders.push({ data: "Error", header: true });
@@ -180,7 +183,7 @@ describe("getTableRows", () => {
       false,
       false,
       false,
-      defaultDisplayLevel
+      defaultDisplayLevel,
     );
 
     expect(result).toEqual([
@@ -206,7 +209,7 @@ describe("getTableRows", () => {
       false,
       false,
       false,
-      defaultDisplayLevel
+      defaultDisplayLevel,
     );
 
     expect(result).toEqual([]);
@@ -218,7 +221,7 @@ describe("getTableRows", () => {
       false,
       false,
       true,
-      defaultDisplayLevel
+      defaultDisplayLevel,
     );
     const clonedTableHeaders = Object.assign([], tableHeaders);
     clonedTableHeaders.push({ data: "Error", header: true });
@@ -264,7 +267,7 @@ describe("getTableRows", () => {
       true,
       false,
       false,
-      defaultDisplayLevel
+      defaultDisplayLevel,
     );
 
     const expected = [
@@ -339,7 +342,7 @@ describe("getTableRows", () => {
       true,
       true,
       true,
-      defaultDisplayLevel
+      defaultDisplayLevel,
     );
 
     const clonedTableHeaders = Object.assign([], tableHeaders);
@@ -415,7 +418,7 @@ describe("getTableRows", () => {
       false,
       false,
       defaultDisplayLevel,
-      true
+      true,
     );
     const expected = [
       tableHeadersWithAnnotationColumn,
@@ -480,7 +483,7 @@ describe("getTableRows", () => {
       false,
       false,
       defaultDisplayLevel,
-      true
+      true,
     );
     const expected = [
       tableHeadersWithAnnotationColumn,

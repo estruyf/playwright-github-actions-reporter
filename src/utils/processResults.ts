@@ -1,20 +1,25 @@
-import * as core from "@actions/core";
-import { SUMMARY_ENV_VAR } from "@actions/core/lib/summary";
+import { summary } from "@actions/core";
 import { Suite } from "@playwright/test/reporter";
 import { existsSync, unlinkSync, writeFileSync } from "fs";
 import { basename, join } from "path";
-import { getHtmlTable } from "./getHtmlTable";
-import { getSuiteStatusIcon } from "./getSuiteStatusIcon";
-import { getTableRows } from "./getTableRows";
-import { getSummaryTitle } from "./getSummaryTitle";
-import { getSummaryDetails } from "./getSummaryDetails";
-import { getTestsPerFile } from "./getTestsPerFile";
-import { getTestHeading } from "./getTestHeading";
-import { BlobService, DisplayLevel, GitHubActionOptions } from "../models";
+import { getHtmlTable } from "./getHtmlTable.js";
+import { getSuiteStatusIcon } from "./getSuiteStatusIcon.js";
+import { getTableRows } from "./getTableRows.js";
+import { getSummaryTitle } from "./getSummaryTitle.js";
+import { getSummaryDetails } from "./getSummaryDetails.js";
+import { getTestsPerFile } from "./getTestsPerFile.js";
+import { getTestHeading } from "./getTestHeading.js";
+import {
+  BlobService,
+  DisplayLevel,
+  GitHubActionOptions,
+} from "../models/index.js";
+
+const SUMMARY_ENV_VAR = "GITHUB_STEP_SUMMARY";
 
 export const processResults = async (
   suite: Suite | undefined,
-  options: GitHubActionOptions
+  options: GitHubActionOptions,
 ) => {
   if (process.env.NODE_ENV === "development") {
     const summaryFile = join(__dirname, "../../summary.html");
@@ -28,7 +33,6 @@ export const processResults = async (
 
   if (process.env.GITHUB_ACTIONS && suite) {
     const os = process.platform;
-    const summary = core.summary;
 
     let blobService: BlobService | undefined = undefined;
     if (options.azureStorageSAS && options.azureStorageUrl) {
@@ -70,7 +74,7 @@ export const processResults = async (
             !!options.showError,
             options.includeResults as DisplayLevel[],
             options.showAnnotationsInColumn,
-            blobService
+            blobService,
           );
 
           if (!content) {
@@ -82,7 +86,7 @@ export const processResults = async (
 
           summary.addDetails(
             `${testStatusIcon} ${getTestHeading(fileName, os, project)}`,
-            content
+            content,
           );
         } else {
           const tableRows = await getTableRows(
@@ -92,7 +96,7 @@ export const processResults = async (
             !!options.showError,
             options.includeResults as DisplayLevel[],
             options.showAnnotationsInColumn,
-            blobService
+            blobService,
           );
 
           if (tableRows.length !== 0) {

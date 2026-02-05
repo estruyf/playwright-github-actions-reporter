@@ -8,6 +8,8 @@
   ],
   "compilerOptions": {
     "outDir": "dist",
-    "declaration": true
+    "declaration": true,
+    "module": "esnext",
+    "moduleResolution": "nodenext"
   }
 }

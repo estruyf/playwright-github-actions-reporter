@@ -1,9 +1,9 @@
 import { TestCase, TestResult } from "@playwright/test/reporter";
-import { getTestOutcome } from "./getTestOutcome";
+import { getTestOutcome } from "./getTestOutcome.js";
 
 export const getTestStatus = (
   test: TestCase,
-  result: TestResult
+  result: TestResult,
 ): "Flaky" | "Pass" | "Skipped" | "Fail" | string => {
   let value = "";
 

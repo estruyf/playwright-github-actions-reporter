@@ -1,4 +1,4 @@
-import { getTestAnnotations } from "./getTestAnnotations";
+import { getTestAnnotations } from "./getTestAnnotations.js";
 
 describe("getTestAnnotations", () => {
   it("should return an empty string if test or test.annotations is falsy", async () => {

@@ -1,5 +1,5 @@
 import { TestCase } from "@playwright/test/reporter";
-import { getSuiteStatusIcon } from "./getSuiteStatusIcon";
+import { getSuiteStatusIcon } from "./getSuiteStatusIcon.js";
 
 describe("getSuiteStatusIcon", () => {
   it("should return ✅ if all tests have passed", () => {

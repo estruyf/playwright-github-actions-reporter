@@ -1,4 +1,4 @@
-import { getTestStatus } from "./getTestStatus";
+import { getTestStatus } from "./getTestStatus.js";
 
 describe("getTestStatus", () => {
   it("should return 'Flaky' when test status is 'passed' and result retry is greater than 0", () => {

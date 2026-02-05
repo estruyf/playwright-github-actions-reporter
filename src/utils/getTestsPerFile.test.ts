@@ -1,4 +1,4 @@
-import { getTestsPerFile } from "./getTestsPerFile";
+import { getTestsPerFile } from "./getTestsPerFile.js";
 
 describe("getTestsPerFile", () => {
   it("should return an array of unique file paths", () => {
