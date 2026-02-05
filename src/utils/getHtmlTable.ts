@@ -16,7 +16,7 @@ export const getHtmlTable = async (
   showError: boolean,
   displayLevel: DisplayLevel[],
   showAnnotationsInColumn: boolean = false,
-  blobService?: BlobService
+  blobService?: BlobService,
 ): Promise<string | undefined> => {
   const convert = new Convert();
   const hasBlobService = blobService && blobService.azure;
@@ -34,7 +34,7 @@ export const getHtmlTable = async (
   if (showTags) {
     content.push(`<th>Tags</th>`);
   }
-  if (showAnnotations && showAnnotationsInColumn){
+  if (showAnnotations && showAnnotationsInColumn) {
     content.push(`<th>Annotations</th>`);
   }
   if (showError) {
@@ -83,8 +83,8 @@ export const getHtmlTable = async (
     testRows.push(
       `<td>${getTestStatusIcon(test, result)} ${getTestStatus(
         test,
-        result
-      )}</td>`
+        result,
+      )}</td>`,
     );
     testRows.push(`<td>${getTestDuration(result)}</td>`);
     testRows.push(`<td>${result?.retry || ""}</td>`);
@@ -96,7 +96,7 @@ export const getHtmlTable = async (
       const annotations = await getTestAnnotations(test);
       if (annotations) {
         testRows.push(`<td>${annotations}</td>`);
-      }else{
+      } else {
         testRows.push(`<td></td>`);
       }
     }
@@ -112,7 +112,7 @@ export const getHtmlTable = async (
           .map(
             (m) =>
               `<p align="center"><img src="${m.url}" alt="${m.name}" width="250"></p>
-<p align="center"><b>${m.name}</b></p>`
+<p align="center"><b>${m.name}</b></p>`,
           )
           .join(", ");
         testRows.push(`<td>${mediaLinks}</td>`);

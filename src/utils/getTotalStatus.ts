@@ -2,7 +2,7 @@ import { Suite } from "@playwright/test/reporter";
 import { getTestOutcome } from "./getTestOutcome.js";
 
 export const getTotalStatus = (
-  suites: Suite[]
+  suites: Suite[],
 ): {
   passed: number;
   failed: number;

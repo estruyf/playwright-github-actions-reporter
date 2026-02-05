@@ -9,13 +9,17 @@ import { getSummaryTitle } from "./getSummaryTitle.js";
 import { getSummaryDetails } from "./getSummaryDetails.js";
 import { getTestsPerFile } from "./getTestsPerFile.js";
 import { getTestHeading } from "./getTestHeading.js";
-import { BlobService, DisplayLevel, GitHubActionOptions } from "../models/index.js";
+import {
+  BlobService,
+  DisplayLevel,
+  GitHubActionOptions,
+} from "../models/index.js";
 
 const SUMMARY_ENV_VAR = "GITHUB_STEP_SUMMARY";
 
 export const processResults = async (
   suite: Suite | undefined,
-  options: GitHubActionOptions
+  options: GitHubActionOptions,
 ) => {
   if (process.env.NODE_ENV === "development") {
     const summaryFile = join(__dirname, "../../summary.html");
@@ -70,7 +74,7 @@ export const processResults = async (
             !!options.showError,
             options.includeResults as DisplayLevel[],
             options.showAnnotationsInColumn,
-            blobService
+            blobService,
           );
 
           if (!content) {
@@ -82,7 +86,7 @@ export const processResults = async (
 
           summary.addDetails(
             `${testStatusIcon} ${getTestHeading(fileName, os, project)}`,
-            content
+            content,
           );
         } else {
           const tableRows = await getTableRows(
@@ -92,7 +96,7 @@ export const processResults = async (
             !!options.showError,
             options.includeResults as DisplayLevel[],
             options.showAnnotationsInColumn,
-            blobService
+            blobService,
           );
 
           if (tableRows.length !== 0) {

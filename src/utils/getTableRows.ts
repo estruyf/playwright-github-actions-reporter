@@ -26,7 +26,7 @@ export const getTableRows = async (
   showError: boolean,
   displayLevel: DisplayLevel[],
   showAnnotationsInColumn: boolean = false,
-  blobService?: BlobService
+  blobService?: BlobService,
 ): Promise<SummaryTableRow[]> => {
   const convert = new Convert();
   const hasBlobService = blobService && blobService.azure;
@@ -57,7 +57,7 @@ export const getTableRows = async (
     });
   }
 
-  if (showAnnotations && showAnnotationsInColumn){
+  if (showAnnotations && showAnnotationsInColumn) {
     tableHeaders.push({
       data: "Annotations",
       header: true,
@@ -141,14 +141,14 @@ export const getTableRows = async (
       });
     }
 
-    if(showAnnotations && showAnnotationsInColumn) {
+    if (showAnnotations && showAnnotationsInColumn) {
       const annotations = await getTestAnnotations(test);
       if (annotations) {
         tableRow.push({
           data: annotations,
           header: false,
         });
-      }else{
+      } else {
         tableRow.push({
           data: "",
           header: false,
@@ -171,9 +171,9 @@ export const getTableRows = async (
           data: (mediaFiles || [])
             .map(
               (
-                m
+                m,
               ) => `<p align="center"><img src="${m.url}" alt="${m.name}" width="250"></p>
-<p align="center"><b>${m.name}</b></p>`
+<p align="center"><b>${m.name}</b></p>`,
             )
             .join("\n\n"),
           header: false,
