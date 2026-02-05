@@ -2,24 +2,41 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.11.0]
+
+-
+  [#33](https://github.com/estruyf/playwright-github-actions-reporter/issues/33):
+  Upgraded to `@actions/core` v3 (ESM-only) to resolve security vulnerabilities
+  in transitive dependencies
+
 ## [1.10.0]
 
-- Added `showArtifactsLink` property which allows you to show a link to the artifacts section in the workflow overview
-- [#19](https://github.com/estruyf/playwright-github-actions-reporter/issues/19): Added the ability to show image attachments in the summary
-- [#29](https://github.com/estruyf/playwright-github-actions-reporter/issues/29): New option to put annotations in table column instead of above the row. Thanks to [Josh Clifford
-](https://github.com/jsclifford).
+- Added `showArtifactsLink` property which allows you to show a link to the
+  artifacts section in the workflow overview -
+  [#19](https://github.com/estruyf/playwright-github-actions-reporter/issues/19):
+  Added the ability to show image attachments in the summary -
+  [#29](https://github.com/estruyf/playwright-github-actions-reporter/issues/29):
+  New option to put annotations in table column instead of above the row. Thanks
+  to [Josh Clifford ](https://github.com/jsclifford).
 
 ## [1.9.2]
 
-- [#20](https://github.com/estruyf/playwright-github-actions-reporter/issues/20): Added `GitHubActionOptions` as export
+-
+[#20](https://github.com/estruyf/playwright-github-actions-reporter/issues/20):
+Added `GitHubActionOptions` as export
 
 ## [1.9.1]
 
-- [#20](https://github.com/estruyf/playwright-github-actions-reporter/issues/20): Add declaration file to the package
+-
+[#20](https://github.com/estruyf/playwright-github-actions-reporter/issues/20):
+Add declaration file to the package
 
 ## [1.9.0]
 
-- [#17](https://github.com/estruyf/playwright-github-actions-reporter/issues/17): Added the ability to define which types of test results should be shown in the summary
+-
+[#17](https://github.com/estruyf/playwright-github-actions-reporter/issues/17):
+Added the ability to define which types of test results should be shown in the
+summary
 
 ## [1.8.0]
 
@@ -28,20 +45,28 @@ All notable changes to this project will be documented in this file.
 
 ## [1.7.0]
 
-- [#14](https://github.com/estruyf/playwright-github-actions-reporter/issues/14): Added the `quiet` option to disable console logging + `stdErr` output support
+-
+[#14](https://github.com/estruyf/playwright-github-actions-reporter/issues/14):
+Added the `quiet` option to disable console logging + `stdErr` output support
 
 ## [1.6.0]
 
-- [#10](https://github.com/estruyf/playwright-github-actions-reporter/issues/10): Added support for test annotations, tags, and describe titles per test
-- [#11](https://github.com/estruyf/playwright-github-actions-reporter/issues/11): Added the ability to hide the header
+-
+[#10](https://github.com/estruyf/playwright-github-actions-reporter/issues/10):
+Added support for test annotations, tags, and describe titles per test -
+[#11](https://github.com/estruyf/playwright-github-actions-reporter/issues/11):
+Added the ability to hide the header
 
 ## [1.5.1]
 
-- [#8](https://github.com/estruyf/playwright-github-actions-reporter/issues/8): Fix for missing duration and status property
+- [#8](https://github.com/estruyf/playwright-github-actions-reporter/issues/8):
+  Fix for missing duration and status property
 
 ## [1.5.0]
 
-- [#6](https://github.com/estruyf/playwright-github-actions-reporter/issues/6): Included logic to retrieve status from the test case when no results are available
+- [#6](https://github.com/estruyf/playwright-github-actions-reporter/issues/6):
+  Included logic to retrieve status from the test case when no results are
+  available
 
 ## [1.4.0]
 
