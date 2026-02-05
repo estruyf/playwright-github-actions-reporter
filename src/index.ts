@@ -20,7 +20,7 @@ class GitHubAction implements Reporter {
       showAnnotationsInColumn: false,
       showTags: true,
       quiet: false,
-    }
+    },
   ) {
     console.log(`Using GitHub Actions reporter`);
 
@@ -53,7 +53,7 @@ class GitHubAction implements Reporter {
   onStdOut(
     chunk: string | Buffer,
     _: void | TestCase,
-    __: void | TestResult
+    __: void | TestResult,
   ): void {
     if (this.options.quiet) {
       return;
