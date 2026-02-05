@@ -1,4 +1,4 @@
-import { getTestDuration } from "../../src/utils/getTestDuration";
+import { getTestDuration } from "../../src/utils/getTestDuration.js";
 
 describe("getTestDuration", () => {
   test("should return empty string if result is undefined", () => {

@@ -1,14 +1,23 @@
-import { SummaryTableRow } from "@actions/core/lib/summary";
 import { TestCase } from "@playwright/test/reporter";
 import Convert from "ansi-to-html";
-import { getTestStatus } from "./getTestStatus";
-import { getTestTitle } from "./getTestTitle";
-import { getTestTags } from "./getTestTags";
-import { getTestAnnotations } from "./getTestAnnotations";
-import { getTestDuration } from "./getTestDuration";
-import { getTestStatusIcon } from "./getTestStatusIcon";
-import { BlobService, DisplayLevel } from "../models";
-import { processAttachments } from "./processAttachments";
+import { getTestStatus } from "./getTestStatus.js";
+import { getTestTitle } from "./getTestTitle.js";
+import { getTestTags } from "./getTestTags.js";
+import { getTestAnnotations } from "./getTestAnnotations.js";
+import { getTestDuration } from "./getTestDuration.js";
+import { getTestStatusIcon } from "./getTestStatusIcon.js";
+import { BlobService, DisplayLevel } from "../models/index.js";
+import { processAttachments } from "./processAttachments.js";
+
+// Type definitions for summary table (from @actions/core)
+interface SummaryTableCell {
+  data: string;
+  header?: boolean;
+  colspan?: string;
+  rowspan?: string;
+}
+
+type SummaryTableRow = (SummaryTableCell | string)[];
 
 export const getTableRows = async (
   tests: TestCase[],

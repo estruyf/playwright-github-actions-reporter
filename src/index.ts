@@ -1,4 +1,4 @@
-import * as core from "@actions/core";
+import { setFailed } from "@actions/core";
 import type {
   Reporter,
   FullConfig,
@@ -7,9 +7,9 @@ import type {
   FullResult,
   TestResult,
 } from "@playwright/test/reporter";
-import { processResults } from "./utils/processResults";
-import { GitHubActionOptions } from "./models";
-export { GitHubActionOptions } from "./models";
+import { processResults } from "./utils/processResults.js";
+import { GitHubActionOptions } from "./models/index.js";
+export { GitHubActionOptions } from "./models/index.js";
 
 class GitHubAction implements Reporter {
   private suite: Suite | undefined;
@@ -76,7 +76,7 @@ class GitHubAction implements Reporter {
     await processResults(this.suite, this.options);
 
     if (result?.status !== "passed") {
-      core.setFailed("Tests failed");
+      setFailed("Tests failed");
     }
   }
 }

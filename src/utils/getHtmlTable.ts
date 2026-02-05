@@ -1,13 +1,13 @@
 import { TestCase } from "@playwright/test/reporter";
 import Convert from "ansi-to-html";
-import { getTestStatus } from "./getTestStatus";
-import { getTestStatusIcon } from "./getTestStatusIcon";
-import { getTestTitle } from "./getTestTitle";
-import { getTestTags } from "./getTestTags";
-import { getTestAnnotations } from "./getTestAnnotations";
-import { getTestDuration } from "./getTestDuration";
-import { BlobService, DisplayLevel } from "../models";
-import { processAttachments } from "./processAttachments";
+import { getTestStatus } from "./getTestStatus.js";
+import { getTestStatusIcon } from "./getTestStatusIcon.js";
+import { getTestTitle } from "./getTestTitle.js";
+import { getTestTags } from "./getTestTags.js";
+import { getTestAnnotations } from "./getTestAnnotations.js";
+import { getTestDuration } from "./getTestDuration.js";
+import { BlobService, DisplayLevel } from "../models/index.js";
+import { processAttachments } from "./processAttachments.js";
 
 export const getHtmlTable = async (
   tests: TestCase[],

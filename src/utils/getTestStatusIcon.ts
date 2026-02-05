@@ -1,5 +1,5 @@
 import { TestCase, TestResult } from "@playwright/test/reporter";
-import { getTestStatus } from "./getTestStatus";
+import { getTestStatus } from "./getTestStatus.js";
 
 export const getTestStatusIcon = (test: TestCase, result: TestResult) => {
   let value = getTestStatus(test, result);

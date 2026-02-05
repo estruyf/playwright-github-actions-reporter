@@ -1,3 +1,3 @@
-export * from "./BlobService";
-export * from "./DisplayLevel";
-export * from "./GitHubActionOptions";
+export * from "./BlobService.js";
+export * from "./DisplayLevel.js";
+export * from "./GitHubActionOptions.js";

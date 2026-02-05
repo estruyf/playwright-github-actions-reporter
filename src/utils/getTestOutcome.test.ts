@@ -1,4 +1,4 @@
-import { getTestOutcome } from "./getTestOutcome";
+import { getTestOutcome } from "./getTestOutcome.js";
 
 describe("getTestOutcome", () => {
   it("should return the status if it exists", () => {

@@ -1,5 +1,5 @@
 import { Suite } from "@playwright/test/reporter";
-import { getTotalStatus } from "./getTotalStatus";
+import { getTotalStatus } from "./getTotalStatus.js";
 
 const baseSuite: Suite = {
   tests: [],

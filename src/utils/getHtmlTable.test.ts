@@ -1,5 +1,5 @@
-import { DisplayLevel } from "../models";
-import { getHtmlTable } from "./getHtmlTable";
+import { DisplayLevel } from "../models/index.js";
+import { getHtmlTable } from "./getHtmlTable.js";
 
 const defaultDisplayLevel: DisplayLevel[] = [
   "pass",
@@ -59,7 +59,7 @@ describe("getHtmlTable", () => {
       false,
       false,
       true,
-      defaultDisplayLevel
+      defaultDisplayLevel,
     );
 
     const expected = `
@@ -194,7 +194,7 @@ describe("getHtmlTable", () => {
       false,
       false,
       false,
-      defaultDisplayLevel
+      defaultDisplayLevel,
     );
 
     expect(result).toBeUndefined();
@@ -206,7 +206,7 @@ describe("getHtmlTable", () => {
       false,
       false,
       true,
-      defaultDisplayLevel
+      defaultDisplayLevel,
     );
 
     expect(result).toBeUndefined();
@@ -241,7 +241,7 @@ describe("getHtmlTable", () => {
       true,
       false,
       false,
-      defaultDisplayLevel
+      defaultDisplayLevel,
     );
 
     const expected = `
@@ -315,7 +315,7 @@ describe("getHtmlTable", () => {
       true,
       true,
       true,
-      defaultDisplayLevel
+      defaultDisplayLevel,
     );
 
     const expected = `
@@ -387,7 +387,7 @@ describe("getHtmlTable", () => {
       false,
       false,
       defaultDisplayLevel,
-      true
+      true,
     );
 
     const expected = `
@@ -445,7 +445,7 @@ describe("getHtmlTable", () => {
       false,
       false,
       defaultDisplayLevel,
-      true
+      true,
     );
 
     const expected = `

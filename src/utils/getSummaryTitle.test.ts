@@ -1,4 +1,4 @@
-import { getSummaryTitle } from "./getSummaryTitle";
+import { getSummaryTitle } from "./getSummaryTitle.js";
 
 describe("getSummaryTitle", () => {
   it("should return 'Test results' when no title is provided", () => {

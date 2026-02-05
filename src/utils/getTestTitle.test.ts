@@ -1,4 +1,4 @@
-import { getTestTitle } from "../../src/utils/getTestTitle";
+import { getTestTitle } from "../../src/utils/getTestTitle.js";
 
 describe("getTestTitle", () => {
   it("should return an empty string if test is falsy", () => {

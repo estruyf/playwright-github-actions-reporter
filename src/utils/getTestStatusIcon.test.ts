@@ -1,4 +1,4 @@
-import { getTestStatusIcon } from "./getTestStatusIcon";
+import { getTestStatusIcon } from "./getTestStatusIcon.js";
 
 describe("getTestStatusIcon", () => {
   it("should return '⚠️' when test status is 'passed' and result retry is greater than 0", () => {

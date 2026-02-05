@@ -1,5 +1,5 @@
 import { TestCase } from "@playwright/test/reporter";
-import { getTestOutcome } from "./getTestOutcome";
+import { getTestOutcome } from "./getTestOutcome.js";
 
 export const getSuiteStatusIcon = (tests: TestCase[]) => {
   if (!tests || tests.length === 0) {

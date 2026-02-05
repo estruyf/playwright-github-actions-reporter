@@ -1,4 +1,4 @@
-import { getTestTags } from "./getTestTags";
+import { getTestTags } from "./getTestTags.js";
 
 describe("getTestTags", () => {
   it("should return empty string test is not defined", () => {
