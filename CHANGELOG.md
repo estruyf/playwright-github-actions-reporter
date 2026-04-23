@@ -2,20 +2,24 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.12.0]
+
+- [#35](https://github.com/estruyf/playwright-github-actions-reporter/issues/35):
+  It should mark suite as skipped when all tests in suite are skipped. Implemented by [KotPawel](https://github.com/KotPawel)
+
 ## [1.11.0]
 
--
-  [#33](https://github.com/estruyf/playwright-github-actions-reporter/issues/33):
-  Upgraded to `@actions/core` v3 (ESM-only) to resolve security vulnerabilities
-  in transitive dependencies
+- [#33](https://github.com/estruyf/playwright-github-actions-reporter/issues/33):
+Upgraded to `@actions/core` v3 (ESM-only) to resolve security vulnerabilities in
+transitive dependencies
 
 ## [1.10.0]
 
 - Added `showArtifactsLink` property which allows you to show a link to the
-  artifacts section in the workflow overview -
-  [#19](https://github.com/estruyf/playwright-github-actions-reporter/issues/19):
-  Added the ability to show image attachments in the summary -
-  [#29](https://github.com/estruyf/playwright-github-actions-reporter/issues/29):
+  artifacts section in the workflow overview
+- [#19](https://github.com/estruyf/playwright-github-actions-reporter/issues/19):
+  Added the ability to show image attachments in the summary 
+- [#29](https://github.com/estruyf/playwright-github-actions-reporter/issues/29):
   New option to put annotations in table column instead of above the row. Thanks
   to [Josh Clifford ](https://github.com/jsclifford).
 
