@@ -2,18 +2,9 @@ import { TestCase } from "@playwright/test/reporter";
 import { getSuiteStatusIcon } from "./getSuiteStatusIcon.js";
 
 describe("getSuiteStatusIcon", () => {
-  it("should return ✅ if all tests have passed", () => {
+  it("should return ✅ if all tests have passed ignoring skipped ones", () => {
     const tests = [
       { results: [{ status: "passed" }], outcome: () => "expected" },
-    ] as TestCase[];
-
-    const result = getSuiteStatusIcon(tests);
-
-    expect(result).toBe("✅");
-  });
-
-  it("should return ⏭️ if any test has been skipped", () => {
-    const tests = [
       { results: [{ status: "skipped" }], outcome: () => "expected" },
     ] as TestCase[];
 
@@ -22,9 +13,22 @@ describe("getSuiteStatusIcon", () => {
     expect(result).toBe("✅");
   });
 
+  it("should return ⏭️ if all tests have been skipped", () => {
+    const tests = [
+      { results: [{ status: "skipped" }], outcome: () => "expected" },
+      { results: [{ status: "skipped" }], outcome: () => "expected" },
+    ] as TestCase[];
+
+    const result = getSuiteStatusIcon(tests);
+
+    expect(result).toBe("⏭️");
+  });
+
   it("should return ❌ if any test has failed, interrupted, or timed out", () => {
     const tests = [
       { results: [{ status: "failed" }], outcome: () => "expected" },
+      { results: [{ status: "skipped" }], outcome: () => "expected" },
+      { results: [{ status: "passed" }], outcome: () => "expected" },
     ] as TestCase[];
 
     const result = getSuiteStatusIcon(tests);
