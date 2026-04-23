@@ -17,13 +17,15 @@ export const getSuiteStatusIcon = (tests: TestCase[]) => {
   });
 
   if (
-    testOutcomes.includes("failed") ||
-    testOutcomes.includes("interrupted") ||
-    testOutcomes.includes("timedOut")
+      testOutcomes.includes("failed") ||
+      testOutcomes.includes("interrupted") ||
+      testOutcomes.includes("timedOut")
   ) {
     return "❌";
   } else if (testOutcomes.includes("flaky")) {
     return "⚠️";
+  } else if (testOutcomes.every((outcome) => outcome === "skipped")) {
+    return "⏭️";
   }
 
   return "✅";
