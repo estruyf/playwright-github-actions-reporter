@@ -20,6 +20,7 @@ const SUMMARY_ENV_VAR = "GITHUB_STEP_SUMMARY";
 export const processResults = async (
   suite: Suite | undefined,
   options: GitHubActionOptions,
+  shard?: { current: number; total: number } | null,
 ) => {
   if (process.env.NODE_ENV === "development") {
     const summaryFile = join(__dirname, "../../summary.html");
@@ -46,7 +47,7 @@ export const processResults = async (
       summary.addLink("Go to artifacts", "#artifacts");
     }
 
-    const summaryTitle = getSummaryTitle(options.title);
+    const summaryTitle = getSummaryTitle(options.title, shard);
     if (summaryTitle) {
       summary.addHeading(summaryTitle, 1);
     }

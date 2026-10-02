@@ -13,6 +13,7 @@ export { GitHubActionOptions } from "./models/index.js";
 
 class GitHubAction implements Reporter {
   private suite: Suite | undefined;
+  private shard: { current: number; total: number } | null | undefined;
 
   constructor(
     private options: GitHubActionOptions = {
@@ -46,8 +47,9 @@ class GitHubAction implements Reporter {
     }
   }
 
-  onBegin(_: FullConfig, suite: Suite) {
+  onBegin(config: FullConfig, suite: Suite) {
     this.suite = suite;
+    this.shard = config.shard;
   }
 
   onStdOut(
@@ -73,7 +75,7 @@ class GitHubAction implements Reporter {
   }
 
   async onEnd(result: FullResult) {
-    await processResults(this.suite, this.options);
+    await processResults(this.suite, this.options, this.shard);
 
     if (result?.status !== "passed") {
       setFailed("Tests failed");
