@@ -1,5 +1,5 @@
 import { summary } from "@actions/core";
-import { Suite } from "@playwright/test/reporter";
+import { FullConfig, Suite } from "@playwright/test/reporter";
 import { existsSync, unlinkSync, writeFileSync } from "fs";
 import { basename, join } from "path";
 import { getHtmlTable } from "./getHtmlTable.js";
@@ -20,6 +20,7 @@ const SUMMARY_ENV_VAR = "GITHUB_STEP_SUMMARY";
 export const processResults = async (
   suite: Suite | undefined,
   options: GitHubActionOptions,
+  config?: FullConfig,
 ) => {
   if (process.env.NODE_ENV === "development") {
     const summaryFile = join(__dirname, "../../summary.html");
@@ -46,9 +47,12 @@ export const processResults = async (
       summary.addLink("Go to artifacts", "#artifacts");
     }
 
-    const summaryTitle = getSummaryTitle(options.title);
+    const shard = config?.shard;
+    const summaryTitle = getSummaryTitle(options.title, shard);
     if (summaryTitle) {
       summary.addHeading(summaryTitle, 1);
+    } else if (shard) {
+      summary.addRaw(`shard ${shard.current}/${shard.total}`, true).addEOL();
     }
 
     const headerText = getSummaryDetails(suite);

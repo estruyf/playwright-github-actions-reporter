@@ -70,6 +70,42 @@ export default defineConfig({
 
 ![Example with details](./assets/example-with-details.png)
 
+## Sharding
+
+When running tests with Playwright's `--shard` option in a matrix (e.g. `--shard=2/4`), the reporter automatically detects the current shard and adds it to the report summary header:
+
+```
+Test results (shard 2/4)
+```
+
+If you specify an empty title (`title: ""`), a line `shard 2/4` is included above the summary details instead.
+
+### Merging Sharded Reports
+
+If you prefer a single consolidated summary for all shards rather than individual shard summaries, you can merge your blob reports with Playwright's `merge-reports` command using a separate configuration file:
+
+```bash
+npx playwright merge-reports --config=merge.config.ts ./blob-reports
+```
+
+The merge configuration (`merge.config.ts`):
+
+```ts
+import type { GitHubActionOptions } from "@estruyf/github-actions-reporter";
+
+export default {
+  testDir: "./tests",
+  reporter: [
+    ['@estruyf/github-actions-reporter', <GitHubActionOptions>{
+      title: 'All test results',
+      showError: true
+    }],
+  ],
+};
+```
+
+When running through `merge-reports`, no shard information is present, so the combined report title will display without a shard label (e.g. `All test results`).
+
 ## Showing result attachments
 
 If you want to show attachments like when you use pixel matching, you need to provide the configuration for the blob service where the images will be stored.

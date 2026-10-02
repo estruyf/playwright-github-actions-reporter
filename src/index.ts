@@ -13,6 +13,7 @@ export { GitHubActionOptions } from "./models/index.js";
 
 class GitHubAction implements Reporter {
   private suite: Suite | undefined;
+  private config: FullConfig | undefined;
 
   constructor(
     private options: GitHubActionOptions = {
@@ -46,7 +47,8 @@ class GitHubAction implements Reporter {
     }
   }
 
-  onBegin(_: FullConfig, suite: Suite) {
+  onBegin(config: FullConfig, suite: Suite) {
+    this.config = config;
     this.suite = suite;
   }
 
@@ -73,7 +75,7 @@ class GitHubAction implements Reporter {
   }
 
   async onEnd(result: FullResult) {
-    await processResults(this.suite, this.options);
+    await processResults(this.suite, this.options, this.config);
 
     if (result?.status !== "passed") {
       setFailed("Tests failed");
