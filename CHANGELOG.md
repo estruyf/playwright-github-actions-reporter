@@ -2,17 +2,14 @@
 
 All notable changes to this project will be documented in this file.
 
-## [1.14.0]
-
-- [#39](https://github.com/estruyf/playwright-github-actions-reporter/issues/39):
-  Upgraded the `@playwright/test` dev dependency to v1.63. The peer dependency
-  stays at `^1.42.1`, so no Playwright upgrade is needed on your side
-
 ## [1.13.0]
 
 - [#32](https://github.com/estruyf/playwright-github-actions-reporter/issues/32):
   Added the `prComment` and `githubToken` options to add the test results as a
   comment on the pull request
+- [#39](https://github.com/estruyf/playwright-github-actions-reporter/issues/39):
+  Upgraded the `@playwright/test` dev dependency to v1.63. The peer dependency
+  stays at `^1.42.1`, so no Playwright upgrade is needed on your side
 
 ## [1.12.0]
 
