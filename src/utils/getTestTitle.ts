@@ -1,4 +1,4 @@
-import { TestCase } from "@playwright/test/reporter";
+import type { TestCase } from "@playwright/test/reporter";
 
 export const getTestTitle = (test: TestCase): string => {
   if (!test) {

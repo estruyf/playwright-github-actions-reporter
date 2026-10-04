@@ -1,5 +1,5 @@
 import { summary } from "@actions/core";
-import { Suite } from "@playwright/test/reporter";
+import type { Suite } from "@playwright/test/reporter";
 import { existsSync, unlinkSync, writeFileSync } from "fs";
 import { basename, join } from "path";
 import { getHtmlTable } from "./getHtmlTable.js";
@@ -10,7 +10,7 @@ import { getSummaryDetails } from "./getSummaryDetails.js";
 import { getTestsPerFile } from "./getTestsPerFile.js";
 import { getTestHeading } from "./getTestHeading.js";
 import { commentOnPullRequest } from "./commentOnPullRequest.js";
-import {
+import type {
   BlobService,
   DisplayLevel,
   GitHubActionOptions,

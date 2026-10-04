@@ -1,4 +1,4 @@
-import { Suite } from "@playwright/test/reporter";
+import type { Suite } from "@playwright/test/reporter";
 import { getTestOutcome } from "./getTestOutcome.js";
 
 export const getTotalStatus = (

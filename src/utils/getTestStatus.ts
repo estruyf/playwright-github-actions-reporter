@@ -1,4 +1,4 @@
-import { TestCase, TestResult } from "@playwright/test/reporter";
+import type { TestCase, TestResult } from "@playwright/test/reporter";
 import { getTestOutcome } from "./getTestOutcome.js";
 
 export const getTestStatus = (

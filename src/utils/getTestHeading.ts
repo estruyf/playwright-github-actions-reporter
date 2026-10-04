@@ -1,4 +1,4 @@
-import { FullProject } from "@playwright/test";
+import type { FullProject } from "@playwright/test";
 
 export const getTestHeading = (
   fileName: string,

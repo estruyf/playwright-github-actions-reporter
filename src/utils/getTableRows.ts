@@ -1,4 +1,4 @@
-import { TestCase } from "@playwright/test/reporter";
+import type { TestCase } from "@playwright/test/reporter";
 import Convert from "ansi-to-html";
 import { getTestStatus } from "./getTestStatus.js";
 import { getTestTitle } from "./getTestTitle.js";
@@ -6,7 +6,7 @@ import { getTestTags } from "./getTestTags.js";
 import { getTestAnnotations } from "./getTestAnnotations.js";
 import { getTestDuration } from "./getTestDuration.js";
 import { getTestStatusIcon } from "./getTestStatusIcon.js";
-import { BlobService, DisplayLevel } from "../models/index.js";
+import type { BlobService, DisplayLevel } from "../models/index.js";
 import { processAttachments } from "./processAttachments.js";
 
 // Type definitions for summary table (from @actions/core)

@@ -1,4 +1,4 @@
-import { TestCase } from "@playwright/test/reporter";
+import type { TestCase } from "@playwright/test/reporter";
 import { getTestOutcome } from "./getTestOutcome.js";
 
 export const getSuiteStatusIcon = (tests: TestCase[]) => {

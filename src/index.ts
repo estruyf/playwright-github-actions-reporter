@@ -8,8 +8,8 @@ import type {
   TestResult,
 } from "@playwright/test/reporter";
 import { processResults } from "./utils/processResults.js";
-import { GitHubActionOptions } from "./models/index.js";
-export { GitHubActionOptions } from "./models/index.js";
+import type { GitHubActionOptions } from "./models/index.js";
+export type { GitHubActionOptions } from "./models/index.js";
 
 class GitHubAction implements Reporter {
   private suite: Suite | undefined;

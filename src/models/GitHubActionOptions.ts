@@ -1,4 +1,4 @@
-import { DisplayLevel } from "./index.js";
+import type { DisplayLevel } from "./index.js";
 
 export interface GitHubActionOptions {
   title?: string;

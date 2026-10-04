@@ -1,4 +1,4 @@
-import { TestCase } from "@playwright/test/reporter";
+import type { TestCase } from "@playwright/test/reporter";
 import { marked } from "marked";
 
 export const getTestAnnotations = async (test: TestCase): Promise<string> => {

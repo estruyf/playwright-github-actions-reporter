@@ -8,6 +8,8 @@ const baseSuite: Suite = {
   titlePath: () => [""],
   project: () => undefined,
   allTests: () => [],
+  entries: () => [],
+  type: "describe",
 };
 
 describe("getTotalStatus", () => {
