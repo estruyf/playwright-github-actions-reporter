@@ -82,6 +82,40 @@ describe("getSummaryDetails", () => {
     expect(result.length).toBe(2);
   });
 
+  it("should include the number of flaky tests if there are any", () => {
+    const suite = {
+      suites: [
+        {
+          allTests: () => [{ results: [{ status: "passed", retry: 1 }] }],
+        },
+        {
+          allTests: () => [{ results: [{ status: "passed" }] }],
+        },
+      ],
+      allTests: () => [{}, {}],
+    };
+    const result = getSummaryDetails(suite as any);
+    expect(result).toContain("Passed: 2");
+    expect(result).toContain("Flaky: 1");
+    expect(result.indexOf("Flaky: 1")).toBeGreaterThan(
+      result.indexOf("Passed: 2"),
+    );
+  });
+
+  it("should not include flaky tests when there are none", () => {
+    const suite = {
+      suites: [
+        {
+          allTests: () => [{ results: [{ status: "passed" }] }],
+        },
+      ],
+      allTests: () => [{}],
+    };
+    const result = getSummaryDetails(suite as any);
+    expect(result).toContain("Passed: 1");
+    expect(result.some((line) => line.startsWith("Flaky:"))).toBe(false);
+  });
+
   it("should include all test states", () => {
     const suite = {
       suites: [
