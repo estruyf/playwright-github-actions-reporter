@@ -42,6 +42,8 @@ The reporter supports the following configuration options:
 | includeResults | Define which types of test results should be shown in the summary | `['pass', 'skipped', 'fail', 'flaky']` |
 | quiet | Do not show any output in the console | `false` |
 | showArtifactsLink | Show a link to the artifacts section in the workflow overview | `false` |
+| prComment | Add the test results as a comment on the pull request. See [Comment on the pull request](#comment-on-the-pull-request) | `false` |
+| githubToken | Token used to comment on the pull request | `process.env.GITHUB_TOKEN` |
 | azureStorageUrl | URL to the Azure Storage account where the screenshots are stored (optional) | `""` |
 | azureStorageSAS | Shared Access Signature (SAS) token to access the Azure Storage account (optional) | `""` |
 
@@ -61,6 +63,54 @@ export default defineConfig({
   ],
 });
 ```
+
+## Comment on the pull request
+
+Next to the job summary, the reporter can add the test results as a comment on the pull request. When the workflow runs again, the reporter updates its existing comment instead of adding a new one.
+
+To enable it:
+
+1. Set the `prComment` option to `true`:
+
+    ```ts
+    import { defineConfig } from '@playwright/test';
+    import type { GitHubActionOptions } from '@estruyf/github-actions-reporter';
+
+    export default defineConfig({
+      reporter: [
+        ['@estruyf/github-actions-reporter', <GitHubActionOptions>{
+          prComment: true
+        }]
+      ],
+    });
+    ```
+
+2. Run the workflow on the `pull_request` event, give it the `pull-requests: write` permission, and pass the `GITHUB_TOKEN` to the Playwright step:
+
+    ```yaml
+    on:
+      pull_request:
+
+    permissions:
+      contents: read
+      pull-requests: write
+
+    jobs:
+      test:
+        runs-on: ubuntu-latest
+        steps:
+          # ...
+          - name: Run Playwright tests
+            run: npx playwright test
+            env:
+              GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    ```
+
+> [!NOTE]
+> The comment is only added when the workflow runs for a pull request. If the comment fails (for example, pull requests from forks get a read-only token), the reporter logs a warning and does not fail the run.
+
+> [!TIP]
+> Each reporter gets its own comment per workflow job and `title`. When you use a matrix strategy, give each matrix job a different `title`, or the jobs update the same comment.
 
 ### Example without details
 

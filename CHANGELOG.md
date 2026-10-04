@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.13.0]
+
+- [#32](https://github.com/estruyf/playwright-github-actions-reporter/issues/32):
+  Added the `prComment` and `githubToken` options to add the test results as a
+  comment on the pull request
+
 ## [1.12.0]
 
 - [#35](https://github.com/estruyf/playwright-github-actions-reporter/issues/35):

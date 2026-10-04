@@ -9,6 +9,7 @@ import { getSummaryTitle } from "./getSummaryTitle.js";
 import { getSummaryDetails } from "./getSummaryDetails.js";
 import { getTestsPerFile } from "./getTestsPerFile.js";
 import { getTestHeading } from "./getTestHeading.js";
+import { commentOnPullRequest } from "./commentOnPullRequest.js";
 import {
   BlobService,
   DisplayLevel,
@@ -107,6 +108,20 @@ export const processResults = async (
       }
     }
 
+    // The summary buffer is emptied on write, so grab the content first
+    const summaryContent = options.prComment ? summary.stringify() : "";
+
     await summary.write();
+
+    if (options.prComment) {
+      await commentOnPullRequest(
+        {
+          content: summaryContent,
+          title: summaryTitle,
+          headerText,
+        },
+        options.githubToken || process.env.GITHUB_TOKEN,
+      );
+    }
   }
 };

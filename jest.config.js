@@ -6,6 +6,7 @@ export default {
   testMatch: ['**/*.test.ts'],
   extensionsToTreatAsEsm: ['.ts'],
   moduleNameMapper: {
+    '^@actions/core$': '<rootDir>/../__mocks__/actionsCore.ts',
     '^(\\.{1,2}/.*)\\.js$': '$1',
   },
   transform: {

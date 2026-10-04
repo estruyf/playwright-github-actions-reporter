@@ -14,6 +14,10 @@ export interface GitHubActionOptions {
   // Useful links
   showArtifactsLink?: boolean;
 
+  // Pull request comment
+  prComment?: boolean;
+  githubToken?: string;
+
   // Azure Storage
   azureStorageUrl?: string;
   azureStorageSAS?: string;
