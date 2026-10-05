@@ -1,12 +1,17 @@
 import { DisplayLevel } from "../models/index.js";
 import { getTableRows } from "./getTableRows.js";
+import { TABLE_SPACER } from "./summaryTable.js";
 
-const headers = (widths: Record<string, string>, ...extra: string[]) =>
-  ["Test", "Status", "Duration", "Retries", ...extra].map((data) => ({
-    data,
+const headers = (widths: Record<string, string>, ...extra: string[]) => {
+  const columns = ["Test", "Status", "Duration", "Retries", ...extra];
+  const spacerColumn = columns.filter((column) => widths[column]).pop();
+
+  return columns.map((column) => ({
+    data: column === spacerColumn ? `${column}${TABLE_SPACER}` : column,
     header: true,
-    ...(widths[data] ? { width: widths[data] } : {}),
+    ...(widths[column] ? { width: widths[column] } : {}),
   }));
+};
 
 const tableHeaders = headers({ Test: "100%" });
 

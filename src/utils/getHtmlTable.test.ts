@@ -71,7 +71,7 @@ describe("getHtmlTable", () => {
 <th>Status</th>
 <th>Duration</th>
 <th>Retries</th>
-<th width="60%">Error</th>
+<th width="60%">Error<img width="10000" height="0" align="left"></th>
 </tr>
 </thead>
 <tbody>
@@ -163,7 +163,7 @@ describe("getHtmlTable", () => {
 <th>Status</th>
 <th>Duration</th>
 <th>Retries</th>
-<th width="60%">Error</th>
+<th width="60%">Error<img width="10000" height="0" align="left"></th>
 </tr>
 </thead>
 <tbody>
@@ -249,7 +249,7 @@ describe("getHtmlTable", () => {
 <table role="table">
 <thead>
 <tr>
-<th width="100%">Test</th>
+<th width="100%">Test<img width="10000" height="0" align="left"></th>
 <th>Status</th>
 <th>Duration</th>
 <th>Retries</th>
@@ -328,7 +328,7 @@ describe("getHtmlTable", () => {
 <th>Duration</th>
 <th>Retries</th>
 <th>Tags</th>
-<th width="60%">Error</th>
+<th width="60%">Error<img width="10000" height="0" align="left"></th>
 </tr>
 </thead>
 <tbody>
@@ -399,7 +399,7 @@ describe("getHtmlTable", () => {
 <th>Status</th>
 <th>Duration</th>
 <th>Retries</th>
-<th width="33%">Annotations</th>
+<th width="33%">Annotations<img width="10000" height="0" align="left"></th>
 </tr>
 </thead>
 <tbody>
@@ -457,7 +457,7 @@ describe("getHtmlTable", () => {
 <th>Status</th>
 <th>Duration</th>
 <th>Retries</th>
-<th width="33%">Annotations</th>
+<th width="33%">Annotations<img width="10000" height="0" align="left"></th>
 </tr>
 </thead>
 <tbody>

@@ -1,4 +1,5 @@
 import {
+  TABLE_SPACER,
   getColumnWidths,
   getTableHeaders,
   getTableHtml,
@@ -34,11 +35,18 @@ describe("summaryTable", () => {
   });
 
   describe("getTableHeaders", () => {
-    it("should only add a width to the text columns", () => {
+    it("should add a width to the text columns and the spacer to the last one", () => {
       expect(getTableHeaders(["File", "Test", "Error"])).toEqual([
         { data: "File", header: true },
         { data: "Test", header: true, width: "40%" },
-        { data: "Error", header: true, width: "60%" },
+        { data: `Error${TABLE_SPACER}`, header: true, width: "60%" },
+      ]);
+    });
+
+    it("should not add the spacer without text columns", () => {
+      expect(getTableHeaders(["File", "Duration"])).toEqual([
+        { data: "File", header: true },
+        { data: "Duration", header: true },
       ]);
     });
   });
@@ -52,7 +60,7 @@ describe("summaryTable", () => {
           [{ data: "Annotation", colspan: "2", header: false }],
         ]),
       ).toBe(
-        `<table><tr><th width="100%">Test</th><th>Status</th></tr><tr><td>My test</td><td>✅&nbsp;Pass</td></tr><tr><td colspan="2">Annotation</td></tr></table>`,
+        `<table><tr><th width="100%">Test${TABLE_SPACER}</th><th>Status</th></tr><tr><td>My test</td><td>✅&nbsp;Pass</td></tr><tr><td colspan="2">Annotation</td></tr></table>`,
       );
     });
   });

@@ -18,9 +18,17 @@ const COLUMN_WEIGHTS: Record<string, number> = {
 };
 
 /**
- * GitHub sizes tables to their content (`width: max-content`). When the
- * percentages of the text columns add up to 100% and at least one other
- * column has no width, the table fills the full width instead.
+ * Spacer that makes the table fill the full width of the summary. GitHub sizes
+ * tables to their content (`width: max-content`, `max-width: 100%`), so the
+ * wide image stretches the table up to the page width. GitHub limits images
+ * to the cell width, so it never overflows, and `align` floats it so it does
+ * not add a line to the header.
+ */
+export const TABLE_SPACER = `<img width="10000" height="0" align="left">`;
+
+/**
+ * Percentages of the text columns, which add up to 100%. They share the free
+ * space of the table between the text columns.
  */
 export const getColumnWidths = (columns: string[]): (string | undefined)[] => {
   const totalWeight = columns.reduce(
@@ -56,9 +64,13 @@ export const getColumnWidths = (columns: string[]): (string | undefined)[] => {
 
 export const getTableHeaders = (columns: string[]): SummaryTableCell[] => {
   const widths = getColumnWidths(columns);
+  const spacerIdx = widths.reduce(
+    (last, width, idx) => (width ? idx : last),
+    -1,
+  );
 
-  return columns.map((data, idx) => ({
-    data,
+  return columns.map((column, idx) => ({
+    data: idx === spacerIdx ? `${column}${TABLE_SPACER}` : column,
     header: true,
     ...(widths[idx] ? { width: widths[idx] } : {}),
   }));

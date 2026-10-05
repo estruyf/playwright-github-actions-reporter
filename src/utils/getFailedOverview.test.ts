@@ -1,4 +1,5 @@
 import type { DisplayLevel } from "../models/index.js";
+import { TABLE_SPACER } from "./summaryTable.js";
 import { getFailedOverview } from "./getFailedOverview.js";
 
 const defaultDisplayLevel: DisplayLevel[] = [
@@ -11,7 +12,7 @@ const defaultDisplayLevel: DisplayLevel[] = [
 const headers = [
   { data: "File", header: true },
   { data: "Test", header: true, width: "40%" },
-  { data: "Error", header: true, width: "60%" },
+  { data: `Error${TABLE_SPACER}`, header: true, width: "60%" },
 ];
 
 const createTest = (

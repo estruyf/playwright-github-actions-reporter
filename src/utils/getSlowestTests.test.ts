@@ -1,8 +1,9 @@
 import { getSlowestTests } from "./getSlowestTests.js";
+import { TABLE_SPACER } from "./summaryTable.js";
 
 const headers = [
   { data: "File", header: true },
-  { data: "Test", header: true, width: "100%" },
+  { data: `Test${TABLE_SPACER}`, header: true, width: "100%" },
   { data: "Duration", header: true },
   { data: "Retries", header: true },
 ];
