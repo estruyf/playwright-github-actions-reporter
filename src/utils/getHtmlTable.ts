@@ -1,5 +1,4 @@
 import type { TestCase } from "@playwright/test/reporter";
-import Convert from "ansi-to-html";
 import { getTestStatus } from "./getTestStatus.js";
 import { getTestStatusIcon } from "./getTestStatusIcon.js";
 import { getTestTitle } from "./getTestTitle.js";
@@ -8,6 +7,7 @@ import { getTestAnnotations } from "./getTestAnnotations.js";
 import { getTestDuration } from "./getTestDuration.js";
 import type { BlobService, DisplayLevel } from "../models/index.js";
 import { processAttachments } from "./processAttachments.js";
+import { getErrorDetails, type ErrorOptions } from "./getErrorDetails.js";
 
 export const getHtmlTable = async (
   tests: TestCase[],
@@ -17,8 +17,8 @@ export const getHtmlTable = async (
   displayLevel: DisplayLevel[],
   showAnnotationsInColumn: boolean = false,
   blobService?: BlobService,
+  errorOptions?: ErrorOptions,
 ): Promise<string | undefined> => {
-  const convert = new Convert();
   const hasBlobService = blobService && blobService.azure;
 
   const content: string[] = [];
@@ -101,8 +101,7 @@ export const getHtmlTable = async (
       }
     }
     if (showError) {
-      const error = result?.error?.message || "";
-      testRows.push(`<td>${convert.toHtml(error)}</td>`);
+      testRows.push(`<td>${getErrorDetails(result, errorOptions)}</td>`);
 
       if (hasBlobService) {
         const mediaFiles =

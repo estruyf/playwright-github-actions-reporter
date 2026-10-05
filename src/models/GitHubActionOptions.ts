@@ -1,4 +1,4 @@
-import type { DisplayLevel } from "./index.js";
+import type { DisplayLevel, ErrorFormat } from "./index.js";
 
 export interface GitHubActionOptions {
   title?: string;
@@ -7,6 +7,9 @@ export interface GitHubActionOptions {
   showAnnotationsInColumn?: boolean;
   showTags: boolean;
   showError?: boolean;
+  errorFormat?: ErrorFormat;
+  maxErrorLength?: number;
+  showErrorSnippet?: boolean;
   showFailedOverview?: boolean;
   failedOverviewLimit?: number;
   showSlowestTests?: number;

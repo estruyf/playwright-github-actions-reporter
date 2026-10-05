@@ -38,7 +38,10 @@ The reporter supports the following configuration options:
 | showAnnotations | Show annotations from tests | `true` |
 | showAnnotationsInColumn | Shows annotations from tests but in a column.  To enable showAnnotations must be set to `true` | `false` |
 | showTags | Show tags from tests | `true` |
-| showError | Show error message in summary | `false` |
+| showError | Show error message in summary. All errors of a test are shown, e.g. every failed `expect.soft()`, with the cause and a link to the failing line on GitHub | `false` |
+| errorFormat | How much of the error to show: `full` shows the complete message, `short` shows the first line of each error. Requires `showError` | `full` |
+| maxErrorLength | Maximum length of an error in the `short` format and in the failed tests overview | `180` |
+| showErrorSnippet | Show the code snippet of the error in a collapsible block. Only for the `full` format. Snippets are left out of the pull request comment | `false` |
 | showFailedOverview | Show a table with all failed and timed out tests across all files below the summary header. Only rendered when at least one test failed and `fail` is part of `includeResults` | `false` |
 | failedOverviewLimit | Maximum number of tests in the failed tests overview. The remaining tests are shown as a "+N more failed tests" line | `10` |
 | showSlowestTests | Show a table with the N slowest tests below the summary header, sorted by the duration of their slowest attempt. Skipped tests are left out. Use `0` to turn it off | `0` |

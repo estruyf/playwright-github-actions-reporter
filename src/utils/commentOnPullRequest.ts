@@ -1,5 +1,6 @@
 import { info, warning } from "@actions/core";
 import { existsSync, readFileSync } from "fs";
+import { SNIPPET_END, SNIPPET_START } from "./getErrorDetails.js";
 
 // GitHub limits issue/PR comment bodies to 65536 characters
 export const MAX_COMMENT_LENGTH = 65536;
@@ -66,7 +67,11 @@ export const getPullRequestCommentBody = (
   marker: string,
   runUrl?: string,
 ): string => {
-  let content = details.content;
+  // Code snippets are too large for a comment, they stay in the job summary
+  let content = details.content.replace(
+    new RegExp(`${SNIPPET_START}[\\s\\S]*?${SNIPPET_END}`, "g"),
+    "",
+  );
 
   // In-page links of the job summary do not work in a PR comment
   if (runUrl) {

@@ -21,6 +21,13 @@ All notable changes to this project will be documented in this file.
 - [#53](https://github.com/estruyf/playwright-github-actions-reporter/issues/53):
   Added the `showSlowestTests` option to show the slowest tests at the top of
   the summary
+- [#41](https://github.com/estruyf/playwright-github-actions-reporter/issues/41):
+  The error column shows all errors of a test (e.g. every failed
+  `expect.soft()`), the error cause, and a link to the failing line on GitHub.
+  Added the `showErrorSnippet` option to show the code snippet of the error
+- [#52](https://github.com/estruyf/playwright-github-actions-reporter/issues/52):
+  Added the `errorFormat` and `maxErrorLength` options to show a short, one
+  line version of each error
 
 ## [1.12.0]
 

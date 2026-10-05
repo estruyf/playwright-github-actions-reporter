@@ -130,6 +130,17 @@ describe("commentOnPullRequest", () => {
       );
     });
 
+    it("should leave out the error code snippets", () => {
+      const body = getPullRequestCommentBody(
+        {
+          content: `<td>Error<!-- error-snippet --><details><pre>code</pre></details><!-- /error-snippet --></td><td>Other<!-- error-snippet -->x<!-- /error-snippet --></td>`,
+          headerText: [],
+        },
+        marker,
+      );
+      expect(body).toBe(`${marker}\n<td>Error</td><td>Other</td>`);
+    });
+
     it("should point the artifacts link to the workflow run", () => {
       const body = getPullRequestCommentBody(
         { content: `<a href="#artifacts">Go to artifacts</a>`, headerText: [] },

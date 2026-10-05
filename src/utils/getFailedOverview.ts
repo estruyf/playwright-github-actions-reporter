@@ -4,6 +4,11 @@ import { getTestsPerFile } from "./getTestsPerFile.js";
 import { getTestStatus } from "./getTestStatus.js";
 import { getTestTitle } from "./getTestTitle.js";
 import { getShortError } from "./getShortError.js";
+import {
+  escapeHtml,
+  getErrorMessage,
+  getTestErrors,
+} from "./getErrorDetails.js";
 import type { DisplayLevel } from "../models/index.js";
 
 // Type definitions for summary table (from @actions/core)
@@ -21,13 +26,11 @@ export interface FailedOverview {
 
 export const DEFAULT_FAILED_OVERVIEW_LIMIT = 10;
 
-const escapeHtml = (value: string) =>
-  value.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
-
 export const getFailedOverview = (
   suite: Suite,
   displayLevel: DisplayLevel[],
   limit: number = DEFAULT_FAILED_OVERVIEW_LIMIT,
+  maxErrorLength?: number,
 ): FailedOverview | undefined => {
   if (!displayLevel.includes("fail")) {
     return;
@@ -51,7 +54,10 @@ export const getFailedOverview = (
           continue;
         }
 
-        const error = getShortError(result?.error?.message);
+        const error = getShortError(
+          getErrorMessage(getTestErrors(result)[0]),
+          maxErrorLength,
+        );
 
         failedRows.push([
           {

@@ -12,6 +12,7 @@ import { getTestHeading } from "./getTestHeading.js";
 import { commentOnPullRequest } from "./commentOnPullRequest.js";
 import { getFailedOverview } from "./getFailedOverview.js";
 import { getSlowestTests } from "./getSlowestTests.js";
+import type { ErrorOptions } from "./getErrorDetails.js";
 import type {
   BlobService,
   DisplayLevel,
@@ -54,6 +55,12 @@ export const processResults = async (
       summary.addHeading(summaryTitle, 1);
     }
 
+    const errorOptions: ErrorOptions = {
+      errorFormat: options.errorFormat,
+      maxErrorLength: options.maxErrorLength,
+      showErrorSnippet: options.showErrorSnippet,
+    };
+
     const headerText = getSummaryDetails(suite);
     summary.addRaw(headerText.join(` - `));
 
@@ -62,6 +69,7 @@ export const processResults = async (
         suite,
         options.includeResults as DisplayLevel[],
         options.failedOverviewLimit,
+        options.maxErrorLength,
       );
 
       if (failedOverview) {
@@ -109,6 +117,7 @@ export const processResults = async (
             options.includeResults as DisplayLevel[],
             options.showAnnotationsInColumn,
             blobService,
+            errorOptions,
           );
 
           if (!content) {
@@ -131,6 +140,7 @@ export const processResults = async (
             options.includeResults as DisplayLevel[],
             options.showAnnotationsInColumn,
             blobService,
+            errorOptions,
           );
 
           if (tableRows.length !== 0) {

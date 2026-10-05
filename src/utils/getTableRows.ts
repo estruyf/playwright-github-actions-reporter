@@ -1,5 +1,4 @@
 import type { TestCase } from "@playwright/test/reporter";
-import Convert from "ansi-to-html";
 import { getTestStatus } from "./getTestStatus.js";
 import { getTestTitle } from "./getTestTitle.js";
 import { getTestTags } from "./getTestTags.js";
@@ -8,6 +7,7 @@ import { getTestDuration } from "./getTestDuration.js";
 import { getTestStatusIcon } from "./getTestStatusIcon.js";
 import type { BlobService, DisplayLevel } from "../models/index.js";
 import { processAttachments } from "./processAttachments.js";
+import { getErrorDetails, type ErrorOptions } from "./getErrorDetails.js";
 
 // Type definitions for summary table (from @actions/core)
 interface SummaryTableCell {
@@ -27,8 +27,8 @@ export const getTableRows = async (
   displayLevel: DisplayLevel[],
   showAnnotationsInColumn: boolean = false,
   blobService?: BlobService,
+  errorOptions?: ErrorOptions,
 ): Promise<SummaryTableRow[]> => {
-  const convert = new Convert();
   const hasBlobService = blobService && blobService.azure;
 
   const tableHeaders = [
@@ -157,9 +157,8 @@ export const getTableRows = async (
     }
 
     if (showError) {
-      const error = result?.error?.message || "";
       tableRow.push({
-        data: convert.toHtml(error),
+        data: getErrorDetails(result, errorOptions),
         header: false,
       });
 
