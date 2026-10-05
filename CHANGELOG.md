@@ -52,6 +52,9 @@ All notable changes to this project will be documented in this file.
 - [#49](https://github.com/estruyf/playwright-github-actions-reporter/issues/49):
   Sharded runs get one pull request comment per shard. Added the `prCommentId`
   option to give each matrix job its own comment
+- [#40](https://github.com/estruyf/playwright-github-actions-reporter/issues/40):
+  The error shows the `test.step` or hook in which a test failed, e.g.
+  `Failed at: Checkout › Add to cart (SKU 42)`
 - The summary tables now use the full width of the page, so they no longer
   change width from table to table
 

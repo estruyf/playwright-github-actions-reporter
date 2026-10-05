@@ -2,6 +2,7 @@ import type { TestError, TestResult } from "@playwright/test/reporter";
 import Convert from "ansi-to-html";
 import { getShortError } from "./getShortError.js";
 import { getSourceLink } from "./getSourceLink.js";
+import { getFailedStepPath } from "./getFailedStepPath.js";
 import type { ErrorFormat } from "../models/index.js";
 
 export interface ErrorOptions {
@@ -80,16 +81,29 @@ export const getErrorDetails = (
   options: ErrorOptions = {},
 ): string => {
   const errors = getTestErrors(result);
+  if (errors.length === 0) {
+    return "";
+  }
+
+  // Which `test.step` or hook the test failed in
+  const failedStep = getFailedStepPath(result);
+  const failedAt = failedStep
+    ? `<b>Failed at:</b> ${escapeHtml(failedStep)}`
+    : "";
 
   if (options.errorFormat === "short") {
-    return errors
-      .map((error) => getCompactError(error, options.maxErrorLength))
+    return [
+      failedAt,
+      ...errors.map((error) => getCompactError(error, options.maxErrorLength)),
+    ]
       .filter(Boolean)
       .join("<br>");
   }
 
   const convert = new Convert();
-  return errors
+  const details = errors
     .map((error) => getFullError(error, convert, !!options.showErrorSnippet))
     .join("<hr>");
+
+  return failedAt ? `${failedAt}<br><br>${details}` : details;
 };

@@ -40,7 +40,7 @@ The reporter supports the following configuration options:
 | showAnnotations | Show annotations from tests | `true` |
 | showAnnotationsInColumn | Shows annotations from tests but in a column.  To enable showAnnotations must be set to `true` | `false` |
 | showTags | Show tags from tests | `true` |
-| showError | Show error message in summary. All errors of a test are shown, e.g. every failed `expect.soft()`, with the cause and a link to the failing line on GitHub | `false` |
+| showError | Show error message in summary. All errors of a test are shown, e.g. every failed `expect.soft()`, with the cause and a link to the failing line on GitHub. When a test fails inside a `test.step` or a hook, the step is shown as well, e.g. `Failed at: Checkout › Add to cart` | `false` |
 | errorFormat | How much of the error to show: `full` shows the complete message, `short` shows the first line of each error. Requires `showError` | `full` |
 | maxErrorLength | Maximum length of an error in the `short` format and in the failed tests overview | `180` |
 | showErrorSnippet | Show the code snippet of the error in a collapsible block. Only for the `full` format. Snippets are left out of the pull request comment | `false` |

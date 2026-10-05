@@ -157,4 +157,44 @@ describe("getErrorDetails", () => {
       );
     });
   });
+
+  describe("failed step", () => {
+    const steps = [
+      {
+        title: "Checkout <cart>",
+        category: "test.step",
+        subtitle: "SKU 42",
+        error: { message: "Boom" },
+        steps: [
+          {
+            title: 'Expect "toBe"',
+            category: "expect",
+            error: { message: "Boom" },
+            steps: [],
+          },
+        ],
+      },
+    ];
+
+    it("should show the failed step above the errors", () => {
+      const result = { errors: [{ message: "Boom" }], steps } as any;
+      expect(getErrorDetails(result)).toBe(
+        "<b>Failed at:</b> Checkout &lt;cart&gt; (SKU 42)<br><br>Boom",
+      );
+    });
+
+    it("should show the failed step in the short format", () => {
+      const result = {
+        errors: [{ message: "Boom\nCall log:" }, { message: "Second" }],
+        steps,
+      } as any;
+      expect(getErrorDetails(result, { errorFormat: "short" })).toBe(
+        "<b>Failed at:</b> Checkout &lt;cart&gt; (SKU 42)<br>Boom<br>Second",
+      );
+    });
+
+    it("should not show a failed step without errors", () => {
+      expect(getErrorDetails({ errors: [], steps } as any)).toBe("");
+    });
+  });
 });
