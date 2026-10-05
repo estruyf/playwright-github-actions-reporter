@@ -28,6 +28,9 @@ All notable changes to this project will be documented in this file.
 - [#52](https://github.com/estruyf/playwright-github-actions-reporter/issues/52):
   Added the `errorFormat` and `maxErrorLength` options to show a short, one
   line version of each error
+- [#42](https://github.com/estruyf/playwright-github-actions-reporter/issues/42):
+  Annotations link to their source line on GitHub (Playwright 1.54 and newer).
+  Annotations without a description no longer show `undefined`
 
 ## [1.12.0]
 
