@@ -1,7 +1,6 @@
 import type { Suite } from "@playwright/test/reporter";
 import { getTestOutcome } from "./getTestOutcome.js";
 
-
 export const getTotalStatus = (
   suites: Suite[],
 ): {
@@ -19,13 +18,14 @@ export const getTotalStatus = (
     flaky: 0,
   };
 
-
   for (const suite of suites) {
     const testOutcome = suite.allTests().map((test) => {
       const lastResult = test.results[test.results.length - 1];
-      return { outcome: getTestOutcome(test, lastResult), retry: lastResult?.retry || 0 };
+      return {
+        outcome: getTestOutcome(test, lastResult),
+        retry: lastResult?.retry || 0,
+      };
     });
-
 
     for (const { outcome, retry } of testOutcome) {
       if (outcome === "passed") {
@@ -44,7 +44,6 @@ export const getTotalStatus = (
       }
     }
   }
-
 
   return total;
 };
