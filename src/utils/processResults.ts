@@ -11,6 +11,7 @@ import { getTestsPerFile } from "./getTestsPerFile.js";
 import { getTestHeading } from "./getTestHeading.js";
 import { commentOnPullRequest } from "./commentOnPullRequest.js";
 import { getFailedOverview } from "./getFailedOverview.js";
+import { getSlowestTests } from "./getSlowestTests.js";
 import type {
   BlobService,
   DisplayLevel,
@@ -75,6 +76,15 @@ export const processResults = async (
             true,
           );
         }
+      }
+    }
+
+    if (options.showSlowestTests && options.showSlowestTests > 0) {
+      const slowestTests = getSlowestTests(suite, options.showSlowestTests);
+
+      if (slowestTests) {
+        summary.addHeading("Slowest tests", 2);
+        summary.addTable(slowestTests);
       }
     }
 

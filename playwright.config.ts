@@ -20,6 +20,7 @@ const config: PlaywrightTestConfig<{}, {}> = {
         useDetails: false,
         showError: true,
         showFailedOverview: true,
+        showSlowestTests: 5,
         quiet: false,
         includeResults: ["fail", "flaky", "skipped"],
         debug: true,

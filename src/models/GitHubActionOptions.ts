@@ -9,6 +9,7 @@ export interface GitHubActionOptions {
   showError?: boolean;
   showFailedOverview?: boolean;
   failedOverviewLimit?: number;
+  showSlowestTests?: number;
   quiet?: boolean;
   includeResults?: DisplayLevel[];
   debug?: boolean;

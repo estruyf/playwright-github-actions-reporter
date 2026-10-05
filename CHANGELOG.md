@@ -18,6 +18,9 @@ All notable changes to this project will be documented in this file.
 - [#51](https://github.com/estruyf/playwright-github-actions-reporter/issues/51):
   Added the `showFailedOverview` and `failedOverviewLimit` options to show an
   overview of all failed tests at the top of the summary
+- [#53](https://github.com/estruyf/playwright-github-actions-reporter/issues/53):
+  Added the `showSlowestTests` option to show the slowest tests at the top of
+  the summary
 
 ## [1.12.0]
 
