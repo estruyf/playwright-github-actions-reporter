@@ -9,7 +9,10 @@ import { getSummaryTitle } from "./getSummaryTitle.js";
 import { getSummaryDetails } from "./getSummaryDetails.js";
 import { getTestsPerFile } from "./getTestsPerFile.js";
 import { getTestHeading } from "./getTestHeading.js";
-import { commentOnPullRequest } from "./commentOnPullRequest.js";
+import {
+  commentOnPullRequest,
+  getCommentMarker,
+} from "./commentOnPullRequest.js";
 import { getFailedOverview } from "./getFailedOverview.js";
 import { getSlowestTests } from "./getSlowestTests.js";
 import type { ErrorOptions } from "./getErrorDetails.js";
@@ -17,6 +20,11 @@ import { excludeProjects } from "./excludeProjects.js";
 import { getSummaryContext } from "./getSummaryContext.js";
 import { getTableHtml } from "./summaryTable.js";
 import { getGlobalErrors, type GlobalError } from "./getGlobalErrors.js";
+import {
+  getShardCommentId,
+  getShardLabel,
+  type Shard,
+} from "./getShard.js";
 import type {
   BlobService,
   DisplayLevel,
@@ -29,6 +37,7 @@ export interface RunDetails {
   failureReason?: string;
   errors?: GlobalError[];
   failOnFlakyTests?: boolean;
+  shard?: Shard | null;
 }
 
 export const processResults = async (
@@ -63,8 +72,17 @@ export const processResults = async (
     }
 
     const summaryTitle = getSummaryTitle(options.title);
-    if (summaryTitle) {
-      summary.addHeading(summaryTitle, 1);
+    const shardLabel = getShardLabel(runDetails.shard);
+    const displayTitle =
+      summaryTitle && shardLabel
+        ? `${summaryTitle} (${shardLabel})`
+        : summaryTitle;
+    if (displayTitle) {
+      summary.addHeading(displayTitle, 1);
+    } else if (shardLabel) {
+      // Without a title, the shard still needs to be visible
+      const label = shardLabel.charAt(0).toUpperCase() + shardLabel.slice(1);
+      summary.addRaw(`<p>${label}</p>`, true);
     }
 
     const summaryContext = await getSummaryContext(
@@ -199,9 +217,15 @@ export const processResults = async (
       await commentOnPullRequest(
         {
           content: summaryContent,
-          title: summaryTitle,
+          title: displayTitle,
           context: summaryContext,
           headerText,
+          marker: getCommentMarker(
+            summaryTitle,
+            [options.prCommentId, getShardCommentId(runDetails.shard)]
+              .filter(Boolean)
+              .join(":"),
+          ),
         },
         options.githubToken || process.env.GITHUB_TOKEN,
       );

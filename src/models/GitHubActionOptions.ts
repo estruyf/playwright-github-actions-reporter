@@ -25,6 +25,7 @@ export interface GitHubActionOptions {
 
   // Pull request comment
   prComment?: boolean;
+  prCommentId?: string;
   githubToken?: string;
 
   // Azure Storage

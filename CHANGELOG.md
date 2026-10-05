@@ -46,6 +46,12 @@ All notable changes to this project will be documented in this file.
   shown in the summary
 - [#55](https://github.com/estruyf/playwright-github-actions-reporter/issues/55):
   The test result counts and the run status are set as step outputs
+- [#45](https://github.com/estruyf/playwright-github-actions-reporter/issues/45):
+  Sharded runs show the shard in the summary title, e.g. `Test results (shard
+  2/4)`. Added a "Sharding" section to the README on merging the shard reports
+- [#49](https://github.com/estruyf/playwright-github-actions-reporter/issues/49):
+  Sharded runs get one pull request comment per shard. Added the `prCommentId`
+  option to give each matrix job its own comment
 - The summary tables now use the full width of the page, so they no longer
   change width from table to table
 

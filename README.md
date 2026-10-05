@@ -52,6 +52,7 @@ The reporter supports the following configuration options:
 | quiet | Do not show any output in the console | `false` |
 | showArtifactsLink | Show a link to the artifacts section in the workflow overview | `false` |
 | prComment | Add the test results as a comment on the pull request. See [Comment on the pull request](#comment-on-the-pull-request) | `false` |
+| prCommentId | Extra id for the pull request comment, to give each matrix job its own comment, e.g. `${{ matrix.target }}`. Sharded runs get their own comment without it. See [Comment on the pull request](#comment-on-the-pull-request) | `""` |
 | githubToken | Token used to comment on the pull request | `process.env.GITHUB_TOKEN` |
 | azureStorageUrl | URL to the Azure Storage account where the screenshots are stored (optional) | `""` |
 | azureStorageSAS | Shared Access Signature (SAS) token to access the Azure Storage account (optional) | `""` |
@@ -72,6 +73,44 @@ export default defineConfig({
   ],
 });
 ```
+
+## Sharding
+
+When you [shard your tests](https://playwright.dev/docs/test-sharding), each shard writes its own summary. The title shows which shard it belongs to, for example `Test results (shard 2/4)`.
+
+To get one summary for all shards instead, let each shard write a [blob report](https://playwright.dev/docs/test-sharding#merge-reports-cli) and merge them in a separate job with a config that uses this reporter. The merged summary has no shard label.
+
+1. Add the `blob` reporter next to this reporter in your Playwright config, so each shard writes a blob report (and set `prComment` only in the merge config, to get a single comment):
+
+    ```ts
+    reporter: process.env.CI
+      ? [['blob'], ['@estruyf/github-actions-reporter']]
+      : 'html',
+    ```
+
+2. Create a `merge.config.ts` for the merge job:
+
+    ```ts
+    import type { GitHubActionOptions } from '@estruyf/github-actions-reporter';
+
+    export default {
+      testDir: './tests',
+      reporter: [
+        ['@estruyf/github-actions-reporter', <GitHubActionOptions>{
+          title: 'All test results',
+          showError: true
+        }]
+      ],
+    };
+    ```
+
+3. Upload the `blob-report` folder of each shard as an artifact, download them all in the merge job, and run:
+
+    ```bash
+    npx playwright merge-reports --config=merge.config.ts ./all-blob-reports
+    ```
+
+The [sharding sample workflow](./.github/workflows/sharding.yml) of this repository shows the full setup, with [`playwright.sharding.config.ts`](./playwright.sharding.config.ts) for the shards and [`playwright.merge.config.ts`](./playwright.merge.config.ts) for the merge job.
 
 ## Failed runs
 
@@ -202,7 +241,7 @@ To enable it:
 > The comment is only added when the workflow runs for a pull request. If the comment fails (for example, pull requests from forks get a read-only token), the reporter logs a warning and does not fail the run.
 
 > [!TIP]
-> Each reporter gets its own comment per workflow job and `title`. When you use a matrix strategy, give each matrix job a different `title`, or the jobs update the same comment.
+> Each reporter gets its own comment per workflow job and `title`. The jobs of a matrix share the same workflow job, so they would update the same comment. Sharded runs get one comment per shard automatically. For other matrix setups, pass a unique `prCommentId` per matrix job, for example `prCommentId: process.env.TEST_TARGET` with `TEST_TARGET: ${{ matrix.target }}` in the workflow.
 
 ### Example without details
 

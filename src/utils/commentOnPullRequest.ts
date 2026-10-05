@@ -12,6 +12,8 @@ export interface PullRequestCommentDetails {
   title?: string;
   context?: string;
   headerText: string[];
+  // Marker to find the comment again, defaults to one based on the title
+  marker?: string;
 }
 
 export const getPullRequestNumber = (): number | undefined => {
@@ -53,10 +55,19 @@ export const getRunUrl = (): string | undefined => {
 /**
  * Hidden marker to find the comment again on the next run. It is unique per
  * workflow, job, and reporter title so multiple reporters do not overwrite
- * each other.
+ * each other. The comment id keeps matrix legs and shards apart, as they share
+ * the same job.
  */
-export const getCommentMarker = (title?: string): string => {
-  const id = [process.env.GITHUB_WORKFLOW, process.env.GITHUB_JOB, title ?? ""]
+export const getCommentMarker = (
+  title?: string,
+  commentId?: string,
+): string => {
+  const id = [
+    process.env.GITHUB_WORKFLOW,
+    process.env.GITHUB_JOB,
+    title ?? "",
+    commentId || undefined,
+  ]
     .filter((value) => typeof value === "string")
     .join(":")
     .replace(/-{2,}/g, "-");
@@ -178,7 +189,7 @@ export const commentOnPullRequest = async (
 
   const apiUrl = process.env.GITHUB_API_URL || "https://api.github.com";
   const commentsUrl = `${apiUrl}/repos/${repository}/issues/${prNumber}/comments`;
-  const marker = getCommentMarker(details.title);
+  const marker = details.marker || getCommentMarker(details.title);
   const body = getPullRequestCommentBody(details, marker, getRunUrl());
 
   try {

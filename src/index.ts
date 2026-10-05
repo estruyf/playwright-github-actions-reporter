@@ -14,12 +14,14 @@ import { getTotalStatus } from "./utils/getTotalStatus.js";
 import { getFailureReason } from "./utils/getFailureReason.js";
 import { setResultOutputs } from "./utils/setResultOutputs.js";
 import type { GlobalError } from "./utils/getGlobalErrors.js";
+import type { Shard } from "./utils/getShard.js";
 import type { GitHubActionOptions } from "./models/index.js";
 export type { GitHubActionOptions } from "./models/index.js";
 
 class GitHubAction implements Reporter {
   private suite: Suite | undefined;
   private failOnFlakyTests = false;
+  private shard: Shard | null = null;
   private errors: GlobalError[] = [];
 
   constructor(
@@ -59,6 +61,7 @@ class GitHubAction implements Reporter {
     // Available since Playwright 1.50
     this.failOnFlakyTests = !!(config as { failOnFlakyTests?: boolean })
       .failOnFlakyTests;
+    this.shard = config?.shard || null;
   }
 
   // Errors outside of tests, like a failing global setup or worker teardown
@@ -101,6 +104,7 @@ class GitHubAction implements Reporter {
       failureReason,
       errors: this.errors,
       failOnFlakyTests: this.failOnFlakyTests,
+      shard: this.shard,
     });
 
     if (result?.status) {

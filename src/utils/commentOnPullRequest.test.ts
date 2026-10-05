@@ -109,6 +109,37 @@ describe("commentOnPullRequest", () => {
       );
     });
 
+    it("should stay the same without a comment id", () => {
+      process.env.GITHUB_WORKFLOW = "E2E";
+      process.env.GITHUB_JOB = "testing";
+      expect(getCommentMarker("My title", "")).toBe(getCommentMarker("My title"));
+      expect(getCommentMarker("My title", undefined)).toBe(
+        "<!-- @estruyf/github-actions-reporter E2E:testing:My title -->",
+      );
+    });
+
+    it("should keep matrix legs apart with a comment id", () => {
+      process.env.GITHUB_WORKFLOW = "E2E";
+      process.env.GITHUB_JOB = "testing";
+      const pages = getCommentMarker("My title", "pages");
+      const webparts = getCommentMarker("My title", "webparts");
+      expect(pages).toBe(
+        "<!-- @estruyf/github-actions-reporter E2E:testing:My title:pages -->",
+      );
+      expect(pages).not.toBe(webparts);
+    });
+
+    it("should keep shards apart", () => {
+      process.env.GITHUB_WORKFLOW = "E2E";
+      process.env.GITHUB_JOB = "testing";
+      expect(getCommentMarker("My title", "pages:shard-2-of-4")).toBe(
+        "<!-- @estruyf/github-actions-reporter E2E:testing:My title:pages:shard-2-of-4 -->",
+      );
+      expect(getCommentMarker("", "shard-1-of-2")).not.toBe(
+        getCommentMarker("", "shard-2-of-2"),
+      );
+    });
+
     it("should not contain a double dash which would end the HTML comment", () => {
       const marker = getCommentMarker("a -- b --- c");
       expect(marker).toBe("<!-- @estruyf/github-actions-reporter a - b - c -->");
@@ -234,6 +265,30 @@ describe("commentOnPullRequest", () => {
         "https://api.github.com/repos/owner/repo/issues/comments/99",
       );
       expect(init.method).toBe("PATCH");
+    });
+
+    it("should only update the comment of the same shard", async () => {
+      const shard1 = getCommentMarker(details.title, "shard-1-of-2");
+      const shard2 = getCommentMarker(details.title, "shard-2-of-2");
+      const fetchMock = jest
+        .fn()
+        .mockResolvedValueOnce(
+          jsonResponse([
+            { id: 1, body: `${shard1}\nshard 1 results` },
+            { id: 2, body: `${shard2}\nshard 2 results` },
+          ]),
+        )
+        .mockResolvedValueOnce(jsonResponse({ id: 2 }));
+      global.fetch = fetchMock;
+
+      await commentOnPullRequest({ ...details, marker: shard2 }, "token");
+
+      const [url, init] = fetchMock.mock.calls[1];
+      expect(url).toBe(
+        "https://api.github.com/repos/owner/repo/issues/comments/2",
+      );
+      expect(init.method).toBe("PATCH");
+      expect(JSON.parse(init.body).body.startsWith(shard2)).toBe(true);
     });
 
     it("should page through the existing comments", async () => {
