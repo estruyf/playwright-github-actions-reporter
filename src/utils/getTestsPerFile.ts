@@ -1,4 +1,4 @@
-import { Suite, TestCase } from "@playwright/test/reporter";
+import type { Suite, TestCase } from "@playwright/test/reporter";
 
 export const getTestsPerFile = (suite: Suite) => {
   // Get all the test files

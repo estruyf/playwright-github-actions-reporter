@@ -1,13 +1,14 @@
-import { TestCase } from "@playwright/test/reporter";
-import Convert from "ansi-to-html";
+import type { TestCase } from "@playwright/test/reporter";
 import { getTestStatus } from "./getTestStatus.js";
 import { getTestStatusIcon } from "./getTestStatusIcon.js";
 import { getTestTitle } from "./getTestTitle.js";
 import { getTestTags } from "./getTestTags.js";
 import { getTestAnnotations } from "./getTestAnnotations.js";
 import { getTestDuration } from "./getTestDuration.js";
-import { BlobService, DisplayLevel } from "../models/index.js";
+import type { BlobService, DisplayLevel } from "../models/index.js";
 import { processAttachments } from "./processAttachments.js";
+import { getErrorDetails, type ErrorOptions } from "./getErrorDetails.js";
+import { getTableHeaders } from "./summaryTable.js";
 
 export const getHtmlTable = async (
   tests: TestCase[],
@@ -17,8 +18,9 @@ export const getHtmlTable = async (
   displayLevel: DisplayLevel[],
   showAnnotationsInColumn: boolean = false,
   blobService?: BlobService,
+  errorOptions?: ErrorOptions,
+  failOnFlakyTests: boolean = false,
 ): Promise<string | undefined> => {
-  const convert = new Convert();
   const hasBlobService = blobService && blobService.azure;
 
   const content: string[] = [];
@@ -26,23 +28,24 @@ export const getHtmlTable = async (
   content.push(`<br>`);
   content.push(`<table role="table">`);
   content.push(`<thead>`);
-  content.push(`<tr>`);
-  content.push(`<th>Test</th>`);
-  content.push(`<th>Status</th>`);
-  content.push(`<th>Duration</th>`);
-  content.push(`<th>Retries</th>`);
+  const columns = ["Test", "Status", "Duration", "Retries"];
   if (showTags) {
-    content.push(`<th>Tags</th>`);
+    columns.push("Tags");
   }
   if (showAnnotations && showAnnotationsInColumn) {
-    content.push(`<th>Annotations</th>`);
+    columns.push("Annotations");
   }
   if (showError) {
-    content.push(`<th>Error</th>`);
+    columns.push("Error");
 
     if (hasBlobService) {
-      content.push(`<th>Attachments</th>`);
+      columns.push("Attachments");
     }
+  }
+
+  content.push(`<tr>`);
+  for (const { data, width } of getTableHeaders(columns)) {
+    content.push(`<th${width ? ` width="${width}"` : ""}>${data}</th>`);
   }
   content.push(`</tr>`);
   content.push(`</thead>`);
@@ -81,7 +84,7 @@ export const getHtmlTable = async (
     testRows.push(`<tr>`);
     testRows.push(`<td>${getTestTitle(test)}</td>`);
     testRows.push(
-      `<td>${getTestStatusIcon(test, result)} ${getTestStatus(
+      `<td>${getTestStatusIcon(test, result, failOnFlakyTests)}&nbsp;${getTestStatus(
         test,
         result,
       )}</td>`,
@@ -101,8 +104,7 @@ export const getHtmlTable = async (
       }
     }
     if (showError) {
-      const error = result?.error?.message || "";
-      testRows.push(`<td>${convert.toHtml(error)}</td>`);
+      testRows.push(`<td>${getErrorDetails(result, errorOptions)}</td>`);
 
       if (hasBlobService) {
         const mediaFiles =

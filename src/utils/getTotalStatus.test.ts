@@ -8,6 +8,8 @@ const baseSuite: Suite = {
   titlePath: () => [""],
   project: () => undefined,
   allTests: () => [],
+  entries: () => [],
+  type: "describe",
 };
 
 describe("getTotalStatus", () => {
@@ -34,6 +36,7 @@ describe("getTotalStatus", () => {
       failed: 0,
       skipped: 0,
       timedOut: 0,
+      flaky: 0,
     });
   });
 
@@ -70,6 +73,71 @@ describe("getTotalStatus", () => {
       failed: 2,
       skipped: 1,
       timedOut: 1,
+      flaky: 0,
+    });
+  });
+
+  it("should count interrupted tests as failed", () => {
+    const suites: Suite[] = [
+      {
+        ...baseSuite,
+        allTests: () =>
+          [
+            {
+              results: [{ status: "passed" }],
+            },
+            {
+              results: [{ status: "interrupted" }],
+            },
+          ] as any[],
+      },
+    ];
+
+    const result = getTotalStatus(suites);
+
+    expect(result).toEqual({
+      passed: 1,
+      failed: 1,
+      skipped: 0,
+      timedOut: 0,
+      flaky: 0,
+    });
+  });
+
+  it("should count flaky tests as flaky instead of passed (passed with retry > 0)", () => {
+    const suites: Suite[] = [
+      {
+        ...baseSuite,
+        allTests: () =>
+          [
+            {
+              results: [{ status: "passed" }],
+            },
+            {
+              results: [{ status: "failed" }, { status: "passed", retry: 1 }],
+            },
+            {
+              results: [
+                { status: "failed" },
+                { status: "failed" },
+                { status: "passed", retry: 2 },
+              ],
+            },
+            {
+              results: [{ status: "failed" }],
+            },
+          ] as any[],
+      },
+    ];
+
+    const result = getTotalStatus(suites);
+
+    expect(result).toEqual({
+      passed: 1,
+      failed: 1,
+      skipped: 0,
+      timedOut: 0,
+      flaky: 2,
     });
   });
 
@@ -83,6 +151,7 @@ describe("getTotalStatus", () => {
       failed: 0,
       skipped: 0,
       timedOut: 0,
+      flaky: 0,
     });
   });
 });

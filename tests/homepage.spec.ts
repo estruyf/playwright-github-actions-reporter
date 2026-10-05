@@ -15,10 +15,9 @@ test.describe("Homepage", () => {
     });
   });
 
-  test.afterAll(async ({ browser }) => {
+  test.afterAll(async () => {
     console.log("Closing the homepage.");
     await page.close();
-    await browser.close();
   });
 
   test(
@@ -32,12 +31,9 @@ test.describe("Homepage", () => {
     },
     async () => {
       console.log("Checking the logo.");
-      const logo = page.locator(`#logo span`);
-      const firstName = logo.first();
-      const lastName = logo.last();
+      const logo = page.locator("header").getByTitle("Go to homepage");
 
-      expect(await firstName.innerText()).toBe("ELIO");
-      expect(await lastName.innerText()).toBe("STRUYF");
+      await expect(logo).toHaveText("Elio Struyf");
     }
   );
 
@@ -58,10 +54,10 @@ test.describe("Homepage", () => {
     },
     async () => {
       console.log("Checking the navigation.");
-      const nav = page.locator(`.navigation nav`);
+      const nav = page.locator(`header nav`);
       await nav.waitFor();
 
-      await expect(page.locator(".navigation nav a")).toHaveCount(5);
+      await expect(nav.locator("a")).toHaveCount(6);
     }
   );
 });

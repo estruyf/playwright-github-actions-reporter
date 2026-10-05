@@ -1,7 +1,10 @@
-import { TestCase } from "@playwright/test/reporter";
+import type { TestCase } from "@playwright/test/reporter";
 import { getTestOutcome } from "./getTestOutcome.js";
 
-export const getSuiteStatusIcon = (tests: TestCase[]) => {
+export const getSuiteStatusIcon = (
+  tests: TestCase[],
+  failOnFlakyTests = false,
+) => {
   if (!tests || tests.length === 0) {
     return "❌";
   }
@@ -23,7 +26,8 @@ export const getSuiteStatusIcon = (tests: TestCase[]) => {
   ) {
     return "❌";
   } else if (testOutcomes.includes("flaky")) {
-    return "⚠️";
+    // With `failOnFlakyTests`, a flaky test fails the run
+    return failOnFlakyTests ? "❌" : "⚠️";
   } else if (testOutcomes.every((outcome) => outcome === "skipped")) {
     return "⏭️";
   }

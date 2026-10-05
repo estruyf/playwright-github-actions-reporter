@@ -11,7 +11,8 @@ test.describe.serial("Setup", () => {
       waitUntil: "domcontentloaded",
     });
   });
-  test("Fake timeout 1", async () => {
-    await page.waitForURL("ssss");
+  // Times out on the first run, passes on retry
+  test("Fake timeout 1", async ({}, testInfo) => {
+    await page.waitForURL(testInfo.retry === 0 ? "ssss" : /google/);
   });
 });

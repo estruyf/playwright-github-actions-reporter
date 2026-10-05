@@ -67,31 +67,31 @@ describe("getHtmlTable", () => {
 <table role="table">
 <thead>
 <tr>
-<th>Test</th>
+<th width="40%">Test</th>
 <th>Status</th>
 <th>Duration</th>
 <th>Retries</th>
-<th>Error</th>
+<th width="60%">Error<img width="10000" height="0" align="left"></th>
 </tr>
 </thead>
 <tbody>
 <tr>
 <td>Parent Title > Test 1</td>
-<td>✅ Pass</td>
+<td>✅&nbsp;Pass</td>
 <td>1s</td>
 <td></td>
 <td></td>
 </tr>
 <tr>
 <td>Test 2</td>
-<td>❌ Fail</td>
+<td>❌&nbsp;Fail</td>
 <td>2s</td>
 <td>1</td>
 <td>Test failed</td>
 </tr>
 <tr>
 <td>Test 3</td>
-<td>❌ Fail</td>
+<td>❌&nbsp;Fail</td>
 <td></td>
 <td></td>
 <td>Test failed</td>
@@ -159,24 +159,24 @@ describe("getHtmlTable", () => {
 <table role="table">
 <thead>
 <tr>
-<th>Test</th>
+<th width="40%">Test</th>
 <th>Status</th>
 <th>Duration</th>
 <th>Retries</th>
-<th>Error</th>
+<th width="60%">Error<img width="10000" height="0" align="left"></th>
 </tr>
 </thead>
 <tbody>
 <tr>
 <td>Test 2</td>
-<td>❌ Fail</td>
+<td>❌&nbsp;Fail</td>
 <td>2s</td>
 <td>1</td>
 <td>Test failed</td>
 </tr>
 <tr>
 <td>Test 3</td>
-<td>❌ Fail</td>
+<td>❌&nbsp;Fail</td>
 <td></td>
 <td></td>
 <td>Test failed</td>
@@ -249,7 +249,7 @@ describe("getHtmlTable", () => {
 <table role="table">
 <thead>
 <tr>
-<th>Test</th>
+<th width="100%">Test<img width="10000" height="0" align="left"></th>
 <th>Status</th>
 <th>Duration</th>
 <th>Retries</th>
@@ -261,7 +261,7 @@ describe("getHtmlTable", () => {
 </tr>
 <tr>
 <td>Test 1</td>
-<td>❌ Fail</td>
+<td>❌&nbsp;Fail</td>
 <td>2s</td>
 <td>1</td>
 </tr>
@@ -323,12 +323,12 @@ describe("getHtmlTable", () => {
 <table role="table">
 <thead>
 <tr>
-<th>Test</th>
+<th width="40%">Test</th>
 <th>Status</th>
 <th>Duration</th>
 <th>Retries</th>
 <th>Tags</th>
-<th>Error</th>
+<th width="60%">Error<img width="10000" height="0" align="left"></th>
 </tr>
 </thead>
 <tbody>
@@ -337,7 +337,7 @@ describe("getHtmlTable", () => {
 </tr>
 <tr>
 <td>Test 1</td>
-<td>❌ Fail</td>
+<td>❌&nbsp;Fail</td>
 <td>2s</td>
 <td>1</td>
 <td>tag1, tag2</td>
@@ -345,7 +345,7 @@ describe("getHtmlTable", () => {
 </tr>
 <tr>
 <td>Test 2</td>
-<td>❌ Fail</td>
+<td>❌&nbsp;Fail</td>
 <td>2s</td>
 <td>1</td>
 <td>tag1</td>
@@ -395,17 +395,17 @@ describe("getHtmlTable", () => {
 <table role="table">
 <thead>
 <tr>
-<th>Test</th>
+<th width="67%">Test</th>
 <th>Status</th>
 <th>Duration</th>
 <th>Retries</th>
-<th>Annotations</th>
+<th width="33%">Annotations<img width="10000" height="0" align="left"></th>
 </tr>
 </thead>
 <tbody>
 <tr>
 <td>Test 1</td>
-<td>❌ Fail</td>
+<td>❌&nbsp;Fail</td>
 <td>2s</td>
 <td>1</td>
 <td><p><strong>info</strong>: Annotation 1</p></td>
@@ -453,17 +453,17 @@ describe("getHtmlTable", () => {
 <table role="table">
 <thead>
 <tr>
-<th>Test</th>
+<th width="67%">Test</th>
 <th>Status</th>
 <th>Duration</th>
 <th>Retries</th>
-<th>Annotations</th>
+<th width="33%">Annotations<img width="10000" height="0" align="left"></th>
 </tr>
 </thead>
 <tbody>
 <tr>
 <td>Test 1</td>
-<td>❌ Fail</td>
+<td>❌&nbsp;Fail</td>
 <td>2s</td>
 <td>1</td>
 <td></td>

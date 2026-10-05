@@ -14,10 +14,10 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
         with:
-          node-version: 18
+          node-version: 24
           cache: "npm"
 
       - name: Install dependencies
@@ -31,7 +31,7 @@ jobs:
 
       - name: Cache Playwright Browsers for Playwright's Version
         id: cache-playwright-browsers
-        uses: actions/cache@v4
+        uses: actions/cache@v6
         with:
           path: ~/.cache/ms-playwright
           key: playwright-browsers-${{ env.PLAYWRIGHT_VERSION }}
@@ -41,8 +41,19 @@ jobs:
         run: npx playwright install --with-deps chromium
 
       - name: Run Playwright tests
+        id: playwright
         run: npx playwright test
         continue-on-error: true
         env:
           AZURE_STORAGE_SAS: ${{ secrets.AZURE_STORAGE_SAS }}
           AZURE_STORAGE_URL: ${{ vars.AZURE_STORAGE_URL }}
+
+      - name: Show the test result outputs
+        run: |
+          echo "Total: ${{ steps.playwright.outputs.total }}"
+          echo "Passed: ${{ steps.playwright.outputs.passed }}"
+          echo "Failed: ${{ steps.playwright.outputs.failed }}"
+          echo "Flaky: ${{ steps.playwright.outputs.flaky }}"
+          echo "Skipped: ${{ steps.playwright.outputs.skipped }}"
+          echo "Timed out: ${{ steps.playwright.outputs.timed-out }}"
+          echo "Status: ${{ steps.playwright.outputs.status }}"

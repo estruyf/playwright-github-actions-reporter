@@ -1,4 +1,4 @@
-import { BlobService } from "../models/index.js";
+import type { BlobService } from "../models/index.js";
 import { uploadToAzure } from "./blobServices/uploadToAzure.js";
 
 export const processAttachments = async (

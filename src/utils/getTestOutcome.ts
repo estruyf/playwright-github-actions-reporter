@@ -1,4 +1,4 @@
-import { TestCase, TestResult } from "@playwright/test/reporter";
+import type { TestCase, TestResult } from "@playwright/test/reporter";
 
 export const getTestOutcome = (test: TestCase, result: TestResult) => {
   if (result?.status) {

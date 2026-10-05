@@ -11,15 +11,14 @@ test.describe("Speaking", () => {
     });
   });
 
-  test.afterAll(async ({ browser }) => {
+  test.afterAll(async () => {
     await page.close();
-    await browser.close();
   });
 
   test("Check figure", async () => {
-    const figure = page.locator(`.content_zone figure`);
+    const figure = page.locator(`main img`).first();
     await figure.waitFor();
 
-    expect(figure.locator(`img`)).toBeVisible();
+    await expect(figure).toBeVisible();
   });
 });

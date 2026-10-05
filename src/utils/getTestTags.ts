@@ -1,4 +1,4 @@
-import { TestCase } from "@playwright/test/reporter";
+import type { TestCase } from "@playwright/test/reporter";
 
 /**
  * Retrieves the tags associated with a test case.

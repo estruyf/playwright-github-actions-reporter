@@ -1,6 +1,6 @@
 import { parse } from "path";
 import { readFile } from "fs/promises";
-import { BlobService } from "../../models/index.js";
+import type { BlobService } from "../../models/index.js";
 
 export const uploadToAzure = async (
   blobService: BlobService,

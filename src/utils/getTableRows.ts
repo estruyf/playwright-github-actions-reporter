@@ -1,23 +1,14 @@
-import { TestCase } from "@playwright/test/reporter";
-import Convert from "ansi-to-html";
+import type { TestCase } from "@playwright/test/reporter";
 import { getTestStatus } from "./getTestStatus.js";
 import { getTestTitle } from "./getTestTitle.js";
 import { getTestTags } from "./getTestTags.js";
 import { getTestAnnotations } from "./getTestAnnotations.js";
 import { getTestDuration } from "./getTestDuration.js";
 import { getTestStatusIcon } from "./getTestStatusIcon.js";
-import { BlobService, DisplayLevel } from "../models/index.js";
+import type { BlobService, DisplayLevel } from "../models/index.js";
 import { processAttachments } from "./processAttachments.js";
-
-// Type definitions for summary table (from @actions/core)
-interface SummaryTableCell {
-  data: string;
-  header?: boolean;
-  colspan?: string;
-  rowspan?: string;
-}
-
-type SummaryTableRow = (SummaryTableCell | string)[];
+import { getErrorDetails, type ErrorOptions } from "./getErrorDetails.js";
+import { getTableHeaders, type SummaryTableRow } from "./summaryTable.js";
 
 export const getTableRows = async (
   tests: TestCase[],
@@ -27,56 +18,30 @@ export const getTableRows = async (
   displayLevel: DisplayLevel[],
   showAnnotationsInColumn: boolean = false,
   blobService?: BlobService,
+  errorOptions?: ErrorOptions,
+  failOnFlakyTests: boolean = false,
 ): Promise<SummaryTableRow[]> => {
-  const convert = new Convert();
   const hasBlobService = blobService && blobService.azure;
 
-  const tableHeaders = [
-    {
-      data: "Test",
-      header: true,
-    },
-    {
-      data: "Status",
-      header: true,
-    },
-    {
-      data: "Duration",
-      header: true,
-    },
-    {
-      data: "Retries",
-      header: true,
-    },
-  ];
+  const columns = ["Test", "Status", "Duration", "Retries"];
 
   if (showTags) {
-    tableHeaders.push({
-      data: "Tags",
-      header: true,
-    });
+    columns.push("Tags");
   }
 
   if (showAnnotations && showAnnotationsInColumn) {
-    tableHeaders.push({
-      data: "Annotations",
-      header: true,
-    });
+    columns.push("Annotations");
   }
 
   if (showError) {
-    tableHeaders.push({
-      data: "Error",
-      header: true,
-    });
+    columns.push("Error");
 
     if (hasBlobService) {
-      tableHeaders.push({
-        data: "Attachments",
-        header: true,
-      });
+      columns.push("Attachments");
     }
   }
+
+  const tableHeaders = getTableHeaders(columns);
 
   const tableRows: SummaryTableRow[] = [];
 
@@ -121,7 +86,7 @@ export const getTableRows = async (
         header: false,
       },
       {
-        data: `${getTestStatusIcon(test, result)} ${testStatus}`,
+        data: `${getTestStatusIcon(test, result, failOnFlakyTests)}&nbsp;${testStatus}`,
         header: false,
       },
       {
@@ -157,9 +122,8 @@ export const getTableRows = async (
     }
 
     if (showError) {
-      const error = result?.error?.message || "";
       tableRow.push({
-        data: convert.toHtml(error),
+        data: getErrorDetails(result, errorOptions),
         header: false,
       });
 

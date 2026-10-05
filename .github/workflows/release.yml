@@ -1,20 +1,24 @@
-name: Release beta
+name: Release
 on:
   push:
     branches:
       - dev
+  release:
+    types:
+      - published
+  workflow_dispatch:
 
-# Cancel the previous runs (if any are still waiting)
+# Cancel the previous beta runs (if any are still waiting)
 concurrency:
-  group: ${{ github.workflow }}
-  cancel-in-progress: true
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.ref == 'refs/heads/dev' }}
 
 jobs:
   test:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
         with:
           node-version: 18
           registry-url: https://registry.npmjs.org/
@@ -28,13 +32,16 @@ jobs:
   build:
     runs-on: ubuntu-latest
     needs: test
+    permissions:
+      contents: read
+      id-token: write
     environment:
       name: npm
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
         with:
-          node-version: 18
+          node-version: 24
           registry-url: https://registry.npmjs.org/
 
       - name: Install npm dependencies
@@ -48,7 +55,9 @@ jobs:
         run: node scripts/update-package-version.js $GITHUB_RUN_ID
 
       - name: Publish beta release
-        run: npm publish --tag next --access public
         if: github.ref == 'refs/heads/dev'
-        env:
-          NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
+        run: npm publish --tag next --access public
+
+      - name: Publish release
+        if: github.ref != 'refs/heads/dev'
+        run: npm publish --access public

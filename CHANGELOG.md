@@ -2,6 +2,65 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.13.0]
+
+- [#32](https://github.com/estruyf/playwright-github-actions-reporter/issues/32):
+  Added the `prComment` and `githubToken` options to add the test results as a
+  comment on the pull request
+- [#39](https://github.com/estruyf/playwright-github-actions-reporter/issues/39):
+  Upgraded the `@playwright/test` dev dependency to v1.63. The peer dependency
+  stays at `^1.42.1`, so no Playwright upgrade is needed on your side
+- [#50](https://github.com/estruyf/playwright-github-actions-reporter/issues/50):
+  Added a `Flaky` count to the summary header for tests that passed on a retry.
+  Flaky tests are no longer counted as `Passed`, so the counts add up to
+  `Total tests`.
+  Implemented by [SpinachDigital](https://github.com/SpinachDigital)
+- [#51](https://github.com/estruyf/playwright-github-actions-reporter/issues/51):
+  Added the `showFailedOverview` and `failedOverviewLimit` options to show an
+  overview of all failed tests at the top of the summary
+- [#53](https://github.com/estruyf/playwright-github-actions-reporter/issues/53):
+  Added the `showSlowestTests` option to show the slowest tests at the top of
+  the summary
+- [#41](https://github.com/estruyf/playwright-github-actions-reporter/issues/41):
+  The error column shows all errors of a test (e.g. every failed
+  `expect.soft()`), the error cause, and a link to the failing line on GitHub.
+  Added the `showErrorSnippet` option to show the code snippet of the error
+- [#52](https://github.com/estruyf/playwright-github-actions-reporter/issues/52):
+  Added the `errorFormat` and `maxErrorLength` options to show a short, one
+  line version of each error
+- [#42](https://github.com/estruyf/playwright-github-actions-reporter/issues/42):
+  Annotations link to their source line on GitHub (Playwright 1.54 and newer).
+  Annotations without a description no longer show `undefined`
+- [#54](https://github.com/estruyf/playwright-github-actions-reporter/issues/54):
+  Added the `excludeProjects` option to leave projects, like setup projects,
+  out of the summary. An excluded project with a failed test is still shown
+- [#56](https://github.com/estruyf/playwright-github-actions-reporter/issues/56):
+  Added the `description` and `metadata` options to show custom context below
+  the title of the summary and the pull request comment
+- [#44](https://github.com/estruyf/playwright-github-actions-reporter/issues/44),
+  [#24](https://github.com/estruyf/playwright-github-actions-reporter/issues/24):
+  The summary and the failed step explain why a run failed, including global
+  timeouts, interrupted runs and flaky tests with `failOnFlakyTests`
+- [#43](https://github.com/estruyf/playwright-github-actions-reporter/issues/43):
+  Errors outside of tests, like a failing global setup or worker teardown, are
+  shown in the summary
+- [#55](https://github.com/estruyf/playwright-github-actions-reporter/issues/55):
+  The test result counts and the run status are set as step outputs
+- [#45](https://github.com/estruyf/playwright-github-actions-reporter/issues/45):
+  Sharded runs show the shard in the summary title, e.g. `Test results (shard
+  2/4)`. Added a "Sharding" section to the README on merging the shard reports
+- [#49](https://github.com/estruyf/playwright-github-actions-reporter/issues/49):
+  Sharded runs get one pull request comment per shard. Added the `prCommentId`
+  option to give each matrix job its own comment
+- [#40](https://github.com/estruyf/playwright-github-actions-reporter/issues/40):
+  The error shows the `test.step` or hook in which a test failed, e.g.
+  `Failed at: Checkout › Add to cart (SKU 42)`
+- [#58](https://github.com/estruyf/playwright-github-actions-reporter/issues/58):
+  Added the `workflowAnnotations` option to add workflow annotations for failed
+  and flaky tests
+- The summary tables now use the full width of the page, so they no longer
+  change width from table to table
+
 ## [1.12.0]
 
 - [#35](https://github.com/estruyf/playwright-github-actions-reporter/issues/35):

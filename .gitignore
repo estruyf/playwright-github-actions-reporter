@@ -7,3 +7,5 @@ playwright-report
 coverage
 
 results.json
+blob-report
+all-blob-reports

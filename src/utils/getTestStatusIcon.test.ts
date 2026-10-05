@@ -69,4 +69,16 @@ describe("getTestStatusIcon", () => {
 
     expect(status).toBe("❌");
   });
+
+  it("should return '❌' for a flaky test when failOnFlakyTests is enabled", () => {
+    const test: any = {
+      outcome: () => "expected",
+    };
+    const result: any = {
+      retry: 1,
+      status: "passed",
+    };
+
+    expect(getTestStatusIcon(test, result, true)).toBe("❌");
+  });
 });

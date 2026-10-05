@@ -1,29 +1,24 @@
 import { DisplayLevel } from "../models/index.js";
 import { getTableRows } from "./getTableRows.js";
+import { TABLE_SPACER } from "./summaryTable.js";
 
-const tableHeaders = [
-  {
-    data: "Test",
-    header: true,
-  },
-  {
-    data: "Status",
-    header: true,
-  },
-  {
-    data: "Duration",
-    header: true,
-  },
-  {
-    data: "Retries",
-    header: true,
-  },
-];
+const headers = (widths: Record<string, string>, ...extra: string[]) => {
+  const columns = ["Test", "Status", "Duration", "Retries", ...extra];
+  const spacerColumn = columns.filter((column) => widths[column]).pop();
 
-const tableHeadersWithAnnotationColumn = [
-  ...tableHeaders,
-  ...[{ data: "Annotations", header: true }],
-];
+  return columns.map((column) => ({
+    data: column === spacerColumn ? `${column}${TABLE_SPACER}` : column,
+    header: true,
+    ...(widths[column] ? { width: widths[column] } : {}),
+  }));
+};
+
+const tableHeaders = headers({ Test: "100%" });
+
+const tableHeadersWithAnnotationColumn = headers(
+  { Test: "67%", Annotations: "33%" },
+  "Annotations",
+);
 
 const defaultDisplayLevel: DisplayLevel[] = [
   "pass",
@@ -72,21 +67,20 @@ describe("getTableRows", () => {
       true,
       defaultDisplayLevel,
     );
-    const clonedTableHeaders = Object.assign([], tableHeaders);
-    clonedTableHeaders.push({ data: "Error", header: true });
+    const clonedTableHeaders = headers({ Test: "40%", Error: "60%" }, "Error");
 
     const expected = [
       clonedTableHeaders,
       [
         { data: "Parent Title > Test 1", header: false },
-        { data: "✅ Pass", header: false },
+        { data: "✅&nbsp;Pass", header: false },
         { data: "1s", header: false },
         { data: "", header: false },
         { data: "", header: false },
       ],
       [
         { data: "Test 2", header: false },
-        { data: "❌ Fail", header: false },
+        { data: "❌&nbsp;Fail", header: false },
         { data: "2s", header: false },
         { data: "1", header: false },
         { data: "Test failed", header: false },
@@ -133,14 +127,13 @@ describe("getTableRows", () => {
       "flaky",
       "skipped",
     ]);
-    const clonedTableHeaders = Object.assign([], tableHeaders);
-    clonedTableHeaders.push({ data: "Error", header: true });
+    const clonedTableHeaders = headers({ Test: "40%", Error: "60%" }, "Error");
 
     const expected = [
       clonedTableHeaders,
       [
         { data: "Test 2", header: false },
-        { data: "❌ Fail", header: false },
+        { data: "❌&nbsp;Fail", header: false },
         { data: "2s", header: false },
         { data: "1", header: false },
         { data: "Test failed", header: false },
@@ -190,13 +183,13 @@ describe("getTableRows", () => {
       tableHeaders,
       [
         { data: "Test 1", header: false },
-        { data: "✅ Pass", header: false },
+        { data: "✅&nbsp;Pass", header: false },
         { data: "1s", header: false },
         { data: "", header: false },
       ],
       [
         { data: "Test 2", header: false },
-        { data: "❌ Fail", header: false },
+        { data: "❌&nbsp;Fail", header: false },
         { data: "2s", header: false },
         { data: "1", header: false },
       ],
@@ -223,8 +216,7 @@ describe("getTableRows", () => {
       true,
       defaultDisplayLevel,
     );
-    const clonedTableHeaders = Object.assign([], tableHeaders);
-    clonedTableHeaders.push({ data: "Error", header: true });
+    const clonedTableHeaders = headers({ Test: "40%", Error: "60%" }, "Error");
 
     expect(result).toEqual([]);
   });
@@ -284,7 +276,7 @@ describe("getTableRows", () => {
       ],
       [
         { data: "Test 1", header: false },
-        { data: "✅ Pass", header: false },
+        { data: "✅&nbsp;Pass", header: false },
         { data: "1s", header: false },
         { data: "", header: false },
       ],
@@ -297,7 +289,7 @@ describe("getTableRows", () => {
       ],
       [
         { data: "Test 2", header: false },
-        { data: "❌ Fail", header: false },
+        { data: "❌&nbsp;Fail", header: false },
         { data: "2s", header: false },
         { data: "1", header: false },
       ],
@@ -345,9 +337,11 @@ describe("getTableRows", () => {
       defaultDisplayLevel,
     );
 
-    const clonedTableHeaders = Object.assign([], tableHeaders);
-    clonedTableHeaders.push({ data: "Tags", header: true });
-    clonedTableHeaders.push({ data: "Error", header: true });
+    const clonedTableHeaders = headers(
+      { Test: "40%", Error: "60%" },
+      "Tags",
+      "Error",
+    );
 
     const expected = [
       clonedTableHeaders,
@@ -360,7 +354,7 @@ describe("getTableRows", () => {
       ],
       [
         { data: "Test 1", header: false },
-        { data: "✅ Pass", header: false },
+        { data: "✅&nbsp;Pass", header: false },
         { data: "1s", header: false },
         { data: "", header: false },
         { data: "tag1, tag2", header: false },
@@ -368,7 +362,7 @@ describe("getTableRows", () => {
       ],
       [
         { data: "Test 2", header: false },
-        { data: "❌ Fail", header: false },
+        { data: "❌&nbsp;Fail", header: false },
         { data: "2s", header: false },
         { data: "1", header: false },
         { data: "tag1", header: false },
@@ -424,7 +418,7 @@ describe("getTableRows", () => {
       tableHeadersWithAnnotationColumn,
       [
         { data: "Test 1", header: false },
-        { data: "✅ Pass", header: false },
+        { data: "✅&nbsp;Pass", header: false },
         { data: "1s", header: false },
         { data: "", header: false },
         {
@@ -437,7 +431,7 @@ describe("getTableRows", () => {
       ],
       [
         { data: "Test 2", header: false },
-        { data: "❌ Fail", header: false },
+        { data: "❌&nbsp;Fail", header: false },
         { data: "2s", header: false },
         { data: "1", header: false },
         {
@@ -489,7 +483,7 @@ describe("getTableRows", () => {
       tableHeadersWithAnnotationColumn,
       [
         { data: "Test 1", header: false },
-        { data: "✅ Pass", header: false },
+        { data: "✅&nbsp;Pass", header: false },
         { data: "1s", header: false },
         { data: "", header: false },
         {
@@ -499,7 +493,7 @@ describe("getTableRows", () => {
       ],
       [
         { data: "Test 2", header: false },
-        { data: "❌ Fail", header: false },
+        { data: "❌&nbsp;Fail", header: false },
         { data: "2s", header: false },
         { data: "1", header: false },
         {

@@ -1,4 +1,4 @@
-import { Suite } from "@playwright/test/reporter";
+import type { Suite } from "@playwright/test/reporter";
 import { getTotalStatus } from "./getTotalStatus.js";
 
 export const getSummaryDetails = (suite: Suite): string[] => {
@@ -8,6 +8,10 @@ export const getSummaryDetails = (suite: Suite): string[] => {
 
   if (totalStatus.passed > 0) {
     headerText.push(`Passed: ${totalStatus.passed}`);
+  }
+
+  if (totalStatus.flaky > 0) {
+    headerText.push(`Flaky: ${totalStatus.flaky}`);
   }
 
   if (totalStatus.failed > 0) {
