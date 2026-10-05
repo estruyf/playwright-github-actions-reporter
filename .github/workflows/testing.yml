@@ -41,8 +41,19 @@ jobs:
         run: npx playwright install --with-deps chromium
 
       - name: Run Playwright tests
+        id: playwright
         run: npx playwright test
         continue-on-error: true
         env:
           AZURE_STORAGE_SAS: ${{ secrets.AZURE_STORAGE_SAS }}
           AZURE_STORAGE_URL: ${{ vars.AZURE_STORAGE_URL }}
+
+      - name: Show the test result outputs
+        run: |
+          echo "Total: ${{ steps.playwright.outputs.total }}"
+          echo "Passed: ${{ steps.playwright.outputs.passed }}"
+          echo "Failed: ${{ steps.playwright.outputs.failed }}"
+          echo "Flaky: ${{ steps.playwright.outputs.flaky }}"
+          echo "Skipped: ${{ steps.playwright.outputs.skipped }}"
+          echo "Timed out: ${{ steps.playwright.outputs.timed-out }}"
+          echo "Status: ${{ steps.playwright.outputs.status }}"

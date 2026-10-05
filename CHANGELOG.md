@@ -37,6 +37,15 @@ All notable changes to this project will be documented in this file.
 - [#56](https://github.com/estruyf/playwright-github-actions-reporter/issues/56):
   Added the `description` and `metadata` options to show custom context below
   the title of the summary and the pull request comment
+- [#44](https://github.com/estruyf/playwright-github-actions-reporter/issues/44),
+  [#24](https://github.com/estruyf/playwright-github-actions-reporter/issues/24):
+  The summary and the failed step explain why a run failed, including global
+  timeouts, interrupted runs and flaky tests with `failOnFlakyTests`
+- [#43](https://github.com/estruyf/playwright-github-actions-reporter/issues/43):
+  Errors outside of tests, like a failing global setup or worker teardown, are
+  shown in the summary
+- [#55](https://github.com/estruyf/playwright-github-actions-reporter/issues/55):
+  The test result counts and the run status are set as step outputs
 - The summary tables now use the full width of the page, so they no longer
   change width from table to table
 

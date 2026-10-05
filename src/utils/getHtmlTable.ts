@@ -19,6 +19,7 @@ export const getHtmlTable = async (
   showAnnotationsInColumn: boolean = false,
   blobService?: BlobService,
   errorOptions?: ErrorOptions,
+  failOnFlakyTests: boolean = false,
 ): Promise<string | undefined> => {
   const hasBlobService = blobService && blobService.azure;
 
@@ -83,7 +84,7 @@ export const getHtmlTable = async (
     testRows.push(`<tr>`);
     testRows.push(`<td>${getTestTitle(test)}</td>`);
     testRows.push(
-      `<td>${getTestStatusIcon(test, result)}&nbsp;${getTestStatus(
+      `<td>${getTestStatusIcon(test, result, failOnFlakyTests)}&nbsp;${getTestStatus(
         test,
         result,
       )}</td>`,

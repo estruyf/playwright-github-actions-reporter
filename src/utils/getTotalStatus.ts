@@ -1,15 +1,15 @@
 import type { Suite } from "@playwright/test/reporter";
 import { getTestOutcome } from "./getTestOutcome.js";
 
-export const getTotalStatus = (
-  suites: Suite[],
-): {
+export interface TotalStatus {
   passed: number;
   failed: number;
   skipped: number;
   timedOut: number;
   flaky: number;
-} => {
+}
+
+export const getTotalStatus = (suites: Suite[]): TotalStatus => {
   let total = {
     passed: 0,
     failed: 0,

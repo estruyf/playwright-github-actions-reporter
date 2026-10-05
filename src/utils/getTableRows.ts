@@ -19,6 +19,7 @@ export const getTableRows = async (
   showAnnotationsInColumn: boolean = false,
   blobService?: BlobService,
   errorOptions?: ErrorOptions,
+  failOnFlakyTests: boolean = false,
 ): Promise<SummaryTableRow[]> => {
   const hasBlobService = blobService && blobService.azure;
 
@@ -85,7 +86,7 @@ export const getTableRows = async (
         header: false,
       },
       {
-        data: `${getTestStatusIcon(test, result)}&nbsp;${testStatus}`,
+        data: `${getTestStatusIcon(test, result, failOnFlakyTests)}&nbsp;${testStatus}`,
         header: false,
       },
       {

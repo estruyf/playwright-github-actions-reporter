@@ -59,4 +59,11 @@ describe("getSuiteStatusIcon", () => {
 
     expect(result).toBe("⚠️");
   });
+
+  it("should return ❌ for flaky tests when failOnFlakyTests is enabled", () => {
+    const tests = [{ results: [{}], outcome: () => "flaky" }] as TestCase[];
+
+    expect(getSuiteStatusIcon(tests, true)).toBe("❌");
+    expect(getSuiteStatusIcon(tests, false)).toBe("⚠️");
+  });
 });

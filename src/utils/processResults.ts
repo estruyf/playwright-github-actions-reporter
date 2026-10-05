@@ -16,6 +16,7 @@ import type { ErrorOptions } from "./getErrorDetails.js";
 import { excludeProjects } from "./excludeProjects.js";
 import { getSummaryContext } from "./getSummaryContext.js";
 import { getTableHtml } from "./summaryTable.js";
+import { getGlobalErrors, type GlobalError } from "./getGlobalErrors.js";
 import type {
   BlobService,
   DisplayLevel,
@@ -24,9 +25,16 @@ import type {
 
 const SUMMARY_ENV_VAR = "GITHUB_STEP_SUMMARY";
 
+export interface RunDetails {
+  failureReason?: string;
+  errors?: GlobalError[];
+  failOnFlakyTests?: boolean;
+}
+
 export const processResults = async (
   rootSuite: Suite | undefined,
   options: GitHubActionOptions,
+  runDetails: RunDetails = {},
 ) => {
   if (process.env.NODE_ENV === "development") {
     const summaryFile = join(__dirname, "../../summary.html");
@@ -74,7 +82,21 @@ export const processResults = async (
     };
 
     const headerText = getSummaryDetails(suite);
-    summary.addRaw(headerText.join(` - `));
+    summary.addRaw(headerText.join(` - `), true);
+
+    if (runDetails.failureReason) {
+      summary.addRaw(
+        `<p>❌ <strong>Run failed:</strong> ${runDetails.failureReason}</p>`,
+        true,
+      );
+    }
+
+    // Shown regardless of `showError`, otherwise the failure is unexplained
+    const globalErrors = getGlobalErrors(runDetails.errors, errorOptions);
+    if (globalErrors) {
+      summary.addHeading("Errors outside of tests", 2);
+      summary.addRaw(getTableHtml(globalErrors), true);
+    }
 
     if (options.showFailedOverview) {
       const failedOverview = getFailedOverview(
@@ -130,6 +152,7 @@ export const processResults = async (
             options.showAnnotationsInColumn,
             blobService,
             errorOptions,
+            runDetails.failOnFlakyTests,
           );
 
           if (!content) {
@@ -137,7 +160,10 @@ export const processResults = async (
           }
 
           // Check if there are any failed tests
-          const testStatusIcon = getSuiteStatusIcon(tests[filePath]);
+          const testStatusIcon = getSuiteStatusIcon(
+            tests[filePath],
+            runDetails.failOnFlakyTests,
+          );
 
           summary.addDetails(
             `${testStatusIcon} ${getTestHeading(fileName, os, project)}`,
@@ -153,6 +179,7 @@ export const processResults = async (
             options.showAnnotationsInColumn,
             blobService,
             errorOptions,
+            runDetails.failOnFlakyTests,
           );
 
           if (tableRows.length !== 0) {

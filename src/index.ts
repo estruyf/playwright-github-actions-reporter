@@ -5,14 +5,22 @@ import type {
   Suite,
   TestCase,
   FullResult,
+  TestError,
   TestResult,
+  WorkerInfo,
 } from "@playwright/test/reporter";
 import { processResults } from "./utils/processResults.js";
+import { getTotalStatus } from "./utils/getTotalStatus.js";
+import { getFailureReason } from "./utils/getFailureReason.js";
+import { setResultOutputs } from "./utils/setResultOutputs.js";
+import type { GlobalError } from "./utils/getGlobalErrors.js";
 import type { GitHubActionOptions } from "./models/index.js";
 export type { GitHubActionOptions } from "./models/index.js";
 
 class GitHubAction implements Reporter {
   private suite: Suite | undefined;
+  private failOnFlakyTests = false;
+  private errors: GlobalError[] = [];
 
   constructor(
     private options: GitHubActionOptions = {
@@ -46,8 +54,16 @@ class GitHubAction implements Reporter {
     }
   }
 
-  onBegin(_: FullConfig, suite: Suite) {
+  onBegin(config: FullConfig, suite: Suite) {
     this.suite = suite;
+    // Available since Playwright 1.50
+    this.failOnFlakyTests = !!(config as { failOnFlakyTests?: boolean })
+      .failOnFlakyTests;
+  }
+
+  // Errors outside of tests, like a failing global setup or worker teardown
+  onError(error: TestError, workerInfo?: WorkerInfo) {
+    this.errors.push({ error, projectName: workerInfo?.project?.name });
   }
 
   onStdOut(
@@ -73,10 +89,30 @@ class GitHubAction implements Reporter {
   }
 
   async onEnd(result: FullResult) {
-    await processResults(this.suite, this.options);
+    const totals = getTotalStatus(this.suite?.suites || []);
+    const failureReason = getFailureReason(
+      result?.status,
+      totals,
+      this.failOnFlakyTests,
+      this.errors.length,
+    );
+
+    await processResults(this.suite, this.options, {
+      failureReason,
+      errors: this.errors,
+      failOnFlakyTests: this.failOnFlakyTests,
+    });
+
+    if (result?.status) {
+      setResultOutputs(
+        this.suite?.allTests().length || 0,
+        totals,
+        result.status,
+      );
+    }
 
     if (result?.status !== "passed") {
-      setFailed("Tests failed");
+      setFailed(failureReason || "Tests failed");
     }
   }
 }

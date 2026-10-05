@@ -73,6 +73,43 @@ export default defineConfig({
 });
 ```
 
+## Failed runs
+
+When a run fails, the summary shows why, below the test totals, for example `2 failed, 1 timed out`. The same message is used for the failed step in the workflow. It also covers runs that fail without a failing test:
+
+- **Flaky tests with `failOnFlakyTests`**: the flaky tests get the ❌ icon and the message says `1 flaky test (failOnFlakyTests is enabled)`.
+- **Global timeout or an interrupted run**: `Global timeout reached` or `Test run was interrupted`.
+- **Errors outside of tests**: a failing global setup or teardown, or a worker fixture that fails during teardown. These errors are shown in an "Errors outside of tests" section at the top of the summary, also when `showError` is turned off.
+
+## Step outputs
+
+The reporter sets the test results as outputs of the step that runs your tests, so later steps can use them:
+
+| Output | Description |
+| --- | --- |
+| `total` | Total number of tests |
+| `passed` | Number of passed tests |
+| `failed` | Number of failed tests |
+| `flaky` | Number of tests that passed on a retry |
+| `skipped` | Number of skipped tests |
+| `timed-out` | Number of tests that timed out |
+| `status` | Status of the run: `passed`, `failed`, `timedout` or `interrupted` |
+
+Give the step an `id` to use them:
+
+```yaml
+- name: Run Playwright tests
+  id: playwright
+  run: npx playwright test
+
+- name: Upload the report when tests failed
+  if: ${{ !cancelled() && steps.playwright.outputs.failed != '0' }}
+  uses: actions/upload-artifact@v4
+  with:
+    name: playwright-report
+    path: playwright-report/
+```
+
 ## Add context to the summary
 
 Use the `description` and `metadata` options to show extra context between the title and the results, for example the tested environment or why this set of tests ran. The context is shown in the job summary and in the pull request comment.
