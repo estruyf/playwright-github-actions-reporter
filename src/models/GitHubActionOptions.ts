@@ -15,6 +15,7 @@ export interface GitHubActionOptions {
   showSlowestTests?: number;
   quiet?: boolean;
   includeResults?: DisplayLevel[];
+  excludeProjects?: (string | RegExp)[];
   debug?: boolean;
 
   // Useful links

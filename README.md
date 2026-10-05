@@ -46,6 +46,7 @@ The reporter supports the following configuration options:
 | failedOverviewLimit | Maximum number of tests in the failed tests overview. The remaining tests are shown as a "+N more failed tests" line | `10` |
 | showSlowestTests | Show a table with the N slowest tests below the summary header, sorted by the duration of their slowest attempt. Skipped tests are left out. Use `0` to turn it off | `0` |
 | includeResults | Define which types of test results should be shown in the summary | `['pass', 'skipped', 'fail', 'flaky']` |
+| excludeProjects | Projects to leave out of the summary and the pull request comment, as strings (exact project name) or regexes. See [Exclude projects](#exclude-projects) | `[]` |
 | quiet | Do not show any output in the console | `false` |
 | showArtifactsLink | Show a link to the artifacts section in the workflow overview | `false` |
 | prComment | Add the test results as a comment on the pull request. See [Comment on the pull request](#comment-on-the-pull-request) | `false` |
@@ -69,6 +70,28 @@ export default defineConfig({
   ],
 });
 ```
+
+## Exclude projects
+
+When you use [project dependencies](https://playwright.dev/docs/test-global-setup-teardown#option-1-project-dependencies), for example to sign in before the tests run, the setup projects show up as their own sections in the summary. Use the `excludeProjects` option to leave them out:
+
+```ts
+import { defineConfig } from '@playwright/test';
+import type { GitHubActionOptions } from '@estruyf/github-actions-reporter';
+
+export default defineConfig({
+  reporter: [
+    ['@estruyf/github-actions-reporter', <GitHubActionOptions>{
+      excludeProjects: ['setup', /^setup-/]
+    }]
+  ],
+});
+```
+
+A string matches the full project name, a regex is tested against it. The tests of excluded projects are left out of the totals, the failed and slowest tests overviews, and the file sections.
+
+> [!NOTE]
+> An excluded project with a failed test is still shown, including in the totals. When a setup project fails, all tests that depend on it are skipped, so the failure explains why.
 
 ## Comment on the pull request
 

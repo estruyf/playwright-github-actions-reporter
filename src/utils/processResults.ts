@@ -13,6 +13,7 @@ import { commentOnPullRequest } from "./commentOnPullRequest.js";
 import { getFailedOverview } from "./getFailedOverview.js";
 import { getSlowestTests } from "./getSlowestTests.js";
 import type { ErrorOptions } from "./getErrorDetails.js";
+import { excludeProjects } from "./excludeProjects.js";
 import type {
   BlobService,
   DisplayLevel,
@@ -22,7 +23,7 @@ import type {
 const SUMMARY_ENV_VAR = "GITHUB_STEP_SUMMARY";
 
 export const processResults = async (
-  suite: Suite | undefined,
+  rootSuite: Suite | undefined,
   options: GitHubActionOptions,
 ) => {
   if (process.env.NODE_ENV === "development") {
@@ -35,7 +36,8 @@ export const processResults = async (
     process.env.GITHUB_ACTIONS = "true";
   }
 
-  if (process.env.GITHUB_ACTIONS && suite) {
+  if (process.env.GITHUB_ACTIONS && rootSuite) {
+    const suite = excludeProjects(rootSuite, options.excludeProjects);
     const os = process.platform;
 
     let blobService: BlobService | undefined = undefined;

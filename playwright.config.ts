@@ -38,6 +38,7 @@ const config: PlaywrightTestConfig<{}, {}> = {
         showError: true,
         quiet: false,
         includeResults: ["pass", "skipped"],
+        excludeProjects: [/^setup$/],
       },
     ],
     [

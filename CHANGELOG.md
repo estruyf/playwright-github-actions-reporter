@@ -31,6 +31,9 @@ All notable changes to this project will be documented in this file.
 - [#42](https://github.com/estruyf/playwright-github-actions-reporter/issues/42):
   Annotations link to their source line on GitHub (Playwright 1.54 and newer).
   Annotations without a description no longer show `undefined`
+- [#54](https://github.com/estruyf/playwright-github-actions-reporter/issues/54):
+  Added the `excludeProjects` option to leave projects, like setup projects,
+  out of the summary. An excluded project with a failed test is still shown
 
 ## [1.12.0]
 
