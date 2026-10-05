@@ -95,11 +95,39 @@ describe("getSummaryDetails", () => {
       allTests: () => [{}, {}],
     };
     const result = getSummaryDetails(suite as any);
-    expect(result).toContain("Passed: 2");
+    expect(result).toContain("Passed: 1");
     expect(result).toContain("Flaky: 1");
     expect(result.indexOf("Flaky: 1")).toBeGreaterThan(
-      result.indexOf("Passed: 2"),
+      result.indexOf("Passed: 1"),
     );
+  });
+
+  it("should have status counts that add up to the total number of tests", () => {
+    const suite = {
+      suites: [
+        {
+          allTests: () => [
+            { results: [{ status: "passed" }] },
+            { results: [{ status: "failed" }, { status: "passed", retry: 1 }] },
+          ],
+        },
+        {
+          allTests: () => [
+            { results: [{ status: "failed" }] },
+            { results: [{ status: "interrupted" }] },
+            { results: [{ status: "skipped" }] },
+            { results: [{ status: "timedOut" }] },
+          ],
+        },
+      ],
+      allTests: () => [{}, {}, {}, {}, {}, {}],
+    };
+    const result = getSummaryDetails(suite as any);
+    const [total, ...counts] = result.map((line) =>
+      Number(line.split(": ")[1]),
+    );
+    expect(total).toBe(6);
+    expect(counts.reduce((sum, count) => sum + count, 0)).toBe(total);
   });
 
   it("should not include flaky tests when there are none", () => {

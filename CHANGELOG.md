@@ -12,6 +12,8 @@ All notable changes to this project will be documented in this file.
   stays at `^1.42.1`, so no Playwright upgrade is needed on your side
 - [#50](https://github.com/estruyf/playwright-github-actions-reporter/issues/50):
   Added a `Flaky` count to the summary header for tests that passed on a retry.
+  Flaky tests are no longer counted as `Passed`, so the counts add up to
+  `Total tests`.
   Implemented by [SpinachDigital](https://github.com/SpinachDigital)
 
 ## [1.12.0]

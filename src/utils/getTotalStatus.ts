@@ -28,19 +28,20 @@ export const getTotalStatus = (
     });
 
     for (const { outcome, retry } of testOutcome) {
-      if (outcome === "passed") {
-        total.passed++;
+      if (outcome === "passed" && retry > 0) {
         // A test that failed first and passed on retry shows as "Flaky"
-        // in the summary table - count it separately in the header too.
-        if (retry > 0) {
-          total.flaky++;
-        }
-      } else if (outcome === "failed") {
-        total.failed++;
+        // in the summary table, so it is not counted as passed.
+        total.flaky++;
+      } else if (outcome === "passed") {
+        total.passed++;
       } else if (outcome === "skipped") {
         total.skipped++;
       } else if (outcome === "timedOut") {
         total.timedOut++;
+      } else {
+        // "failed", "interrupted" and anything else show as "Fail" in the
+        // summary table. Counting them here keeps the totals adding up.
+        total.failed++;
       }
     }
   }
