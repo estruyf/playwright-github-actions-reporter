@@ -15,6 +15,11 @@ import { getFailureReason } from "./utils/getFailureReason.js";
 import { setResultOutputs } from "./utils/setResultOutputs.js";
 import type { GlobalError } from "./utils/getGlobalErrors.js";
 import type { Shard } from "./utils/getShard.js";
+import { excludeProjects } from "./utils/excludeProjects.js";
+import {
+  emitWorkflowAnnotations,
+  getWorkflowAnnotations,
+} from "./utils/getWorkflowAnnotations.js";
 import type { GitHubActionOptions } from "./models/index.js";
 export type { GitHubActionOptions } from "./models/index.js";
 
@@ -99,6 +104,23 @@ class GitHubAction implements Reporter {
       this.failOnFlakyTests,
       this.errors.length,
     );
+
+    if (
+      this.options.workflowAnnotations &&
+      process.env.GITHUB_ACTIONS &&
+      this.suite
+    ) {
+      emitWorkflowAnnotations(
+        getWorkflowAnnotations(
+          excludeProjects(this.suite, this.options.excludeProjects),
+          {
+            maxErrorLength: this.options.maxErrorLength,
+            failOnFlakyTests: this.failOnFlakyTests,
+            errors: this.errors,
+          },
+        ),
+      );
+    }
 
     await processResults(this.suite, this.options, {
       failureReason,

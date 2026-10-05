@@ -45,6 +45,7 @@ The reporter supports the following configuration options:
 | maxErrorLength | Maximum length of an error in the `short` format and in the failed tests overview | `180` |
 | showErrorSnippet | Show the code snippet of the error in a collapsible block. Only for the `full` format. Snippets are left out of the pull request comment | `false` |
 | showFailedOverview | Show a table with all failed and timed out tests across all files below the summary header. Only rendered when at least one test failed and `fail` is part of `includeResults` | `false` |
+| workflowAnnotations | Add workflow annotations for failed and flaky tests, shown on the run and on the files of a pull request. See [Workflow annotations](#workflow-annotations) | `false` |
 | failedOverviewLimit | Maximum number of tests in the failed tests overview. The remaining tests are shown as a "+N more failed tests" line | `10` |
 | showSlowestTests | Show a table with the N slowest tests below the summary header, sorted by the duration of their slowest attempt. Skipped tests are left out. Use `0` to turn it off | `0` |
 | includeResults | Define which types of test results should be shown in the summary | `['pass', 'skipped', 'fail', 'flaky']` |
@@ -119,6 +120,17 @@ When a run fails, the summary shows why, below the test totals, for example `2 f
 - **Flaky tests with `failOnFlakyTests`**: the flaky tests get the ❌ icon and the message says `1 flaky test (failOnFlakyTests is enabled)`.
 - **Global timeout or an interrupted run**: `Global timeout reached` or `Test run was interrupted`.
 - **Errors outside of tests**: a failing global setup or teardown, or a worker fixture that fails during teardown. These errors are shown in an "Errors outside of tests" section at the top of the summary, also when `showError` is turned off.
+
+## Workflow annotations
+
+With the `workflowAnnotations` option, the reporter adds a [workflow annotation](https://docs.github.com/en/actions/reference/workflows-and-actions/workflow-commands#setting-an-error-message) for each failed test, shown on the run and inline on the "Files changed" tab of a pull request:
+
+- Failed and timed out tests get an error on the line where the test failed.
+- Flaky tests get a warning, or an error when `failOnFlakyTests` is enabled.
+- Errors outside of tests, like a failing global setup, get an error as well.
+
+> [!NOTE]
+> Playwright's built-in [`github` reporter](https://playwright.dev/docs/test-reporters#github-actions-annotations) also adds annotations. Do not enable this option when you use both reporters, or each failure is annotated twice. GitHub shows at most 10 errors and 10 warnings per step.
 
 ## Step outputs
 

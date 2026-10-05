@@ -3,6 +3,7 @@ import { basename } from "path";
 import { getTestStatus } from "./getTestStatus.js";
 import { getTableHeaders, type SummaryTableRow } from "./summaryTable.js";
 import { getTestDuration } from "./getTestDuration.js";
+import { getTestTitlePath } from "./getTestTitlePath.js";
 
 interface SlowTest {
   test: TestCase;
@@ -10,21 +11,6 @@ interface SlowTest {
   retries: number;
   projectName?: string;
 }
-
-// Full describe path of the test, e.g. "Pages > Homepage > loads all web parts"
-const getTestTitlePath = (test: TestCase): string => {
-  const titles = [test.title];
-
-  let parent = test.parent;
-  while (parent && parent.type === "describe") {
-    if (parent.title) {
-      titles.unshift(parent.title);
-    }
-    parent = parent.parent as Suite;
-  }
-
-  return titles.join(" > ");
-};
 
 export const getSlowestTests = (
   suite: Suite,

@@ -27,6 +27,7 @@ const config: PlaywrightTestConfig<{}, {}> = {
         showError: true,
         showFailedOverview: true,
         showSlowestTests: 5,
+        workflowAnnotations: true,
         showErrorSnippet: true,
         quiet: false,
         includeResults: ["fail", "flaky", "skipped"],

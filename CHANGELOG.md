@@ -55,6 +55,9 @@ All notable changes to this project will be documented in this file.
 - [#40](https://github.com/estruyf/playwright-github-actions-reporter/issues/40):
   The error shows the `test.step` or hook in which a test failed, e.g.
   `Failed at: Checkout › Add to cart (SKU 42)`
+- [#58](https://github.com/estruyf/playwright-github-actions-reporter/issues/58):
+  Added the `workflowAnnotations` option to add workflow annotations for failed
+  and flaky tests
 - The summary tables now use the full width of the page, so they no longer
   change width from table to table
 

@@ -23,26 +23,39 @@ export const getCommitSha = (): string | undefined => {
 };
 
 /**
- * Link to the line of the location in the GitHub repository, or `undefined`
- * when not running in GitHub Actions or when the file is outside the workspace.
+ * Path of the file relative to the repository (`GITHUB_WORKSPACE`), with
+ * forward slashes, or `undefined` when the file is outside the workspace.
  */
-export const getSourceUrl = (location?: Location): string | undefined => {
-  const { GITHUB_SERVER_URL, GITHUB_REPOSITORY, GITHUB_WORKSPACE } =
-    process.env;
-  const sha = getCommitSha();
-
-  if (!location?.file || !GITHUB_REPOSITORY || !GITHUB_WORKSPACE || !sha) {
+export const getWorkspacePath = (file?: string): string | undefined => {
+  const { GITHUB_WORKSPACE } = process.env;
+  if (!file || !GITHUB_WORKSPACE) {
     return undefined;
   }
 
-  const filePath = relative(GITHUB_WORKSPACE, location.file);
+  const filePath = relative(GITHUB_WORKSPACE, file);
   if (!filePath || filePath.startsWith("..") || isAbsolute(filePath)) {
     return undefined;
   }
 
+  // Windows runners use backslashes
+  return filePath.split(/[\\/]/).join("/");
+};
+
+/**
+ * Link to the line of the location in the GitHub repository, or `undefined`
+ * when not running in GitHub Actions or when the file is outside the workspace.
+ */
+export const getSourceUrl = (location?: Location): string | undefined => {
+  const { GITHUB_SERVER_URL, GITHUB_REPOSITORY } = process.env;
+  const sha = getCommitSha();
+  const filePath = getWorkspacePath(location?.file);
+
+  if (!location || !filePath || !GITHUB_REPOSITORY || !sha) {
+    return undefined;
+  }
+
   const serverUrl = GITHUB_SERVER_URL || "https://github.com";
-  // Windows runners use backslashes, URLs need forward slashes
-  const urlPath = filePath.split(/[\\/]/).map(encodeURIComponent).join("/");
+  const urlPath = filePath.split("/").map(encodeURIComponent).join("/");
   return `${serverUrl}/${GITHUB_REPOSITORY}/blob/${sha}/${urlPath}#L${location.line}`;
 };
 

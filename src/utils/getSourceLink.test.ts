@@ -1,7 +1,12 @@
 import { mkdtempSync, writeFileSync } from "fs";
 import { tmpdir } from "os";
 import { join } from "path";
-import { getCommitSha, getSourceLink, getSourceUrl } from "./getSourceLink.js";
+import {
+  getCommitSha,
+  getSourceLink,
+  getSourceUrl,
+  getWorkspacePath,
+} from "./getSourceLink.js";
 
 const ENV_KEYS = [
   "GITHUB_EVENT_PATH",
@@ -65,6 +70,23 @@ describe("getSourceLink", () => {
       writeFileSync(eventPath, "not json", "utf-8");
       process.env.GITHUB_EVENT_PATH = eventPath;
       expect(getCommitSha()).toBe("abc123");
+    });
+  });
+
+  describe("getWorkspacePath", () => {
+    it("should return undefined outside of GitHub Actions", () => {
+      expect(getWorkspacePath(location.file)).toBeUndefined();
+    });
+
+    it("should return the path relative to the workspace", () => {
+      setGitHubEnv();
+      expect(getWorkspacePath(location.file)).toBe("tests/fail.spec.ts");
+    });
+
+    it("should return undefined for files outside the workspace", () => {
+      setGitHubEnv();
+      expect(getWorkspacePath("/home/runner/other/file.ts")).toBeUndefined();
+      expect(getWorkspacePath(undefined)).toBeUndefined();
     });
   });
 

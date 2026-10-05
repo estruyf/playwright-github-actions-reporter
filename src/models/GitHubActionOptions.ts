@@ -13,6 +13,7 @@ export interface GitHubActionOptions {
   maxErrorLength?: number;
   showErrorSnippet?: boolean;
   showFailedOverview?: boolean;
+  workflowAnnotations?: boolean;
   failedOverviewLimit?: number;
   showSlowestTests?: number;
   quiet?: boolean;
