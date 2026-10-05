@@ -34,6 +34,9 @@ All notable changes to this project will be documented in this file.
 - [#54](https://github.com/estruyf/playwright-github-actions-reporter/issues/54):
   Added the `excludeProjects` option to leave projects, like setup projects,
   out of the summary. An excluded project with a failed test is still shown
+- [#56](https://github.com/estruyf/playwright-github-actions-reporter/issues/56):
+  Added the `description` and `metadata` options to show custom context below
+  the title of the summary and the pull request comment
 
 ## [1.12.0]
 

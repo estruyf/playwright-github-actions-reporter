@@ -165,6 +165,22 @@ describe("commentOnPullRequest", () => {
       expect(body).toContain("Total tests: 2 - Passed: 2");
       expect(body).toContain(`[workflow run summary](${runUrl})`);
     });
+
+    it("should keep the custom context when the content is too large", () => {
+      const body = getPullRequestCommentBody(
+        {
+          content: "x".repeat(MAX_COMMENT_LENGTH),
+          title: "Test results",
+          context: "<p>Environment: staging</p>",
+          headerText: ["Total tests: 2"],
+        },
+        marker,
+        runUrl,
+      );
+      expect(body).toContain(
+        "<h1>Test results</h1>\n<p>Environment: staging</p>\nTotal tests: 2",
+      );
+    });
   });
 
   describe("commentOnPullRequest", () => {

@@ -17,6 +17,12 @@ const config: PlaywrightTestConfig<{}, {}> = {
       "./src/index.ts",
       <GitHubActionOptions>{
         title: "Reporter (details: false, report: fail, flaky, skipped)",
+        description: "Runs the **full** test suite on every push",
+        metadata: {
+          Platform: process.platform,
+          Branch: process.env.GITHUB_REF_NAME,
+          Node: process.version,
+        },
         useDetails: false,
         showError: true,
         showFailedOverview: true,

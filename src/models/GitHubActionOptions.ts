@@ -1,7 +1,9 @@
-import type { DisplayLevel, ErrorFormat } from "./index.js";
+import type { DisplayLevel, ErrorFormat, SummaryMetadata } from "./index.js";
 
 export interface GitHubActionOptions {
   title?: string;
+  description?: string;
+  metadata?: SummaryMetadata;
   useDetails?: boolean;
   showAnnotations: boolean;
   showAnnotationsInColumn?: boolean;

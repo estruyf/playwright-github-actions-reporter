@@ -34,6 +34,8 @@ The reporter supports the following configuration options:
 | Option | Description | Default |
 | --- | --- | --- |
 | title | Title of the report. Use an empty string (`""`) to remove the heading.  | `Test results` |
+| description | Markdown or HTML to show below the title. See [Add context to the summary](#add-context-to-the-summary) | `""` |
+| metadata | Key/value pairs to show as a list below the title. Empty values are skipped. See [Add context to the summary](#add-context-to-the-summary) | `{}` |
 | useDetails | Use details in summary which creates expandable content | `false` |
 | showAnnotations | Show annotations from tests | `true` |
 | showAnnotationsInColumn | Shows annotations from tests but in a column.  To enable showAnnotations must be set to `true` | `false` |
@@ -70,6 +72,30 @@ export default defineConfig({
   ],
 });
 ```
+
+## Add context to the summary
+
+Use the `description` and `metadata` options to show extra context between the title and the results, for example the tested environment or why this set of tests ran. The context is shown in the job summary and in the pull request comment.
+
+```ts
+import { defineConfig } from '@playwright/test';
+import type { GitHubActionOptions } from '@estruyf/github-actions-reporter';
+
+export default defineConfig({
+  reporter: [
+    ['@estruyf/github-actions-reporter', <GitHubActionOptions>{
+      description: `Selection: **${process.env.SELECTION_MODE}**`,
+      metadata: {
+        Environment: process.env.TEST_ENV,
+        Target: process.env.TEST_TARGET ?? 'all tests',
+      }
+    }]
+  ],
+});
+```
+
+- `description` supports markdown and HTML.
+- `metadata` is shown as a list. Entries with an empty, `null` or `undefined` value are skipped, so you can use environment variables that are not always set.
 
 ## Exclude projects
 

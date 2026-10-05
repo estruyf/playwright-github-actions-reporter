@@ -10,6 +10,7 @@ const MARKER_PREFIX = "<!-- @estruyf/github-actions-reporter";
 export interface PullRequestCommentDetails {
   content: string;
   title?: string;
+  context?: string;
   headerText: string[];
 }
 
@@ -88,6 +89,9 @@ export const getPullRequestCommentBody = (
   const lines = [marker];
   if (details.title) {
     lines.push(`<h1>${details.title}</h1>`);
+  }
+  if (details.context) {
+    lines.push(details.context);
   }
   lines.push(details.headerText.join(" - "));
   lines.push(

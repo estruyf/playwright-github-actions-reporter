@@ -14,6 +14,7 @@ import { getFailedOverview } from "./getFailedOverview.js";
 import { getSlowestTests } from "./getSlowestTests.js";
 import type { ErrorOptions } from "./getErrorDetails.js";
 import { excludeProjects } from "./excludeProjects.js";
+import { getSummaryContext } from "./getSummaryContext.js";
 import type {
   BlobService,
   DisplayLevel,
@@ -55,6 +56,14 @@ export const processResults = async (
     const summaryTitle = getSummaryTitle(options.title);
     if (summaryTitle) {
       summary.addHeading(summaryTitle, 1);
+    }
+
+    const summaryContext = await getSummaryContext(
+      options.description,
+      options.metadata,
+    );
+    if (summaryContext) {
+      summary.addRaw(summaryContext, true);
     }
 
     const errorOptions: ErrorOptions = {
@@ -163,6 +172,7 @@ export const processResults = async (
         {
           content: summaryContent,
           title: summaryTitle,
+          context: summaryContext,
           headerText,
         },
         options.githubToken || process.env.GITHUB_TOKEN,
