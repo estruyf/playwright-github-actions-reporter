@@ -2,6 +2,7 @@ import type { Suite } from "@playwright/test/reporter";
 import { basename } from "path";
 import { getTestsPerFile } from "./getTestsPerFile.js";
 import { getTestStatus } from "./getTestStatus.js";
+import { getTableHeaders, type SummaryTableRow } from "./summaryTable.js";
 import { getTestTitle } from "./getTestTitle.js";
 import { getShortError } from "./getShortError.js";
 import {
@@ -10,14 +11,6 @@ import {
   getTestErrors,
 } from "./getErrorDetails.js";
 import type { DisplayLevel } from "../models/index.js";
-
-// Type definitions for summary table (from @actions/core)
-interface SummaryTableCell {
-  data: string;
-  header?: boolean;
-}
-
-type SummaryTableRow = (SummaryTableCell | string)[];
 
 export interface FailedOverview {
   rows: SummaryTableRow[];
@@ -62,7 +55,7 @@ export const getFailedOverview = (
         failedRows.push([
           {
             data: `<code>${fileName}</code>${
-              projectName ? ` (${projectName})` : ""
+              projectName ? `&nbsp;(${projectName})` : ""
             }`,
           },
           { data: getTestTitle(test) },
@@ -80,11 +73,7 @@ export const getFailedOverview = (
 
   return {
     rows: [
-      [
-        { data: "File", header: true },
-        { data: "Test", header: true },
-        { data: "Error", header: true },
-      ],
+      getTableHeaders(["File", "Test", "Error"]),
       ...failedRows.slice(0, maxRows),
     ],
     remaining: Math.max(0, failedRows.length - maxRows),

@@ -37,6 +37,8 @@ All notable changes to this project will be documented in this file.
 - [#56](https://github.com/estruyf/playwright-github-actions-reporter/issues/56):
   Added the `description` and `metadata` options to show custom context below
   the title of the summary and the pull request comment
+- The summary tables now use the full width of the page, so they no longer
+  change width from table to table
 
 ## [1.12.0]
 

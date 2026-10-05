@@ -10,8 +10,8 @@ const defaultDisplayLevel: DisplayLevel[] = [
 
 const headers = [
   { data: "File", header: true },
-  { data: "Test", header: true },
-  { data: "Error", header: true },
+  { data: "Test", header: true, width: "40%" },
+  { data: "Error", header: true, width: "60%" },
 ];
 
 const createTest = (
@@ -111,14 +111,14 @@ describe("getFailedOverview", () => {
       rows: [
         headers,
         [
-          { data: "<code>navigation.spec.ts</code> (chromium)" },
+          { data: "<code>navigation.spec.ts</code>&nbsp;(chromium)" },
           { data: "Navigation > opens the menu" },
           {
             data: "<code>Error: expect(locator).toBeVisible() failed</code>",
           },
         ],
         [
-          { data: "<code>timeout.spec.ts</code> (chromium)" },
+          { data: "<code>timeout.spec.ts</code>&nbsp;(chromium)" },
           { data: "takes too long" },
           { data: "<code>Test timeout of 2000ms exceeded.</code>" },
         ],

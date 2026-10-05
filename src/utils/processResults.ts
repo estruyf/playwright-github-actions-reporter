@@ -15,6 +15,7 @@ import { getSlowestTests } from "./getSlowestTests.js";
 import type { ErrorOptions } from "./getErrorDetails.js";
 import { excludeProjects } from "./excludeProjects.js";
 import { getSummaryContext } from "./getSummaryContext.js";
+import { getTableHtml } from "./summaryTable.js";
 import type {
   BlobService,
   DisplayLevel,
@@ -85,7 +86,7 @@ export const processResults = async (
 
       if (failedOverview) {
         summary.addHeading("Failed tests", 2);
-        summary.addTable(failedOverview.rows);
+        summary.addRaw(getTableHtml(failedOverview.rows), true);
 
         if (failedOverview.remaining > 0) {
           summary.addRaw(
@@ -103,7 +104,7 @@ export const processResults = async (
 
       if (slowestTests) {
         summary.addHeading("Slowest tests", 2);
-        summary.addTable(slowestTests);
+        summary.addRaw(getTableHtml(slowestTests), true);
       }
     }
 
@@ -156,7 +157,7 @@ export const processResults = async (
 
           if (tableRows.length !== 0) {
             summary.addHeading(getTestHeading(fileName, os, project), 2);
-            summary.addTable(tableRows);
+            summary.addRaw(getTableHtml(tableRows), true);
           }
         }
       }

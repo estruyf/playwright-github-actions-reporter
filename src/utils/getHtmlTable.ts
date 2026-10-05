@@ -8,6 +8,7 @@ import { getTestDuration } from "./getTestDuration.js";
 import type { BlobService, DisplayLevel } from "../models/index.js";
 import { processAttachments } from "./processAttachments.js";
 import { getErrorDetails, type ErrorOptions } from "./getErrorDetails.js";
+import { getTableHeaders } from "./summaryTable.js";
 
 export const getHtmlTable = async (
   tests: TestCase[],
@@ -26,23 +27,24 @@ export const getHtmlTable = async (
   content.push(`<br>`);
   content.push(`<table role="table">`);
   content.push(`<thead>`);
-  content.push(`<tr>`);
-  content.push(`<th>Test</th>`);
-  content.push(`<th>Status</th>`);
-  content.push(`<th>Duration</th>`);
-  content.push(`<th>Retries</th>`);
+  const columns = ["Test", "Status", "Duration", "Retries"];
   if (showTags) {
-    content.push(`<th>Tags</th>`);
+    columns.push("Tags");
   }
   if (showAnnotations && showAnnotationsInColumn) {
-    content.push(`<th>Annotations</th>`);
+    columns.push("Annotations");
   }
   if (showError) {
-    content.push(`<th>Error</th>`);
+    columns.push("Error");
 
     if (hasBlobService) {
-      content.push(`<th>Attachments</th>`);
+      columns.push("Attachments");
     }
+  }
+
+  content.push(`<tr>`);
+  for (const { data, width } of getTableHeaders(columns)) {
+    content.push(`<th${width ? ` width="${width}"` : ""}>${data}</th>`);
   }
   content.push(`</tr>`);
   content.push(`</thead>`);
@@ -81,7 +83,7 @@ export const getHtmlTable = async (
     testRows.push(`<tr>`);
     testRows.push(`<td>${getTestTitle(test)}</td>`);
     testRows.push(
-      `<td>${getTestStatusIcon(test, result)} ${getTestStatus(
+      `<td>${getTestStatusIcon(test, result)}&nbsp;${getTestStatus(
         test,
         result,
       )}</td>`,

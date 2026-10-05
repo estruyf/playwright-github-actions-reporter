@@ -1,15 +1,8 @@
 import type { Suite, TestCase, TestResult } from "@playwright/test/reporter";
 import { basename } from "path";
 import { getTestStatus } from "./getTestStatus.js";
+import { getTableHeaders, type SummaryTableRow } from "./summaryTable.js";
 import { getTestDuration } from "./getTestDuration.js";
-
-// Type definitions for summary table (from @actions/core)
-interface SummaryTableCell {
-  data: string;
-  header?: boolean;
-}
-
-type SummaryTableRow = (SummaryTableCell | string)[];
 
 interface SlowTest {
   test: TestCase;
@@ -84,7 +77,7 @@ export const getSlowestTests = (
     .map(({ test, slowestResult, retries, projectName }) => [
       {
         data: `<code>${basename(test.location.file)}</code>${
-          projectName ? ` (${projectName})` : ""
+          projectName ? `&nbsp;(${projectName})` : ""
         }`,
       },
       { data: getTestTitlePath(test) },
@@ -93,12 +86,7 @@ export const getSlowestTests = (
     ]);
 
   return [
-    [
-      { data: "File", header: true },
-      { data: "Test", header: true },
-      { data: "Duration", header: true },
-      { data: "Retries", header: true },
-    ],
+    getTableHeaders(["File", "Test", "Duration", "Retries"]),
     ...rows,
   ];
 };

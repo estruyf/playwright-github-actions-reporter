@@ -2,7 +2,7 @@ import { getSlowestTests } from "./getSlowestTests.js";
 
 const headers = [
   { data: "File", header: true },
-  { data: "Test", header: true },
+  { data: "Test", header: true, width: "100%" },
   { data: "Duration", header: true },
   { data: "Retries", header: true },
 ];
@@ -80,7 +80,7 @@ describe("getSlowestTests", () => {
     expect(getSlowestTests(suite, 2)).toEqual([
       headers,
       [
-        { data: "<code>a.spec.ts</code> (chromium)" },
+        { data: "<code>a.spec.ts</code>&nbsp;(chromium)" },
         { data: "Slowest" },
         { data: "24.31s" },
         { data: "0" },

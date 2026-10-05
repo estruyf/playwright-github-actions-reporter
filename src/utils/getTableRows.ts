@@ -8,16 +8,7 @@ import { getTestStatusIcon } from "./getTestStatusIcon.js";
 import type { BlobService, DisplayLevel } from "../models/index.js";
 import { processAttachments } from "./processAttachments.js";
 import { getErrorDetails, type ErrorOptions } from "./getErrorDetails.js";
-
-// Type definitions for summary table (from @actions/core)
-interface SummaryTableCell {
-  data: string;
-  header?: boolean;
-  colspan?: string;
-  rowspan?: string;
-}
-
-type SummaryTableRow = (SummaryTableCell | string)[];
+import { getTableHeaders, type SummaryTableRow } from "./summaryTable.js";
 
 export const getTableRows = async (
   tests: TestCase[],
@@ -31,52 +22,25 @@ export const getTableRows = async (
 ): Promise<SummaryTableRow[]> => {
   const hasBlobService = blobService && blobService.azure;
 
-  const tableHeaders = [
-    {
-      data: "Test",
-      header: true,
-    },
-    {
-      data: "Status",
-      header: true,
-    },
-    {
-      data: "Duration",
-      header: true,
-    },
-    {
-      data: "Retries",
-      header: true,
-    },
-  ];
+  const columns = ["Test", "Status", "Duration", "Retries"];
 
   if (showTags) {
-    tableHeaders.push({
-      data: "Tags",
-      header: true,
-    });
+    columns.push("Tags");
   }
 
   if (showAnnotations && showAnnotationsInColumn) {
-    tableHeaders.push({
-      data: "Annotations",
-      header: true,
-    });
+    columns.push("Annotations");
   }
 
   if (showError) {
-    tableHeaders.push({
-      data: "Error",
-      header: true,
-    });
+    columns.push("Error");
 
     if (hasBlobService) {
-      tableHeaders.push({
-        data: "Attachments",
-        header: true,
-      });
+      columns.push("Attachments");
     }
   }
+
+  const tableHeaders = getTableHeaders(columns);
 
   const tableRows: SummaryTableRow[] = [];
 
@@ -121,7 +85,7 @@ export const getTableRows = async (
         header: false,
       },
       {
-        data: `${getTestStatusIcon(test, result)} ${testStatus}`,
+        data: `${getTestStatusIcon(test, result)}&nbsp;${testStatus}`,
         header: false,
       },
       {
