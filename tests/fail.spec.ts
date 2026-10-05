@@ -11,13 +11,12 @@ test.describe("Failing test", () => {
     });
   });
 
-  test.afterAll(async ({ browser }) => {
+  test.afterAll(async () => {
     await page.close();
-    await browser.close();
   });
 
   test("Test should fail", {annotation: { type: "info", description: "A test check failure.",},},async () => {
-    const logo = page.locator(`#logo`);
+    const logo = page.locator("header").getByTitle("Go to homepage");
     await logo.waitFor();
 
     expect((await logo.allInnerTexts()).join()).toBe("PYOD");

@@ -13,21 +13,24 @@ test.describe.serial("Timeout test", () => {
     });
   });
 
-  test.afterAll(async ({ browser }) => {
+  test.afterAll(async () => {
     await page.close();
-    await browser.close();
   });
 
-  test("Fake timeout 1", async () => {
+  // Fails on the first run, so the serial group is retried
+  test("Fake timeout 1", async ({}, testInfo) => {
     await page.waitForTimeout(100);
-    throw new Error("Fake error");
+    if (testInfo.retry === 0) {
+      throw new Error("Fake error");
+    }
   });
 
-  test("Fake timeout 2", async () => {
-    await page.waitForTimeout(3000);
+  // Times out on the first retry, passes on the second one
+  test("Fake timeout 2", async ({}, testInfo) => {
+    await page.waitForTimeout(testInfo.retry <= 1 ? 3000 : 100);
   });
 
   test("Fake timeout 3", async () => {
-    await page.waitForTimeout(3000);
+    await page.waitForTimeout(100);
   });
 });

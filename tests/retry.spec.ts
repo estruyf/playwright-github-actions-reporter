@@ -11,9 +11,8 @@ test.describe("Test retry", () => {
     });
   });
 
-  test.afterAll(async ({ browser }) => {
+  test.afterAll(async () => {
     await page.close();
-    await browser.close();
   });
 
   test("First test should fail, next should work", async ({}, testInfo) => {
