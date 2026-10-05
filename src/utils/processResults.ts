@@ -10,6 +10,7 @@ import { getSummaryDetails } from "./getSummaryDetails.js";
 import { getTestsPerFile } from "./getTestsPerFile.js";
 import { getTestHeading } from "./getTestHeading.js";
 import { commentOnPullRequest } from "./commentOnPullRequest.js";
+import { getFailedOverview } from "./getFailedOverview.js";
 import type {
   BlobService,
   DisplayLevel,
@@ -54,6 +55,28 @@ export const processResults = async (
 
     const headerText = getSummaryDetails(suite);
     summary.addRaw(headerText.join(` - `));
+
+    if (options.showFailedOverview) {
+      const failedOverview = getFailedOverview(
+        suite,
+        options.includeResults as DisplayLevel[],
+        options.failedOverviewLimit,
+      );
+
+      if (failedOverview) {
+        summary.addHeading("Failed tests", 2);
+        summary.addTable(failedOverview.rows);
+
+        if (failedOverview.remaining > 0) {
+          summary.addRaw(
+            `<p>+${failedOverview.remaining} more failed test${
+              failedOverview.remaining === 1 ? "" : "s"
+            }</p>`,
+            true,
+          );
+        }
+      }
+    }
 
     if (options.useDetails) {
       summary.addSeparator();

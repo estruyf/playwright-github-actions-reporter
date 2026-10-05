@@ -7,6 +7,8 @@ export interface GitHubActionOptions {
   showAnnotationsInColumn?: boolean;
   showTags: boolean;
   showError?: boolean;
+  showFailedOverview?: boolean;
+  failedOverviewLimit?: number;
   quiet?: boolean;
   includeResults?: DisplayLevel[];
   debug?: boolean;

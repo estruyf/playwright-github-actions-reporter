@@ -39,6 +39,8 @@ The reporter supports the following configuration options:
 | showAnnotationsInColumn | Shows annotations from tests but in a column.  To enable showAnnotations must be set to `true` | `false` |
 | showTags | Show tags from tests | `true` |
 | showError | Show error message in summary | `false` |
+| showFailedOverview | Show a table with all failed and timed out tests across all files below the summary header. Only rendered when at least one test failed and `fail` is part of `includeResults` | `false` |
+| failedOverviewLimit | Maximum number of tests in the failed tests overview. The remaining tests are shown as a "+N more failed tests" line | `10` |
 | includeResults | Define which types of test results should be shown in the summary | `['pass', 'skipped', 'fail', 'flaky']` |
 | quiet | Do not show any output in the console | `false` |
 | showArtifactsLink | Show a link to the artifacts section in the workflow overview | `false` |
