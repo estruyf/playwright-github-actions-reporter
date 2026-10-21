@@ -65,6 +65,9 @@ export const processResults = async (
       blobService.azure = {};
       blobService.azure.azureStorageSAS = options.azureStorageSAS;
       blobService.azure.azureStorageUrl = options.azureStorageUrl;
+    } else if (options.uploadAttachment) {
+      blobService = {};
+      blobService.custom = options.uploadAttachment;
     }
 
     if (options.showArtifactsLink) {

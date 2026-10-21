@@ -1,9 +1,13 @@
-import type { BlobService } from "../models/index.js";
+import type { Attachment, BlobService } from "../models/index.js";
 import { uploadToAzure } from "./blobServices/uploadToAzure.js";
+import { uploadWithCustomUploader } from "./blobServices/uploadWithCustomUploader.js";
+
+export const isBlobServiceConfigured = (blobService?: BlobService): boolean =>
+  !!blobService && (!!blobService.azure || !!blobService.custom);
 
 export const processAttachments = async (
-  blobService: BlobService,
-  attachments?: { name: string; path?: string; contentType: string }[],
+  blobService?: BlobService,
+  attachments?: Attachment[],
 ) => {
   if (!blobService || !attachments || attachments.length === 0) {
     return;
@@ -11,6 +15,10 @@ export const processAttachments = async (
 
   if (blobService.azure) {
     return await uploadToAzure(blobService, attachments);
+  }
+
+  if (blobService.custom) {
+    return await uploadWithCustomUploader(blobService.custom, attachments);
   }
 
   return undefined;

@@ -1,4 +1,9 @@
-import type { DisplayLevel, ErrorFormat, SummaryMetadata } from "./index.js";
+import type {
+  AttachmentUploader,
+  DisplayLevel,
+  ErrorFormat,
+  SummaryMetadata,
+} from "./index.js";
 
 export interface GitHubActionOptions {
   title?: string;
@@ -32,4 +37,7 @@ export interface GitHubActionOptions {
   // Azure Storage
   azureStorageUrl?: string;
   azureStorageSAS?: string;
+
+  // Custom storage
+  uploadAttachment?: AttachmentUploader;
 }
