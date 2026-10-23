@@ -17,6 +17,7 @@ import { getFailedOverview } from "./getFailedOverview.js";
 import { getSlowestTests } from "./getSlowestTests.js";
 import type { ErrorOptions } from "./getErrorDetails.js";
 import { excludeProjects } from "./excludeProjects.js";
+import { createGitHubStorage } from "./blobServices/githubStorage.js";
 import { getSummaryContext } from "./getSummaryContext.js";
 import { getTableHtml } from "./summaryTable.js";
 import { getGlobalErrors, type GlobalError } from "./getGlobalErrors.js";
@@ -65,6 +66,22 @@ export const processResults = async (
       blobService.azure = {};
       blobService.azure.azureStorageSAS = options.azureStorageSAS;
       blobService.azure.azureStorageUrl = options.azureStorageUrl;
+    } else if (options.githubStorage && options.showError) {
+      const github = createGitHubStorage(
+        options.githubStorage,
+        options.githubToken || process.env.GITHUB_TOKEN,
+      );
+      if (github) {
+        // One commit for all attachments, before the tables ask for their URLs
+        await github.uploadSuite(
+          suite,
+          options.includeResults as DisplayLevel[],
+        );
+        blobService = { github };
+      }
+    } else if (options.uploadAttachment) {
+      blobService = {};
+      blobService.custom = options.uploadAttachment;
     }
 
     if (options.showArtifactsLink) {
@@ -211,7 +228,11 @@ export const processResults = async (
     // The summary buffer is emptied on write, so grab the content first
     const summaryContent = options.prComment ? summary.stringify() : "";
 
-    await summary.write();
+    try {
+      await summary.write();
+    } finally {
+      blobService?.github?.report();
+    }
 
     if (options.prComment) {
       await commentOnPullRequest(

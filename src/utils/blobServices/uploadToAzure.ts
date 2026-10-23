@@ -1,10 +1,10 @@
 import { parse } from "path";
 import { readFile } from "fs/promises";
-import type { BlobService } from "../../models/index.js";
+import type { Attachment, BlobService } from "../../models/index.js";
 
 export const uploadToAzure = async (
   blobService: BlobService,
-  attachments: { name: string; path?: string; contentType: string }[],
+  attachments: Attachment[],
 ) => {
   const azureContainerUrl = blobService.azure?.azureStorageUrl;
   const azureContainerSas = blobService.azure?.azureStorageSAS;

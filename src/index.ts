@@ -21,7 +21,12 @@ import {
   getWorkflowAnnotations,
 } from "./utils/getWorkflowAnnotations.js";
 import type { GitHubActionOptions } from "./models/index.js";
-export type { GitHubActionOptions } from "./models/index.js";
+export type {
+  Attachment,
+  AttachmentUploader,
+  GitHubActionOptions,
+  GitHubStorageOptions,
+} from "./models/index.js";
 
 class GitHubAction implements Reporter {
   private suite: Suite | undefined;
