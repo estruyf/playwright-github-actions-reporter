@@ -13,9 +13,9 @@ import { getTestStatus } from "../getTestStatus.js";
 
 const DEFAULT_REF_PREFIX = "test-attachments";
 const DEFAULT_MAX_UPLOADS = 30;
+const DEFAULT_REQUEST_TIMEOUT = 10;
 // Blobs carry the image itself, so they get more time than the other requests
-const REQUEST_TIMEOUT = 10 * 1000;
-const BLOB_REQUEST_TIMEOUT = 30 * 1000;
+const BLOB_TIMEOUT_FACTOR = 3;
 // A read-only token, a missing repository or a rate limit: the remaining uploads fail the same way
 const STOP_STATUSES = [401, 403, 404, 429];
 
@@ -48,6 +48,7 @@ export class GitHubStorage implements GitHubAttachmentStorage {
   private readonly serverUrl: string;
   private readonly ref: string;
   private readonly maxUploads: number;
+  private readonly requestTimeout: number;
   private readonly urls = new Map<string, string>();
   private readonly handled = new Set<string>();
   private parent?: { commit: string; tree: string };
@@ -69,6 +70,10 @@ export class GitHubStorage implements GitHubAttachmentStorage {
       process.env.GITHUB_RUN_ATTEMPT || "1"
     }/${randomUUID()}`;
     this.maxUploads = options.maxUploads ?? DEFAULT_MAX_UPLOADS;
+    this.requestTimeout =
+      (options.requestTimeout && options.requestTimeout > 0
+        ? options.requestTimeout
+        : DEFAULT_REQUEST_TIMEOUT) * 1000;
   }
 
   async uploadSuite(suite: Suite, displayLevel: DisplayLevel[]) {
@@ -234,7 +239,9 @@ export class GitHubStorage implements GitHubAttachmentStorage {
       },
       body: JSON.stringify(body),
       signal: AbortSignal.timeout(
-        path === "git/blobs" ? BLOB_REQUEST_TIMEOUT : REQUEST_TIMEOUT,
+        path === "git/blobs"
+          ? this.requestTimeout * BLOB_TIMEOUT_FACTOR
+          : this.requestTimeout,
       ),
     });
 

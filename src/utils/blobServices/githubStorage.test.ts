@@ -239,6 +239,34 @@ describe("GitHubStorage", () => {
     );
   });
 
+  test("should use the request timeout, and three times as long for images", async () => {
+    const timeout = jest.spyOn(AbortSignal, "timeout");
+    const storage = new GitHubStorage("token", "owner/repo", "123", {
+      requestTimeout: 5,
+    });
+
+    await storage.getUrl(image("a.png"));
+
+    expect(timeout.mock.calls.map(([ms]) => ms)).toEqual([
+      15000, 5000, 5000, 5000,
+    ]);
+    timeout.mockRestore();
+  });
+
+  test("should default to a 10 second timeout", async () => {
+    const timeout = jest.spyOn(AbortSignal, "timeout");
+    const storage = new GitHubStorage("token", "owner/repo", "123", {
+      requestTimeout: 0,
+    });
+
+    await storage.getUrl(image("a.png"));
+
+    expect(timeout.mock.calls.map(([ms]) => ms)).toEqual([
+      30000, 10000, 10000, 10000,
+    ]);
+    timeout.mockRestore();
+  });
+
   test("should use the GitHub Enterprise Server URLs", async () => {
     process.env.GITHUB_API_URL = "https://ghe.example.com/api/v3";
     process.env.GITHUB_SERVER_URL = "https://ghe.example.com";
