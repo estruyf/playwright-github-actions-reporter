@@ -196,10 +196,14 @@ A string matches the full project name, a regex is tested against it. The tests 
 
 ### Showing result attachments
 
-If you want to show attachments like when you use pixel matching, you need to provide the configuration for the blob service where the images will be stored.
+If you want to show attachments like when you use pixel matching, you need to configure where the images will be stored. You can use:
+
+- [Azure Blob Storage](#azure-blob-storage)
+- [GitHub repository storage](#github-repository-storage), which stores the images in the repository itself, so no external storage is needed
+- [Custom storage](#custom-storage), with your own upload function
 
 > [!NOTE]
-> GitHub does not have an API to link images to the summary. Therefore, you need to store the images in a blob storage service and provide the URL to the images.
+> GitHub does not have an API to upload images to the summary. Therefore, the images are stored in one of the above and the summary links to them.
 
 > [!IMPORTANT]
 > To show the attachments, you need to make sure to enable `showError` as well.
