@@ -277,13 +277,13 @@ steps:
       GITHUB_TOKEN: ${{ github.token }}
 ```
 
-- The images of the last attempt of each test shown in the summary are uploaded in one commit, under `refs/<refPrefix>/<run id>/<run attempt>/<uuid>`. The ref is not a branch, so it does not show up in the branch list and is not fetched by a normal clone.
+- The images of the last attempt of each test shown in the summary are uploaded in one commit, under `refs/<refPrefix>/<YYYY-MM-DD>/<run id>/<run attempt>/<uuid>`. The ref is not a branch, so it does not show up in the branch list and is not fetched by a normal clone.
 - `refPrefix` changes the prefix of the refs. Default: `test-attachments`.
 - `maxUploads` limits the number of images per reporter, so per job or shard, so a run with many failures does not hit the rate limit of the GitHub API. The other images are left out. Default: `30`.
 - `requestTimeout` is the timeout of a GitHub API request in seconds. Uploading an image gets three times as long. Default: `10`.
 - The token is the `githubToken` option, or `GITHUB_TOKEN`. Without a token, or outside of a workflow, no images are uploaded and the log says why. On GitHub Enterprise Server, `GITHUB_API_URL` and `GITHUB_SERVER_URL` are used.
 - Azure Blob Storage, when configured, is used instead. `showError` needs to be enabled, as the images are shown next to the error.
-- When an upload fails, the summary is shown without the image and a workflow warning explains why. Pull requests from forks get a read-only token, so their summary has no images.
+- The log shows the number of uploaded images, the ref and the remaining GitHub API rate limit. When an upload fails, the summary is shown without the image and a workflow warning explains why. Pull requests from forks get a read-only token, so their summary has no images.
 
 > [!IMPORTANT]
 > - In a public repository, the images are public as well.
@@ -312,12 +312,10 @@ jobs:
               ...context.repo,
               ref: 'test-attachments/',
             });
-            for (const { ref, object } of refs) {
-              const { data: commit } = await github.rest.git.getCommit({
-                ...context.repo,
-                commit_sha: object.sha,
-              });
-              if (new Date(commit.committer.date).getTime() < cutoff) {
+            for (const { ref } of refs) {
+              // refs/test-attachments/<YYYY-MM-DD>/...
+              const date = ref.split('/')[2];
+              if (new Date(`${date}T23:59:59Z`).getTime() < cutoff) {
                 await github.rest.git.deleteRef({ ...context.repo, ref: ref.replace(/^refs\//, '') });
                 core.info(`Deleted ${ref}`);
               }

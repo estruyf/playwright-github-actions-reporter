@@ -32,11 +32,12 @@ interface Stats {
   failed: number;
   stoppedReason?: string;
   duration: number;
+  rateLimit?: { remaining: string; limit: string | null };
 }
 
 /**
  * Stores image attachments as commits under a ref of the repository that runs the workflow,
- * `refs/<refPrefix>/<run id>/<run attempt>/<uuid>`. The summary links them as
+ * `refs/<refPrefix>/<YYYY-MM-DD>/<run id>/<run attempt>/<uuid>`. The summary links them as
  * `<server>/<repo>/blob/<sha>/<file>?raw=true`, which GitHub shows with the session of the viewer,
  * so this also works for private repositories.
  *
@@ -63,12 +64,17 @@ export class GitHubStorage implements GitHubAttachmentStorage {
   ) {
     this.apiUrl = process.env.GITHUB_API_URL || "https://api.github.com";
     this.serverUrl = process.env.GITHUB_SERVER_URL || "https://github.com";
-    // One ref per reporter, so matrix jobs and shards of a run do not overwrite each other
-    this.ref = `${(options.refPrefix || DEFAULT_REF_PREFIX)
-      .replace(/^refs\//, "")
-      .replace(/\/+$/, "")}/${runId}/${
-      process.env.GITHUB_RUN_ATTEMPT || "1"
-    }/${randomUUID()}`;
+    // The date lets a cleanup workflow find old refs by name. One ref per reporter,
+    // so matrix jobs and shards of a run do not overwrite each other
+    this.ref = [
+      (options.refPrefix || DEFAULT_REF_PREFIX)
+        .replace(/^refs\//, "")
+        .replace(/\/+$/, ""),
+      new Date().toISOString().slice(0, 10),
+      runId,
+      process.env.GITHUB_RUN_ATTEMPT || "1",
+      randomUUID(),
+    ].join("/");
     this.maxUploads = options.maxUploads ?? DEFAULT_MAX_UPLOADS;
     this.requestTimeout =
       (options.requestTimeout && options.requestTimeout > 0
@@ -159,10 +165,17 @@ export class GitHubStorage implements GitHubAttachmentStorage {
       return;
     }
 
+    const { rateLimit } = this.stats;
     console.log(
       `GitHub storage: ${uploaded} attachment(s) uploaded in ${(
         duration / 1000
-      ).toFixed(1)}s${this.parent ? ` to refs/${this.ref}` : ""}`,
+      ).toFixed(1)}s${this.parent ? ` to refs/${this.ref}` : ""}${
+        rateLimit
+          ? `, rate limit remaining: ${rateLimit.remaining}${
+              rateLimit.limit ? `/${rateLimit.limit}` : ""
+            }`
+          : ""
+      }`,
     );
 
     if (stoppedReason) {
@@ -245,15 +258,23 @@ export class GitHubStorage implements GitHubAttachmentStorage {
       ),
     });
 
+    // Every response has the rate limit, so it costs no extra request
+    const remaining = response.headers?.get("x-ratelimit-remaining");
+    if (remaining) {
+      this.stats.rateLimit = {
+        remaining,
+        limit: response.headers.get("x-ratelimit-limit"),
+      };
+    }
+
     if (!response.ok) {
       const details = `${method} ${path}: ${response.status} ${(
         await response.text()
       ).slice(0, 200)}`;
 
       if (STOP_STATUSES.includes(response.status)) {
-        const remaining = response.headers.get("x-ratelimit-remaining");
         this.stats.stoppedReason = `${details}${
-          remaining !== null ? ` (rate limit remaining: ${remaining})` : ""
+          remaining ? ` (rate limit remaining: ${remaining})` : ""
         }`;
       }
 

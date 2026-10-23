@@ -7,7 +7,9 @@ All notable changes to this project will be documented in this file.
 - [#19](https://github.com/estruyf/playwright-github-actions-reporter/issues/19):
   Added the `githubStorage` option to store image attachments in the git
   storage of the repository, so the summary shows them without external
-  storage, also for private repositories
+  storage, also for private repositories. The refs include the date, so old
+  ones can be deleted by name, and the log shows the remaining GitHub API rate
+  limit
   Implemented by [AndyLysenko](https://github.com/AndyLysenko)
 - [#19](https://github.com/estruyf/playwright-github-actions-reporter/issues/19):
   Added the `uploadAttachment` option to upload image attachments to your own
