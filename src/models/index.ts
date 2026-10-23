@@ -3,3 +3,4 @@ export * from "./DisplayLevel.js";
 export * from "./ErrorFormat.js";
 export * from "./SummaryMetadata.js";
 export * from "./GitHubActionOptions.js";
+export * from "./GitHubStorageOptions.js";

@@ -5,9 +5,12 @@ All notable changes to this project will be documented in this file.
 ## [1.14.0]
 
 - [#19](https://github.com/estruyf/playwright-github-actions-reporter/issues/19):
+  Added the `githubStorage` option to store image attachments in the git
+  storage of the repository, so the summary shows them without external
+  storage, also for private repositories
+- [#19](https://github.com/estruyf/playwright-github-actions-reporter/issues/19):
   Added the `uploadAttachment` option to upload image attachments to your own
-  storage, like AWS S3 or the git storage of the repository, and show them in
-  the summary
+  storage, like AWS S3, and show them in the summary
 
 ## [1.13.0]
 

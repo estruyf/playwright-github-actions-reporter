@@ -12,10 +12,17 @@ export type AttachmentUploader = (
   attachment: Attachment & { path: string },
 ) => Promise<string | undefined>;
 
+/** Storage that keeps its uploads for the run, see `githubStorage` */
+export interface GitHubAttachmentStorage {
+  getUrl: AttachmentUploader;
+  report: () => void;
+}
+
 export interface BlobService {
   azure?: {
     azureStorageUrl?: string;
     azureStorageSAS?: string;
   };
+  github?: GitHubAttachmentStorage;
   custom?: AttachmentUploader;
 }

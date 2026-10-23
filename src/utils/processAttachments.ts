@@ -3,7 +3,8 @@ import { uploadToAzure } from "./blobServices/uploadToAzure.js";
 import { uploadWithCustomUploader } from "./blobServices/uploadWithCustomUploader.js";
 
 export const isBlobServiceConfigured = (blobService?: BlobService): boolean =>
-  !!blobService && (!!blobService.azure || !!blobService.custom);
+  !!blobService &&
+  (!!blobService.azure || !!blobService.github || !!blobService.custom);
 
 export const processAttachments = async (
   blobService?: BlobService,
@@ -15,6 +16,14 @@ export const processAttachments = async (
 
   if (blobService.azure) {
     return await uploadToAzure(blobService, attachments);
+  }
+
+  if (blobService.github) {
+    const github = blobService.github;
+    return await uploadWithCustomUploader(
+      (attachment) => github.getUrl(attachment),
+      attachments,
+    );
   }
 
   if (blobService.custom) {

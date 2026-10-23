@@ -115,6 +115,7 @@ export default defineConfig({
 | --- | --- | --- |
 | azureStorageUrl | URL of the Azure Storage container where the screenshots are stored. See [Showing result attachments](#showing-result-attachments) | `""` |
 | azureStorageSAS | Shared Access Signature (SAS) token to upload to the Azure Storage container | `""` |
+| githubStorage | Store the images in the git storage of the repository, `true` or `{ refPrefix, maxUploads }`. See [GitHub repository storage](#github-repository-storage) | `false` |
 | uploadAttachment | Function that uploads an image attachment to your own storage and returns its URL. See [Custom storage](#custom-storage) | `undefined` |
 
 ## The summary
@@ -239,82 +240,12 @@ export default defineConfig({
 });
 ```
 
-#### Custom storage
+#### GitHub repository storage
 
-To use any other storage (AWS S3, Google Cloud Storage, Cloudflare R2, your own server, ...), provide an `uploadAttachment` function. The reporter calls it for every image attachment of the last test attempt, and shows the returned URL in the **Attachments** column.
-
-- The function receives the attachment `name`, `path` (local file) and `contentType`.
-- Return the URL of the uploaded image, or `undefined` to leave it out.
-- When the function throws, the error is logged and the attachment is left out. The run itself does not fail.
-- When `azureStorageUrl` and `azureStorageSAS` are set, Azure Blob Storage is used instead.
-
-> [!NOTE]
-> GitHub loads the images of the summary through its image proxy, without your credentials. The URL needs to be readable without authentication, or point to a file in the same GitHub repository (see the example below).
-
-The following example stores the screenshots in the git storage of the repository itself, under a hidden ref, so no external storage is needed. The images are shown to everyone who can access the repository, as GitHub loads `github.com/<owner>/<repo>/blob/<sha>/<file>?raw=true` URLs with the session of the viewer.
+The images can be stored in the git storage of the repository that runs the workflow, so no external storage is needed. This also works for private repositories: GitHub shows `github.com/<owner>/<repo>/blob/<sha>/<file>?raw=true` images with the session of the viewer, so only people with access to the repository can see them.
 
 ```ts
 import { defineConfig } from '@playwright/test';
-import type { AttachmentUploader } from '@estruyf/github-actions-reporter/dist/models';
-import { randomUUID } from 'crypto';
-import { readFile } from 'fs/promises';
-import { basename } from 'path';
-
-const createGitHubRefUploader = (): AttachmentUploader | undefined => {
-  const { GITHUB_TOKEN, GITHUB_REPOSITORY, GITHUB_RUN_ID, GITHUB_RUN_ATTEMPT } = process.env;
-  if (!GITHUB_TOKEN || !GITHUB_REPOSITORY || !GITHUB_RUN_ID) {
-    return undefined;
-  }
-
-  const apiUrl = process.env.GITHUB_API_URL || 'https://api.github.com';
-  const serverUrl = process.env.GITHUB_SERVER_URL || 'https://github.com';
-  // One ref per Playwright process, so matrix jobs and shards do not overwrite each other
-  const ref = `test-attachments/${GITHUB_RUN_ID}/${GITHUB_RUN_ATTEMPT || '1'}/${randomUUID()}`;
-  let parent: { commit: string; tree: string } | undefined;
-  let index = 0;
-
-  const request = async (method: string, path: string, body: unknown) => {
-    const response = await fetch(`${apiUrl}/repos/${GITHUB_REPOSITORY}/${path}`, {
-      method,
-      headers: {
-        Authorization: `Bearer ${GITHUB_TOKEN}`,
-        Accept: 'application/vnd.github+json',
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(body),
-    });
-    if (!response.ok) {
-      throw new Error(`${method} ${path}: ${response.status}`);
-    }
-    return response.json();
-  };
-
-  return async ({ path }) => {
-    const fileName = `${++index}-${basename(path)}`;
-    const blob = await request('POST', 'git/blobs', {
-      content: (await readFile(path)).toString('base64'),
-      encoding: 'base64',
-    });
-    const tree = await request('POST', 'git/trees', {
-      base_tree: parent?.tree,
-      tree: [{ path: fileName, mode: '100644', type: 'blob', sha: blob.sha }],
-    });
-    const commit = await request('POST', 'git/commits', {
-      message: `Test attachments of run ${GITHUB_RUN_ID}`,
-      tree: tree.sha,
-      parents: parent ? [parent.commit] : [],
-    });
-
-    if (parent) {
-      await request('PATCH', `git/refs/${ref}`, { sha: commit.sha });
-    } else {
-      await request('POST', 'git/refs', { ref: `refs/${ref}`, sha: commit.sha });
-    }
-    parent = { commit: commit.sha, tree: tree.sha };
-
-    return `${serverUrl}/${GITHUB_REPOSITORY}/blob/${commit.sha}/${fileName}?raw=true`;
-  };
-};
 
 export default defineConfig({
   use: {
@@ -323,13 +254,13 @@ export default defineConfig({
   reporter: [
     ['@estruyf/github-actions-reporter', {
       showError: true,
-      uploadAttachment: createGitHubRefUploader(),
+      githubStorage: true,
     }]
   ],
 });
 ```
 
-The workflow needs to pass the token and allow it to write to the repository:
+The token needs to be able to write to the repository:
 
 ```yaml
 permissions:
@@ -342,10 +273,85 @@ steps:
       GITHUB_TOKEN: ${{ github.token }}
 ```
 
+- The images of the last attempt of each test shown in the summary are uploaded in one commit, under `refs/<refPrefix>/<run id>/<run attempt>/<uuid>`. The ref is not a branch, so it does not show up in the branch list and is not fetched by a normal clone.
+- `refPrefix` changes the prefix of the refs. Default: `test-attachments`.
+- `maxUploads` limits the number of images per reporter, so per job or shard, so a run with many failures does not hit the rate limit of the GitHub API. The other images are left out. Default: `30`.
+- The token is the `githubToken` option, or `GITHUB_TOKEN`. Without a token, or outside of a workflow, no images are uploaded and the log says why. On GitHub Enterprise Server, `GITHUB_API_URL` and `GITHUB_SERVER_URL` are used.
+- Azure Blob Storage, when configured, is used instead. `showError` needs to be enabled, as the images are shown next to the error.
+- When an upload fails, the summary is shown without the image and a workflow warning explains why. Pull requests from forks get a read-only token, so their summary has no images.
+
 > [!IMPORTANT]
-> - In a public repository, the stored images are public as well.
-> - Pull requests from forks get a read-only token, so the upload fails and the summary is shown without images.
-> - The refs are not removed automatically. Delete old `refs/test-attachments/*` refs when you no longer need them.
+> - In a public repository, the images are public as well.
+> - The refs are not removed automatically. Delete the old refs, for example with a scheduled workflow (change `test-attachments/` when you use another `refPrefix`):
+
+```yaml
+name: Delete old test attachments
+
+on:
+  schedule:
+    - cron: '0 3 * * *'
+
+permissions:
+  contents: write
+
+jobs:
+  cleanup:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/github-script@v8
+        with:
+          script: |
+            const retentionDays = 7;
+            const cutoff = Date.now() - retentionDays * 24 * 60 * 60 * 1000;
+            const refs = await github.paginate(github.rest.git.listMatchingRefs, {
+              ...context.repo,
+              ref: 'test-attachments/',
+            });
+            for (const { ref, object } of refs) {
+              const { data: commit } = await github.rest.git.getCommit({
+                ...context.repo,
+                commit_sha: object.sha,
+              });
+              if (new Date(commit.committer.date).getTime() < cutoff) {
+                await github.rest.git.deleteRef({ ...context.repo, ref: ref.replace(/^refs\//, '') });
+                core.info(`Deleted ${ref}`);
+              }
+            }
+```
+
+#### Custom storage
+
+To use any other storage (AWS S3, Google Cloud Storage, Cloudflare R2, your own server, ...), provide an `uploadAttachment` function. The reporter calls it for every image attachment of the last test attempt, and shows the returned URL in the **Attachments** column.
+
+- The function receives the attachment `name`, `path` (local file) and `contentType`.
+- Return the URL of the uploaded image, or `undefined` to leave it out.
+- When the function throws, the error is logged and the attachment is left out. The run itself does not fail.
+- When Azure Blob Storage or `githubStorage` is configured, that storage is used instead.
+
+> [!NOTE]
+> GitHub loads the images of the summary through its image proxy, without your credentials. The URL needs to be readable without authentication.
+
+```ts
+import { defineConfig } from '@playwright/test';
+import type { AttachmentUploader } from '@estruyf/github-actions-reporter';
+
+const uploadAttachment: AttachmentUploader = async ({ path, contentType }) => {
+  // Upload the file to your storage, and return its public URL
+  return await uploadToYourStorage(path, contentType);
+};
+
+export default defineConfig({
+  use: {
+    screenshot: 'only-on-failure',
+  },
+  reporter: [
+    ['@estruyf/github-actions-reporter', {
+      showError: true,
+      uploadAttachment,
+    }]
+  ],
+});
+```
 
 ## Workflow integration
 
