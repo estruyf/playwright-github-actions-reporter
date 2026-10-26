@@ -41,9 +41,15 @@ const mockFetch = (failStatus?: number, failOn?: string) => {
       ok: true,
       status: 201,
       json: async () => ({ sha: `sha${++sha}`, method: init.method }),
+      headers: new Map([
+        ["x-ratelimit-remaining", `${5000 - sha}`],
+        ["x-ratelimit-limit", "5000"],
+      ]),
     };
   });
 };
+
+const today = new Date().toISOString().slice(0, 10);
 
 const calls = (fetchMock: jest.Mock) =>
   fetchMock.mock.calls.map(([url, init]) => {
@@ -91,7 +97,9 @@ describe("GitHubStorage", () => {
       "POST git/refs",
     ]);
     const ref = JSON.parse(fetchMock.mock.calls[4][1].body).ref;
-    expect(ref).toMatch(/^refs\/test-attachments\/123\/1\/[0-9a-f-]{36}$/);
+    expect(ref).toMatch(
+      /^refs\/test-attachments\/\d{4}-\d{2}-\d{2}\/123\/1\/[0-9a-f-]{36}$/,
+    );
 
     const url = await storage.getUrl({
       ...suite.allTests()[0].results[0].attachments[0],
@@ -116,7 +124,7 @@ describe("GitHubStorage", () => {
       "POST git/blobs",
       "POST git/trees",
       "POST git/commits",
-      "PATCH git/refs/test-attachments/123/1/<uuid>",
+      `PATCH git/refs/test-attachments/${today}/123/1/<uuid>`,
     ]);
     expect(url).toMatch(/\/blob\/sha\d+\/2-extra\.png\?raw=true$/);
   });
@@ -143,7 +151,7 @@ describe("GitHubStorage", () => {
     );
     expect(urls.filter(Boolean)).toHaveLength(2);
     expect(JSON.parse(fetchMock.mock.calls[4][1].body).ref).toMatch(
-      /^refs\/e2e\/123\//,
+      /^refs\/e2e\/\d{4}-\d{2}-\d{2}\/123\//,
     );
     expect(warning).toHaveBeenCalledWith(
       "GitHub storage: 1 attachment(s) not uploaded, over the limit of 2",
@@ -235,7 +243,7 @@ describe("GitHubStorage", () => {
     await storage.getUrl(image("a.png"));
 
     expect(JSON.parse(fetchMock.mock.calls[3][1].body).ref).toMatch(
-      /^refs\/e2e\/123\/1\//,
+      /^refs\/e2e\/\d{4}-\d{2}-\d{2}\/123\/1\//,
     );
   });
 
@@ -265,6 +273,24 @@ describe("GitHubStorage", () => {
       30000, 10000, 10000, 10000,
     ]);
     timeout.mockRestore();
+  });
+
+  test("should log the uploads with the rate limit of the last response", async () => {
+    const storage = new GitHubStorage("token", "owner/repo", "123");
+
+    await storage.uploadSuite(
+      createSuite([createTest("failed", [image("a.png")])]),
+      ["fail"],
+    );
+    storage.report();
+
+    expect(log).toHaveBeenCalledWith(
+      expect.stringMatching(
+        new RegExp(
+          `^GitHub storage: 1 attachment\\(s\\) uploaded in \\d+\\.\\ds to refs/test-attachments/${today}/123/1/[0-9a-f-]{36}, rate limit remaining: 4997/5000$`,
+        ),
+      ),
+    );
   });
 
   test("should use the GitHub Enterprise Server URLs", async () => {
