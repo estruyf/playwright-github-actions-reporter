@@ -39,7 +39,11 @@ export interface RunDetails {
   errors?: GlobalError[];
   failOnFlakyTests?: boolean;
   shard?: Shard | null;
+  /** Leave out the job summary, see `skipSummaryWhenAllPassed` */
+  skipSummary?: boolean;
 }
+
+const SKIPPED_SUMMARY_MESSAGE = "Job summary skipped: all tests passed";
 
 export const processResults = async (
   rootSuite: Suite | undefined,
@@ -57,6 +61,12 @@ export const processResults = async (
   }
 
   if (process.env.GITHUB_ACTIONS && rootSuite) {
+    // Without a pull request comment, nothing shows the summary or its attachments
+    if (runDetails.skipSummary && !options.prComment) {
+      console.log(SKIPPED_SUMMARY_MESSAGE);
+      return;
+    }
+
     const suite = excludeProjects(rootSuite, options.excludeProjects);
     const os = process.platform;
 
@@ -229,7 +239,13 @@ export const processResults = async (
     const summaryContent = options.prComment ? summary.stringify() : "";
 
     try {
-      await summary.write();
+      if (runDetails.skipSummary) {
+        // The pull request comment still updates, so an earlier failed result is replaced
+        summary.emptyBuffer();
+        console.log(SKIPPED_SUMMARY_MESSAGE);
+      } else {
+        await summary.write();
+      }
     } finally {
       blobService?.github?.report();
     }

@@ -79,6 +79,7 @@ export default defineConfig({
 | showAnnotationsInColumn | Show the annotations in a column instead of above the test row. Requires `showAnnotations` | `false` |
 | includeResults | Which test results to show in the file sections: `pass`, `fail`, `flaky` and/or `skipped` | `['pass', 'skipped', 'fail', 'flaky']` |
 | excludeProjects | Projects to leave out of the summary, as strings (exact project name) or regexes. See [Exclude projects](#exclude-projects) | `[]` |
+| skipSummaryWhenAllPassed | Write no job summary when the run passed with no flaky tests. See [Skip the summary when all tests passed](#skip-the-summary-when-all-tests-passed) | `false` |
 | showArtifactsLink | Show a link to the artifacts section of the workflow run | `false` |
 | quiet | Do not pass through the console output of the tests | `false` |
 | debug | Log the reporter options to the console when the run starts | `false` |
@@ -193,6 +194,28 @@ A string matches the full project name, a regex is tested against it. The tests 
 
 > [!NOTE]
 > An excluded project with a failed test is still shown, including in the totals. When a setup project fails, all tests that depend on it are skipped, so the failure explains why.
+
+### Skip the summary when all tests passed
+
+When a workflow runs many jobs, GitHub shows only the first few job summaries and hides the rest behind "Load summary". Use the `skipSummaryWhenAllPassed` option to only write a summary for the jobs that need attention:
+
+```ts
+import { defineConfig } from '@playwright/test';
+import type { GitHubActionOptions } from '@estruyf/github-actions-reporter';
+
+export default defineConfig({
+  reporter: [
+    ['@estruyf/github-actions-reporter', <GitHubActionOptions>{
+      includeResults: ['fail', 'flaky'],
+      skipSummaryWhenAllPassed: true
+    }]
+  ],
+});
+```
+
+- The summary is skipped when the run passed and no test was flaky. Skipped tests do not count, so a run with only passed and skipped tests, or without tests, has no summary. The log shows `Job summary skipped: all tests passed`.
+- A run that failed, timed out or was interrupted, or has a flaky test, writes the summary as usual.
+- Only the job summary is skipped. The [step outputs](#step-outputs), [workflow annotations](#workflow-annotations) and the [pull request comment](#comment-on-the-pull-request) still work, so the comment of an earlier failed run is updated with the passed results.
 
 ### Showing result attachments
 

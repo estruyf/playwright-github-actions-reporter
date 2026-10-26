@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file.
 
 ## [1.14.0]
 
+- [#64](https://github.com/estruyf/playwright-github-actions-reporter/issues/64):
+  Added the `skipSummaryWhenAllPassed` option to write no job summary when the
+  run passed with no flaky tests. The step outputs, workflow annotations and
+  pull request comment are still set
 - [#19](https://github.com/estruyf/playwright-github-actions-reporter/issues/19):
   Added the `githubStorage` option to store image attachments in the git
   storage of the repository, so the summary shows them without external

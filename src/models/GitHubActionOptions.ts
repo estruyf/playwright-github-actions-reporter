@@ -25,6 +25,7 @@ export interface GitHubActionOptions {
   quiet?: boolean;
   includeResults?: DisplayLevel[];
   excludeProjects?: (string | RegExp)[];
+  skipSummaryWhenAllPassed?: boolean;
   debug?: boolean;
 
   // Useful links
