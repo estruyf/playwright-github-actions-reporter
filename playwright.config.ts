@@ -63,6 +63,29 @@ const config: PlaywrightTestConfig<{}, {}> = {
         azureStorageUrl: process.env.AZURE_STORAGE_URL,
       },
     ],
+    // GitHub repository storage: needs `contents: write` and GITHUB_TOKEN (see the README)
+    // [
+    //   "./src/index.ts",
+    //   <GitHubActionOptions>{
+    //     title: "Reporter (GitHub repository storage)",
+    //     useDetails: true,
+    //     showError: true,
+    //     includeResults: ["fail", "flaky"],
+    //     githubStorage: true,
+    //   },
+    // ],
+    // Custom storage: return the URL of the uploaded image (see the README)
+    // [
+    //   "./src/index.ts",
+    //   <GitHubActionOptions>{
+    //     title: "Reporter (custom attachment storage)",
+    //     useDetails: true,
+    //     showError: true,
+    //     includeResults: ["fail", "flaky"],
+    //     uploadAttachment: async ({ path, contentType }) =>
+    //       await uploadToYourStorage(path, contentType),
+    //   },
+    // ],
     // [
     //   "./src/index.ts",
     //   <GitHubActionOptions>{

@@ -13,6 +13,7 @@ import { processResults } from "./utils/processResults.js";
 import { getTotalStatus } from "./utils/getTotalStatus.js";
 import { getFailureReason } from "./utils/getFailureReason.js";
 import { setResultOutputs } from "./utils/setResultOutputs.js";
+import { shouldSkipSummary } from "./utils/shouldSkipSummary.js";
 import type { GlobalError } from "./utils/getGlobalErrors.js";
 import type { Shard } from "./utils/getShard.js";
 import { excludeProjects } from "./utils/excludeProjects.js";
@@ -21,7 +22,12 @@ import {
   getWorkflowAnnotations,
 } from "./utils/getWorkflowAnnotations.js";
 import type { GitHubActionOptions } from "./models/index.js";
-export type { GitHubActionOptions } from "./models/index.js";
+export type {
+  Attachment,
+  AttachmentUploader,
+  GitHubActionOptions,
+  GitHubStorageOptions,
+} from "./models/index.js";
 
 class GitHubAction implements Reporter {
   private suite: Suite | undefined;
@@ -127,6 +133,11 @@ class GitHubAction implements Reporter {
       errors: this.errors,
       failOnFlakyTests: this.failOnFlakyTests,
       shard: this.shard,
+      skipSummary: shouldSkipSummary(
+        this.options.skipSummaryWhenAllPassed,
+        result?.status,
+        totals,
+      ),
     });
 
     if (result?.status) {

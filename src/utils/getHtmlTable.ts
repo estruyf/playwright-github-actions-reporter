@@ -6,7 +6,10 @@ import { getTestTags } from "./getTestTags.js";
 import { getTestAnnotations } from "./getTestAnnotations.js";
 import { getTestDuration } from "./getTestDuration.js";
 import type { BlobService, DisplayLevel } from "../models/index.js";
-import { processAttachments } from "./processAttachments.js";
+import {
+  isBlobServiceConfigured,
+  processAttachments,
+} from "./processAttachments.js";
 import { getErrorDetails, type ErrorOptions } from "./getErrorDetails.js";
 import { getTableHeaders } from "./summaryTable.js";
 
@@ -21,7 +24,7 @@ export const getHtmlTable = async (
   errorOptions?: ErrorOptions,
   failOnFlakyTests: boolean = false,
 ): Promise<string | undefined> => {
-  const hasBlobService = blobService && blobService.azure;
+  const hasBlobService = isBlobServiceConfigured(blobService);
 
   const content: string[] = [];
 

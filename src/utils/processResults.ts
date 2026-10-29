@@ -17,6 +17,7 @@ import { getFailedOverview } from "./getFailedOverview.js";
 import { getSlowestTests } from "./getSlowestTests.js";
 import type { ErrorOptions } from "./getErrorDetails.js";
 import { excludeProjects } from "./excludeProjects.js";
+import { createGitHubStorage } from "./blobServices/githubStorage.js";
 import { getSummaryContext } from "./getSummaryContext.js";
 import { getTableHtml } from "./summaryTable.js";
 import { getGlobalErrors, type GlobalError } from "./getGlobalErrors.js";
@@ -38,7 +39,11 @@ export interface RunDetails {
   errors?: GlobalError[];
   failOnFlakyTests?: boolean;
   shard?: Shard | null;
+  /** Leave out the job summary, see `skipSummaryWhenAllPassed` */
+  skipSummary?: boolean;
 }
+
+const SKIPPED_SUMMARY_MESSAGE = "Job summary skipped: all tests passed";
 
 export const processResults = async (
   rootSuite: Suite | undefined,
@@ -56,6 +61,12 @@ export const processResults = async (
   }
 
   if (process.env.GITHUB_ACTIONS && rootSuite) {
+    // Without a pull request comment, nothing shows the summary or its attachments
+    if (runDetails.skipSummary && !options.prComment) {
+      console.log(SKIPPED_SUMMARY_MESSAGE);
+      return;
+    }
+
     const suite = excludeProjects(rootSuite, options.excludeProjects);
     const os = process.platform;
 
@@ -65,6 +76,22 @@ export const processResults = async (
       blobService.azure = {};
       blobService.azure.azureStorageSAS = options.azureStorageSAS;
       blobService.azure.azureStorageUrl = options.azureStorageUrl;
+    } else if (options.githubStorage && options.showError) {
+      const github = createGitHubStorage(
+        options.githubStorage,
+        options.githubToken || process.env.GITHUB_TOKEN,
+      );
+      if (github) {
+        // One commit for all attachments, before the tables ask for their URLs
+        await github.uploadSuite(
+          suite,
+          options.includeResults as DisplayLevel[],
+        );
+        blobService = { github };
+      }
+    } else if (options.uploadAttachment) {
+      blobService = {};
+      blobService.custom = options.uploadAttachment;
     }
 
     if (options.showArtifactsLink) {
@@ -211,7 +238,17 @@ export const processResults = async (
     // The summary buffer is emptied on write, so grab the content first
     const summaryContent = options.prComment ? summary.stringify() : "";
 
-    await summary.write();
+    try {
+      if (runDetails.skipSummary) {
+        // The pull request comment still updates, so an earlier failed result is replaced
+        summary.emptyBuffer();
+        console.log(SKIPPED_SUMMARY_MESSAGE);
+      } else {
+        await summary.write();
+      }
+    } finally {
+      blobService?.github?.report();
+    }
 
     if (options.prComment) {
       await commentOnPullRequest(

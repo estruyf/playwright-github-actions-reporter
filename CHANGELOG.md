@@ -2,6 +2,24 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.14.0]
+
+- [#64](https://github.com/estruyf/playwright-github-actions-reporter/issues/64):
+  Added the `skipSummaryWhenAllPassed` option to write no job summary when the
+  run passed with no flaky tests. The step outputs, workflow annotations and
+  pull request comment are still set
+- [#19](https://github.com/estruyf/playwright-github-actions-reporter/issues/19):
+  Added the `githubStorage` option to store image attachments in the git
+  storage of the repository, so the summary shows them without external
+  storage, also for private repositories. The refs include the date, so old
+  ones can be deleted by name, and the log shows the remaining GitHub API rate
+  limit
+  Implemented by [AndyLysenko](https://github.com/AndyLysenko)
+- [#19](https://github.com/estruyf/playwright-github-actions-reporter/issues/19):
+  Added the `uploadAttachment` option to upload image attachments to your own
+  storage, like AWS S3, and show them in the summary
+  Implemented by [AndyLysenko](https://github.com/AndyLysenko)
+
 ## [1.13.0]
 
 - [#32](https://github.com/estruyf/playwright-github-actions-reporter/issues/32):

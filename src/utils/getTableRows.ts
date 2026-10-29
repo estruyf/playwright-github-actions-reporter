@@ -6,7 +6,10 @@ import { getTestAnnotations } from "./getTestAnnotations.js";
 import { getTestDuration } from "./getTestDuration.js";
 import { getTestStatusIcon } from "./getTestStatusIcon.js";
 import type { BlobService, DisplayLevel } from "../models/index.js";
-import { processAttachments } from "./processAttachments.js";
+import {
+  isBlobServiceConfigured,
+  processAttachments,
+} from "./processAttachments.js";
 import { getErrorDetails, type ErrorOptions } from "./getErrorDetails.js";
 import { getTableHeaders, type SummaryTableRow } from "./summaryTable.js";
 
@@ -21,7 +24,7 @@ export const getTableRows = async (
   errorOptions?: ErrorOptions,
   failOnFlakyTests: boolean = false,
 ): Promise<SummaryTableRow[]> => {
-  const hasBlobService = blobService && blobService.azure;
+  const hasBlobService = isBlobServiceConfigured(blobService);
 
   const columns = ["Test", "Status", "Duration", "Retries"];
 
