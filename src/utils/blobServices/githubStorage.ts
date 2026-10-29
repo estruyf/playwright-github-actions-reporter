@@ -55,6 +55,8 @@ export class GitHubStorage implements GitHubAttachmentStorage {
   private readonly handled = new Set<string>();
   private parent?: { commit: string; tree: string };
   private index = 0;
+  // Failed uploads count as well, so `maxUploads` caps the time spent on uploads whatever goes wrong
+  private attempts = 0;
   private stats: Stats = { uploaded: 0, skipped: 0, failed: 0, duration: 0 };
 
   constructor(
@@ -102,12 +104,13 @@ export class GitHubStorage implements GitHubAttachmentStorage {
           this.stats.skipped += paths.length - i;
           break;
         }
-        if (!this.canUpload(entries.length)) {
+        if (!this.canUpload()) {
           this.stats.skipped++;
           continue;
         }
 
         try {
+          this.attempts++;
           const entry = await this.createEntry(path);
           entries.push(entry);
           files.set(path, entry.path);
@@ -148,6 +151,7 @@ export class GitHubStorage implements GitHubAttachmentStorage {
 
     return await this.measure(async () => {
       try {
+        this.attempts++;
         const entry = await this.createEntry(attachment.path);
         const commit = await this.commit([entry]);
         this.stats.uploaded++;
@@ -196,8 +200,8 @@ export class GitHubStorage implements GitHubAttachmentStorage {
     }
   }
 
-  private canUpload(pending = 0) {
-    return this.stats.uploaded + pending < this.maxUploads;
+  private canUpload() {
+    return this.attempts < this.maxUploads;
   }
 
   private async createEntry(path: string): Promise<TreeEntry> {

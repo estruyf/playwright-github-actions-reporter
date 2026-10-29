@@ -209,6 +209,32 @@ describe("GitHubStorage", () => {
     );
   });
 
+  test("should count failed uploads toward the upload limit", async () => {
+    fetchMock = mockFetch(500, "git/blobs");
+    global.fetch = fetchMock as any;
+    const storage = new GitHubStorage("token", "owner/repo", "123", {
+      maxUploads: 2,
+    });
+
+    await storage.uploadSuite(
+      createSuite([
+        createTest("failed", [image("a.png"), image("b.png"), image("c.png")]),
+      ]),
+      ["fail"],
+    );
+    const url = await storage.getUrl(image("extra.png"));
+    storage.report();
+
+    expect(fetchMock).toHaveBeenCalledTimes(2);
+    expect(url).toBeUndefined();
+    expect(warning).toHaveBeenCalledWith(
+      "GitHub storage: 2 attachment(s) not uploaded, over the limit of 2",
+    );
+    expect(warning).toHaveBeenCalledWith(
+      "GitHub storage: 2 attachment(s) failed to upload, see the log for details",
+    );
+  });
+
   test("should continue after a request failed without a timeout", async () => {
     let calls = 0;
     const ok = mockFetch();
