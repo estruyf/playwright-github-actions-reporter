@@ -179,6 +179,86 @@ describe("GitHubStorage", () => {
     );
   });
 
+  test("should stop all uploads after a request timed out", async () => {
+    fetchMock = jest.fn(async () => {
+      const error = new Error("The operation was aborted due to timeout");
+      error.name = "TimeoutError";
+      throw error;
+    });
+    global.fetch = fetchMock as any;
+    const storage = new GitHubStorage("token", "owner/repo", "123", {
+      requestTimeout: 5,
+    });
+
+    await storage.uploadSuite(
+      createSuite([
+        createTest("failed", [image("a.png"), image("b.png"), image("c.png")]),
+      ]),
+      ["fail"],
+    );
+    const url = await storage.getUrl(image("extra.png"));
+    storage.report();
+
+    expect(fetchMock).toHaveBeenCalledTimes(1);
+    expect(url).toBeUndefined();
+    expect(warning).toHaveBeenCalledWith(
+      "GitHub storage: uploads stopped, POST git/blobs: no response within 15s",
+    );
+    expect(warning).toHaveBeenCalledWith(
+      "GitHub storage: 2 attachment(s) not uploaded",
+    );
+  });
+
+  test("should count failed uploads toward the upload limit", async () => {
+    fetchMock = mockFetch(500, "git/blobs");
+    global.fetch = fetchMock as any;
+    const storage = new GitHubStorage("token", "owner/repo", "123", {
+      maxUploads: 2,
+    });
+
+    await storage.uploadSuite(
+      createSuite([
+        createTest("failed", [image("a.png"), image("b.png"), image("c.png")]),
+      ]),
+      ["fail"],
+    );
+    const url = await storage.getUrl(image("extra.png"));
+    storage.report();
+
+    expect(fetchMock).toHaveBeenCalledTimes(2);
+    expect(url).toBeUndefined();
+    expect(warning).toHaveBeenCalledWith(
+      "GitHub storage: 2 attachment(s) not uploaded, over the limit of 2",
+    );
+    expect(warning).toHaveBeenCalledWith(
+      "GitHub storage: 2 attachment(s) failed to upload, see the log for details",
+    );
+  });
+
+  test("should continue after a request failed without a timeout", async () => {
+    let calls = 0;
+    const ok = mockFetch();
+    fetchMock = jest.fn(async (url: string, init: any) => {
+      if (++calls === 1) {
+        throw new Error("fetch failed");
+      }
+      return ok(url, init);
+    });
+    global.fetch = fetchMock as any;
+    const storage = new GitHubStorage("token", "owner/repo", "123");
+
+    await storage.uploadSuite(
+      createSuite([createTest("failed", [image("a.png"), image("b.png")])]),
+      ["fail"],
+    );
+    storage.report();
+
+    expect(calls).toBe(5);
+    expect(warning).not.toHaveBeenCalledWith(
+      expect.stringContaining("uploads stopped"),
+    );
+  });
+
   test("should not retry an attachment that failed in the batch", async () => {
     fetchMock = mockFetch(500, "git/commits");
     global.fetch = fetchMock as any;

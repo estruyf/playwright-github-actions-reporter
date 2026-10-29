@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.14.1]
+
+- [#19](https://github.com/estruyf/playwright-github-actions-reporter/issues/19):
+  `githubStorage` stops the remaining uploads when a GitHub API request gets
+  no response within `requestTimeout`, so a hanging API does not add a timeout
+  per image to the job. Failed uploads count toward `maxUploads`, so it caps
+  the time spent on uploads whatever goes wrong
+  Implemented by [AndyLysenko](https://github.com/AndyLysenko)
+
 ## [1.14.0]
 
 - [#64](https://github.com/estruyf/playwright-github-actions-reporter/issues/64):
