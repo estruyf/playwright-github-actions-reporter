@@ -16,7 +16,8 @@ const DEFAULT_MAX_UPLOADS = 30;
 const DEFAULT_REQUEST_TIMEOUT = 10;
 // Blobs carry the image itself, so they get more time than the other requests
 const BLOB_TIMEOUT_FACTOR = 3;
-// A read-only token, a missing repository or a rate limit: the remaining uploads fail the same way
+// A read-only token, a missing repository or a rate limit: the remaining uploads fail the same way.
+// A request without a response within the timeout stops the uploads as well
 const STOP_STATUSES = [401, 403, 404, 429];
 
 interface TreeEntry {
@@ -243,6 +244,30 @@ export class GitHubStorage implements GitHubAttachmentStorage {
     path: string,
     body: unknown,
   ): Promise<T> {
+    const timeout =
+      path === "git/blobs"
+        ? this.requestTimeout * BLOB_TIMEOUT_FACTOR
+        : this.requestTimeout;
+
+    try {
+      return await this.send<T>(method, path, body, timeout);
+    } catch (e) {
+      // A hanging API would make every remaining upload wait for its timeout as well
+      if ((e as Error).name === "TimeoutError") {
+        this.stats.stoppedReason = `${method} ${path}: no response within ${
+          timeout / 1000
+        }s`;
+      }
+      throw e;
+    }
+  }
+
+  private async send<T>(
+    method: string,
+    path: string,
+    body: unknown,
+    timeout: number,
+  ): Promise<T> {
     const response = await fetch(`${this.apiUrl}/repos/${this.repo}/${path}`, {
       method,
       headers: {
@@ -251,11 +276,7 @@ export class GitHubStorage implements GitHubAttachmentStorage {
         "Content-Type": "application/json",
       },
       body: JSON.stringify(body),
-      signal: AbortSignal.timeout(
-        path === "git/blobs"
-          ? this.requestTimeout * BLOB_TIMEOUT_FACTOR
-          : this.requestTimeout,
-      ),
+      signal: AbortSignal.timeout(timeout),
     });
 
     // Every response has the rate limit, so it costs no extra request
