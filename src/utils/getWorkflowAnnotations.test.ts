@@ -106,6 +106,39 @@ describe("getWorkflowAnnotations", () => {
     ]);
   });
 
+  it("should handle test.fail() tests by their expected status", () => {
+    const suite = createSuite([
+      {
+        tests: [
+          {
+            ...createTest("fails as expected", [
+              { status: "failed", retry: 0, errors: [{ message: "Boom" }] },
+            ]),
+            expectedStatus: "failed",
+          },
+          {
+            ...createTest("passes unexpectedly", [
+              { status: "passed", retry: 0 },
+            ]),
+            expectedStatus: "failed",
+          },
+        ],
+      },
+    ]);
+
+    expect(getWorkflowAnnotations(suite)).toEqual([
+      {
+        level: "error",
+        message: "Expected to fail, but passed",
+        properties: {
+          title: "Shop > passes unexpectedly",
+          file: "tests/shop.spec.ts",
+          startLine: 10,
+        },
+      },
+    ]);
+  });
+
   it("should leave out the file when it is outside the workspace", () => {
     delete process.env.GITHUB_WORKSPACE;
     const suite = createSuite([

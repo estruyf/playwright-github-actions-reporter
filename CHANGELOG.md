@@ -10,6 +10,10 @@ All notable changes to this project will be documented in this file.
   per image to the job. Failed uploads count toward `maxUploads`, so it caps
   the time spent on uploads whatever goes wrong
   Implemented by [AndyLysenko](https://github.com/AndyLysenko)
+- [#67](https://github.com/estruyf/playwright-github-actions-reporter/issues/67):
+  Tests marked with `test.fail()` are now reported by their expected status.
+  A test that fails as expected shows as `Pass`, and a test that passes
+  unexpectedly shows as `Fail`, in line with Playwright
 
 ## [1.14.0]
 

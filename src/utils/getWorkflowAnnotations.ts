@@ -63,7 +63,9 @@ export const getWorkflowAnnotations = (
           level: "error",
           message:
             getMessage(error, options.maxErrorLength) ||
-            `Test ${result?.status || "failed"}`,
+            (test.expectedStatus === "failed" && result?.status === "passed"
+              ? "Expected to fail, but passed"
+              : `Test ${result?.status || "failed"}`),
           properties: getProperties(title, error?.location || test.location),
         });
       } else if (status === "Flaky") {
