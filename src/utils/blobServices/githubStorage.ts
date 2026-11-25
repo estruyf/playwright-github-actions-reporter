@@ -16,7 +16,8 @@ const DEFAULT_MAX_UPLOADS = 30;
 const DEFAULT_REQUEST_TIMEOUT = 10;
 // Blobs carry the image itself, so they get more time than the other requests
 const BLOB_TIMEOUT_FACTOR = 3;
-// A read-only token, a missing repository or a rate limit: the remaining uploads fail the same way
+// A read-only token, a missing repository or a rate limit: the remaining uploads fail the same way.
+// A request without a response within the timeout stops the uploads as well
 const STOP_STATUSES = [401, 403, 404, 429];
 
 interface TreeEntry {
@@ -54,6 +55,8 @@ export class GitHubStorage implements GitHubAttachmentStorage {
   private readonly handled = new Set<string>();
   private parent?: { commit: string; tree: string };
   private index = 0;
+  // Failed uploads count as well, so `maxUploads` caps the time spent on uploads whatever goes wrong
+  private attempts = 0;
   private stats: Stats = { uploaded: 0, skipped: 0, failed: 0, duration: 0 };
 
   constructor(
@@ -101,12 +104,13 @@ export class GitHubStorage implements GitHubAttachmentStorage {
           this.stats.skipped += paths.length - i;
           break;
         }
-        if (!this.canUpload(entries.length)) {
+        if (!this.canUpload()) {
           this.stats.skipped++;
           continue;
         }
 
         try {
+          this.attempts++;
           const entry = await this.createEntry(path);
           entries.push(entry);
           files.set(path, entry.path);
@@ -147,6 +151,7 @@ export class GitHubStorage implements GitHubAttachmentStorage {
 
     return await this.measure(async () => {
       try {
+        this.attempts++;
         const entry = await this.createEntry(attachment.path);
         const commit = await this.commit([entry]);
         this.stats.uploaded++;
@@ -195,8 +200,8 @@ export class GitHubStorage implements GitHubAttachmentStorage {
     }
   }
 
-  private canUpload(pending = 0) {
-    return this.stats.uploaded + pending < this.maxUploads;
+  private canUpload() {
+    return this.attempts < this.maxUploads;
   }
 
   private async createEntry(path: string): Promise<TreeEntry> {
@@ -243,6 +248,30 @@ export class GitHubStorage implements GitHubAttachmentStorage {
     path: string,
     body: unknown,
   ): Promise<T> {
+    const timeout =
+      path === "git/blobs"
+        ? this.requestTimeout * BLOB_TIMEOUT_FACTOR
+        : this.requestTimeout;
+
+    try {
+      return await this.send<T>(method, path, body, timeout);
+    } catch (e) {
+      // A hanging API would make every remaining upload wait for its timeout as well
+      if ((e as Error).name === "TimeoutError") {
+        this.stats.stoppedReason = `${method} ${path}: no response within ${
+          timeout / 1000
+        }s`;
+      }
+      throw e;
+    }
+  }
+
+  private async send<T>(
+    method: string,
+    path: string,
+    body: unknown,
+    timeout: number,
+  ): Promise<T> {
     const response = await fetch(`${this.apiUrl}/repos/${this.repo}/${path}`, {
       method,
       headers: {
@@ -251,11 +280,7 @@ export class GitHubStorage implements GitHubAttachmentStorage {
         "Content-Type": "application/json",
       },
       body: JSON.stringify(body),
-      signal: AbortSignal.timeout(
-        path === "git/blobs"
-          ? this.requestTimeout * BLOB_TIMEOUT_FACTOR
-          : this.requestTimeout,
-      ),
+      signal: AbortSignal.timeout(timeout),
     });
 
     // Every response has the rate limit, so it costs no extra request

@@ -154,4 +154,31 @@ describe("getTotalStatus", () => {
       flaky: 0,
     });
   });
+
+  it("should count test.fail() tests by their expected status", () => {
+    const suites: Suite[] = [
+      {
+        ...baseSuite,
+        allTests: () =>
+          [
+            {
+              expectedStatus: "failed",
+              results: [{ status: "failed" }],
+            },
+            {
+              expectedStatus: "failed",
+              results: [{ status: "passed" }],
+            },
+          ] as any[],
+      },
+    ];
+
+    expect(getTotalStatus(suites)).toEqual({
+      passed: 1,
+      failed: 1,
+      skipped: 0,
+      timedOut: 0,
+      flaky: 0,
+    });
+  });
 });

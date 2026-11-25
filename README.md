@@ -302,8 +302,8 @@ steps:
 
 - The images of the last attempt of each test shown in the summary are uploaded in one commit, under `refs/<refPrefix>/<YYYY-MM-DD>/<run id>/<run attempt>/<uuid>`. The ref is not a branch, so it does not show up in the branch list and is not fetched by a normal clone.
 - `refPrefix` changes the prefix of the refs. Default: `test-attachments`.
-- `maxUploads` limits the number of images per reporter, so per job or shard, so a run with many failures does not hit the rate limit of the GitHub API. The other images are left out. Default: `30`.
-- `requestTimeout` is the timeout of a GitHub API request in seconds. Uploading an image gets three times as long. Default: `10`.
+- `maxUploads` limits the number of image uploads per reporter, so per job or shard, so a run with many failures does not hit the rate limit of the GitHub API. Failed uploads count as well, so it also caps the time spent on uploads. The other images are left out. Default: `30`.
+- `requestTimeout` is the timeout of a GitHub API request in seconds. Uploading an image gets three times as long. When a request gets no response in time, the remaining images are not uploaded, so a hanging API does not keep the job waiting. Default: `10`.
 - The token is the `githubToken` option, or `GITHUB_TOKEN`. Without a token, or outside of a workflow, no images are uploaded and the log says why. On GitHub Enterprise Server, `GITHUB_API_URL` and `GITHUB_SERVER_URL` are used.
 - Azure Blob Storage, when configured, is used instead. `showError` needs to be enabled, as the images are shown next to the error.
 - The log shows the number of uploaded images, the ref and the remaining GitHub API rate limit. When an upload fails, the summary is shown without the image and a workflow warning explains why. Pull requests from forks get a read-only token, so their summary has no images.
